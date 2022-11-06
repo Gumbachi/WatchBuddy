@@ -1,32 +1,82 @@
 package com.gumbachi.watchbuddy.ui.app.components
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
-import com.gumbachi.watchbuddy.model.enums.ReleaseStatus
+import com.gumbachi.watchbuddy.model.enums.ScoreFormat
+import com.gumbachi.watchbuddy.model.enums.format
+import com.gumbachi.watchbuddy.model.interfaces.Movie
+import com.gumbachi.watchbuddy.model.interfaces.SearchResult
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 
+@Composable
+fun MediaCard(
+    searchResult: SearchResult,
+    modifier: Modifier = Modifier,
+    scoreFormat: ScoreFormat = ScoreFormat.Decimal,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
+) {
+    searchResult.apply {
+        MediaCard(
+            imageURL = posterURL,
+            headline = title,
+            primarySubtitle = primaryDetail,
+            secondarySubtitle = secondaryDetail,
+            score = averageScore.format(scoreFormat),
+            statusText = releaseStatus.text,
+            statusColor = releaseStatus.color,
+            onClick = onClick,
+            onLongClick = onLongClick,
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+fun MediaCard(
+    movie: Movie,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
+    scoreFormat: ScoreFormat = ScoreFormat.Decimal
+) {
+    movie.apply {
+        MediaCard(
+            imageURL = posterURL,
+            headline = title,
+            primarySubtitle = movie.runtime,
+            secondarySubtitle = movie.releaseDate.toString(),
+            score = userScore.format(scoreFormat),
+            statusText = releaseStatus.text,
+            statusColor = releaseStatus.color,
+            onClick = onClick,
+            onLongClick = onLongClick,
+            modifier = modifier
+        )
+    }
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MediaCard(
     imageURL: String,
@@ -38,32 +88,23 @@ fun MediaCard(
     statusColor: Color,
     modifier: Modifier = Modifier,
     progress: String? = null,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {}
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
-        modifier=modifier.padding(horizontal = 7.dp, vertical = 5.dp)
+        modifier=modifier
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
     ) {
 
 
         Box {
             // Top Portion of Card
-            SubcomposeAsyncImage(
-                model = imageURL,
-                loading = {
-                    Box(contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(modifier = Modifier.scale(2F))
-                    }
-                },
-                error = {
-                    Image(
-                        imageVector = Icons.Filled.BrokenImage,
-                        contentDescription = "Image failed to load"
-                    )
-                },
-                contentDescription = "$headline Image",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier.aspectRatio(0.66F)
-            )
+            PosterImage(posterURL = imageURL)
 
             // Score Bubble
             CardBubble(
@@ -79,7 +120,7 @@ fun MediaCard(
                 CardBubble(
                     text = it,
                     shape = RoundedCornerShape(topEnd = 10.dp),
-                    innerPadding = PaddingValues(horizontal = 15.dp, vertical = 4.dp),
+                    innerPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                     modifier = Modifier.align(Alignment.BottomStart)
                 )
             }
@@ -99,7 +140,7 @@ fun MediaCard(
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 5.dp)
+                    .padding(bottom = 4.dp)
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -126,7 +167,7 @@ fun MediaCard(
 }
 
 @Composable
-fun CardBubble(
+private fun CardBubble(
     text: String,
     modifier: Modifier = Modifier,
     innerPadding: PaddingValues = PaddingValues(0.dp),
@@ -162,7 +203,7 @@ fun CardBubble(
 }
 
 @Composable
-fun StatusBubble(
+private fun StatusBubble(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary
@@ -180,9 +221,10 @@ fun StatusBubble(
     )
 }
 
+
 @Preview
 @Composable
-fun DefaultMediaCardPreview(darkMode: Boolean = false) {
+private fun DefaultMediaCardPreview(darkMode: Boolean = false) {
     WatchBuddyTheme(darkTheme = darkMode) {
         Surface(modifier = Modifier.padding(16.dp)) {
             MediaCard(
@@ -201,6 +243,6 @@ fun DefaultMediaCardPreview(darkMode: Boolean = false) {
 
 @Preview
 @Composable
-fun MediaCardPreview() {
+private fun MediaCardPreview() {
     DefaultMediaCardPreview(darkMode = true)
 }

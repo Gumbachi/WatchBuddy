@@ -1,11 +1,11 @@
 package com.gumbachi.watchbuddy.ui.app.components
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -13,17 +13,67 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
-import com.gumbachi.watchbuddy.model.enums.ReleaseStatus
+import com.gumbachi.watchbuddy.model.enums.ScoreFormat
+import com.gumbachi.watchbuddy.model.enums.format
+import com.gumbachi.watchbuddy.model.interfaces.Movie
+import com.gumbachi.watchbuddy.model.interfaces.SearchResult
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 
-val statusLine = Modifier.width(3.dp).fillMaxSize()
+@Composable
+fun CompactMediaCard(
+    searchResult: SearchResult,
+    modifier: Modifier = Modifier,
+    scoreFormat: ScoreFormat = ScoreFormat.Decimal,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
+) {
+    searchResult.apply {
+        CompactMediaCard(
+            imageURL = posterURL,
+            headline = title,
+            primarySubtitle = primaryDetail,
+            secondarySubtitle = secondaryDetail,
+            score = averageScore.format(scoreFormat),
+            statusColor = releaseStatus.color,
+            onClick = onClick,
+            onLongClick = onLongClick,
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+fun CompactMediaCard(
+    movie: Movie,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
+    scoreFormat: ScoreFormat = ScoreFormat.Decimal
+) {
+    movie.apply {
+        CompactMediaCard(
+            imageURL = posterURL,
+            headline = title,
+            primarySubtitle = movie.runtime,
+            secondarySubtitle = movie.releaseDate.toString(),
+            score = userScore.format(scoreFormat),
+            statusColor = releaseStatus.color,
+            onClick = onClick,
+            onLongClick = onLongClick,
+            modifier = modifier
+        )
+    }
+}
 
 
+val statusLine = Modifier
+    .width(3.dp)
+    .fillMaxSize()
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CompactMediaCard(
     imageURL: String,
@@ -34,27 +84,33 @@ fun CompactMediaCard(
     statusColor: Color,
     modifier: Modifier = Modifier,
     progress: String? = null,
+    onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
         modifier = modifier
             .padding(horizontal = 8.dp, vertical = 4.dp)
             .height(105.dp)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
     ) {
 
         Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+            modifier = Modifier.fillMaxSize()
         ) {
-            CardImage(
-                imageURL = imageURL,
+            PosterImage(
+                posterURL = imageURL,
                 aspectRatio = 0.6F,
+                matchConstraintByHeight = true
             )
             Spacer(modifier = statusLine.background(statusColor))
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
                     .padding(start = 5.dp, top = 5.dp, bottom = 5.dp)
                     .fillMaxHeight()
             ) {
@@ -92,7 +148,9 @@ fun CompactMediaCard(
                             Icon(
                                 imageVector = Icons.Filled.Star,
                                 contentDescription = null,
-                                modifier = Modifier.size(13.dp).padding(1.dp)
+                                modifier = Modifier
+                                    .size(13.dp)
+                                    .padding(1.dp)
                             )
                             Text(
                                 text = score,
@@ -113,37 +171,9 @@ fun CompactMediaCard(
     }
 }
 
-@Composable
-fun CardImage(
-    imageURL: String,
-    modifier: Modifier = Modifier,
-    contentDescription: String? = null,
-    aspectRatio: Float = 0.75F,
-    matchConstraintByHeight: Boolean = true
-) {
-    SubcomposeAsyncImage(
-        model = imageURL,
-        loading = {
-            Box(contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        },
-        error = {
-            Image(
-                imageVector = Icons.Filled.BrokenImage,
-                contentDescription = "Image failed to load"
-            )
-        },
-        contentDescription = contentDescription,
-        contentScale = ContentScale.FillBounds,
-        modifier = modifier.aspectRatio(aspectRatio, matchConstraintByHeight)
-
-    )
-}
-
 @Preview
 @Composable
-fun DefaultCompactMediaCardPreview(darkMode: Boolean = false) {
+private fun DefaultCompactMediaCardPreview(darkMode: Boolean = false) {
     WatchBuddyTheme(darkTheme = darkMode) {
         Surface(modifier = Modifier.padding(16.dp)) {
             CompactMediaCard(
@@ -161,6 +191,6 @@ fun DefaultCompactMediaCardPreview(darkMode: Boolean = false) {
 
 @Preview
 @Composable
-fun CompactMediaCardPreview() {
+private fun CompactMediaCardPreview() {
     DefaultCompactMediaCardPreview(darkMode = true)
 }

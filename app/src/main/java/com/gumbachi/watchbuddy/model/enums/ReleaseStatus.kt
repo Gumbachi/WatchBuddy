@@ -1,6 +1,7 @@
 package com.gumbachi.watchbuddy.model.enums
 
 import androidx.compose.ui.graphics.Color
+import java.time.LocalDate
 
 sealed class ReleaseStatus(val text: String, val color: Color) {
     data class Unreleased(
@@ -15,4 +16,22 @@ sealed class ReleaseStatus(val text: String, val color: Color) {
         val t: String = "Released",
         val c: Color = Color(0xFF298C43)
     ): ReleaseStatus(t, c)
+
+    companion object {
+        fun fromDate(date: LocalDate): ReleaseStatus {
+            return when {
+                date < LocalDate.now() -> Released()
+                else -> Unreleased()
+            }
+        }
+
+        fun random(): ReleaseStatus {
+            return listOf(
+                ReleaseStatus.Unreleased(),
+                ReleaseStatus.Releasing(),
+                ReleaseStatus.Released()
+            ).random()
+        }
+    }
+
 }
