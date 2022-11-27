@@ -73,7 +73,7 @@ class SearchRepositoryImpl @Inject constructor(
     override suspend fun generateBlankMedia(searchResult: SearchResult): Result<Media> {
         return runCatching {
             when (searchResult.source) {
-                Source.TMDBMovie -> tmdb.getMovieDetails(id = searchResult.id).toTMDBMovie()
+                Source.TMDBMovie -> tmdb.getMovieDetails(searchResult.id).toTMDBMovie()
                 else -> TODO("Fill remaining branches")
             }
         }

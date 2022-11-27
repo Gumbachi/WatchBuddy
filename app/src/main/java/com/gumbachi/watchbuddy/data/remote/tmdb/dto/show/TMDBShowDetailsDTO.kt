@@ -1,6 +1,8 @@
 package com.gumbachi.watchbuddy.data.remote.tmdb.dto.show
 
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class TMDBShowDetailsDTO(
     val backdrop_path: String?,
     val episode_run_time: List<Int>,

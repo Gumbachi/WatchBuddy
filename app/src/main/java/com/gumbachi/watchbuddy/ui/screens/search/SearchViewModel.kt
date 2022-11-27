@@ -35,9 +35,9 @@ data class SearchUiState(
 
     val settings: UserSettings = UserSettings(),
 
-    val underEdit: SearchResult? = null,
+    val underEdit: SearchResult? = null
 
-    )
+)
 
 
 @HiltViewModel
@@ -118,6 +118,7 @@ class SearchViewModel @Inject constructor(
                             movieRepository.addMovie(it with edits)
                                 .onSuccess { snackbarAction() }
                         }
+
                         else -> TODO("Need to implement other branches")
                     }
 

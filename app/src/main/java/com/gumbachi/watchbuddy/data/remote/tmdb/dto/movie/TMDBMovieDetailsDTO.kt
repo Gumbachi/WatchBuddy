@@ -1,5 +1,8 @@
 package com.gumbachi.watchbuddy.data.remote.tmdb.dto.movie
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class TMDBMovieDetailsDTO(
     val backdrop_path: String?,
     val poster_path: String?,

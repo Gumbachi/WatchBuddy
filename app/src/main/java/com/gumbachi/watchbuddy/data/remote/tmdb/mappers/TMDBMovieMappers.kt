@@ -13,54 +13,48 @@ import kotlin.math.roundToInt
 
 
 fun TMDBMovieSearchResultDTO.toTMDBMovieSearchResult(): TMDBMovieSearchResult {
-    this.apply {
-        return TMDBMovieSearchResult(
-            id = id,
-            posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
-            averageScore = (vote_average * 10).roundToInt(),
-            releaseDate = release_date.parseDateOrNow(),
-            popularity = popularity,
-            title = title
-        )
-    }
+    return TMDBMovieSearchResult(
+        id = id,
+        posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
+        averageScore = (vote_average * 10).roundToInt(),
+        releaseDate = release_date.parseDateOrNow(),
+        popularity = popularity,
+        title = title
+    )
 }
 
 fun TMDBMovieSearchResponseDTO.toTMDBSearchResults(): List<TMDBMovieSearchResult> {
-    return this.results.map { it.toTMDBMovieSearchResult() }
+    return results.map { it.toTMDBMovieSearchResult() }
 }
 
 
 fun TMDBMovieDetailsDTO.toTMDBMovieDetails(): TMDBMovieDetails {
-    this.apply {
-        return TMDBMovieDetails(
-            backdropURL = backdrop_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
-            posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
-            id = id,
-            adult = adult,
-            budget = budget,
-            revenue = revenue,
-            title = title,
-            hasVideos = video,
-            voteCount = vote_count,
-            averageScore = vote_average,
-            popularity = popularity,
-            releaseDate = release_date.parseDateOrNow(),
-            runtime = runtime?.let { "${it / 60}h ${it % 60}m" } ?: "??h ??m",
-            overview = overview,
-            tagline = tagline,
-        )
-    }
+    return TMDBMovieDetails(
+        backdropURL = backdrop_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
+        posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
+        id = id,
+        adult = adult,
+        budget = budget,
+        revenue = revenue,
+        title = title,
+        hasVideos = video,
+        voteCount = vote_count,
+        averageScore = vote_average,
+        popularity = popularity,
+        releaseDate = release_date.parseDateOrNow(),
+        runtime = runtime?.let { "${it / 60}h ${it % 60}m" } ?: "??h ??m",
+        overview = overview,
+        tagline = tagline,
+    )
 }
 
 fun TMDBMovieDetailsDTO.toTMDBMovie(): TMDBMovie {
-    this.apply {
-        return TMDBMovie(
-            id = id,
-            posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
-            title = title,
-            releaseDate = release_date.parseDateOrNow(),
-            runtime = runtime?.let { "${it / 60}h ${it % 60}m" } ?: "??h ??m",
-            releaseStatus = release_date.parseDateOrNull().getMovieReleaseStatus()
-        )
-    }
+    return TMDBMovie(
+        id = id,
+        posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
+        title = title,
+        releaseDate = release_date.parseDateOrNow(),
+        runtime = runtime?.let { "${it / 60}h ${it % 60}m" } ?: "??h ??m",
+        releaseStatus = release_date.parseDateOrNull().getMovieReleaseStatus()
+    )
 }

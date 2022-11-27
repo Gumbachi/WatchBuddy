@@ -3,7 +3,6 @@ package com.gumbachi.watchbuddy.data.repository
 import android.util.Log
 import com.gumbachi.watchbuddy.data.remote.tmdb.TMDBApi
 import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBMovieDetails
-import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBShowDetails
 import com.gumbachi.watchbuddy.model.tmdb.TMDBMovieDetails
 import com.gumbachi.watchbuddy.model.tmdb.TMDBShowDetails
 import javax.inject.Inject
@@ -29,7 +28,8 @@ class DetailsRepositoryImpl @Inject constructor(
 
     override suspend fun getTMDBShowDetails(id: Int): Result<TMDBShowDetails> {
         return runCatching {
-            tmdb.getShowDetails(id).toTMDBShowDetails()
+            TODO()
+//            tmdb.getShowDetails(id).toTMDBShowDetails()
         }
     }
 
