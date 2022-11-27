@@ -16,15 +16,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.gumbachi.watchbuddy.model.enums.MediaType
-import com.gumbachi.watchbuddy.model.enums.SourceAPI
-import com.gumbachi.watchbuddy.ui.app.components.PosterImage
+import com.gumbachi.watchbuddy.model.enums.data.Source
+import com.gumbachi.watchbuddy.components.cards.PosterImage
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 
 @Composable
 fun DetailsScreen(
-    api: SourceAPI,
-    mediaType: MediaType,
+    source: Source,
     id: Int,
     modifier: Modifier = Modifier,
     viewModel: DetailsViewModel = hiltViewModel(),
@@ -33,7 +31,7 @@ fun DetailsScreen(
     val state = viewModel.state
 
     LaunchedEffect(Unit) {
-        viewModel.loadDetails(api, mediaType, id)
+        viewModel.loadDetails(source, id)
     }
 
     if (state.loading) {

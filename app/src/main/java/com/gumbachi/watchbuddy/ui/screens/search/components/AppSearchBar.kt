@@ -2,7 +2,6 @@ package com.gumbachi.watchbuddy.ui.screens.search.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -41,14 +40,7 @@ fun AppSearchBar(
             modifier = Modifier
                 .focusRequester(focusRequester)
                 .padding(vertical = 5.dp),
-            shape = CircleShape,
-            placeholder = {
-                Text(
-                    modifier = Modifier,
-                    text = hint,
-                    color = Color.White.copy(alpha = 0.5F)
-                )
-            },
+            placeholder = { Text(text = hint) },
             textStyle = MaterialTheme.typography.titleMedium,
             singleLine = true,
             trailingIcon =  {

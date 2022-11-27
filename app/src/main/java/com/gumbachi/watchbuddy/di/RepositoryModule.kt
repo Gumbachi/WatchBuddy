@@ -1,6 +1,8 @@
 package com.gumbachi.watchbuddy.di
 
-import com.gumbachi.watchbuddy.data.local.*
+import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDB
+import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDatabase
+import com.gumbachi.watchbuddy.data.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -32,7 +34,19 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSettingsRepository(
-        SettingsRepositoryImpl: SettingsRepositoryImpl
+        settingsRepositoryImpl: SettingsRepositoryImpl
     ): SettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSearchRepository(
+        searchRepositoryImpl: SearchRepositoryImpl
+    ): SearchRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDB(
+        watchbuddyDB: WatchbuddyDB
+    ): WatchbuddyDatabase
 
 }

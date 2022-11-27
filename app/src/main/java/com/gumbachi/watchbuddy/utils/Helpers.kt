@@ -1,13 +1,23 @@
 package com.gumbachi.watchbuddy.utils
 
-import android.util.Log
-import java.time.LocalDate
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 
-fun parseDate(dateString: String): LocalDate {
-    return try {
-        LocalDate.parse(dateString)
-    } catch (e: Exception) {
-        Log.w("Object", "Couldn't parse ($dateString) into a valid date")
-        LocalDate.now()
+suspend fun displaySnackbar(
+    message: String,
+    actionLabel: String? = null,
+    snackbarState: SnackbarHostState,
+    onDismiss: suspend () -> Unit = {},
+    onAction: suspend () -> Unit
+) {
+    val result = snackbarState.showSnackbar(
+        message = message,
+        actionLabel = actionLabel,
+        duration = SnackbarDuration.Short
+    )
+    when (result) {
+        SnackbarResult.Dismissed -> onDismiss()
+        SnackbarResult.ActionPerformed -> onAction()
     }
 }

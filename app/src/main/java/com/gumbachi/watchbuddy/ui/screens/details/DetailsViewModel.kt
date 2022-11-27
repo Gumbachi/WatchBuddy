@@ -6,23 +6,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gumbachi.watchbuddy.data.local.DetailsRepository
-import com.gumbachi.watchbuddy.model.enums.MediaType
-import com.gumbachi.watchbuddy.model.enums.SourceAPI
+import com.gumbachi.watchbuddy.data.repository.DetailsRepository
+import com.gumbachi.watchbuddy.model.enums.data.Source
 import com.gumbachi.watchbuddy.model.interfaces.Details
-import com.gumbachi.watchbuddy.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class DetailsUiState(
     val loading: Boolean = false,
+    val error: Throwable? = null,
     val details: Details? = null
 )
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
-    private val repository: DetailsRepository
+    private val detailsRepository: DetailsRepository
 ): ViewModel() {
 
     init {
@@ -31,33 +30,19 @@ class DetailsViewModel @Inject constructor(
 
     var state by mutableStateOf(DetailsUiState())
 
-    fun loadDetails(api: SourceAPI, type: MediaType, id: Int) {
+    fun loadDetails(source: Source, id: Int) {
         viewModelScope.launch {
             state = state.copy(loading = true)
 
-            val details = when (Pair(api, type)) {
-                Pair(SourceAPI.TMDB, MediaType.Movie) -> {
-                    repository.getTMDBMovieDetails(id)
-                }
-                Pair(SourceAPI.TMDB, MediaType.Show) -> {
-                    repository.getTMDBShowDetails(id)
-                }
-                else -> null
-            }
-
-            when (details) {
-                is Resource.Success -> {
-                    state = state.copy(loading = false, details = details.data)
-                    Log.d("Details","Successful details fetch: ${details.data}")
-                }
-                is Resource.Error -> {
-                    state = state.copy(loading = false, details = null)
-                    Log.w("Details","Error with API Fetching $api, $type, $id")
-                }
-                null -> {
-                    state = state.copy(loading = false, details = null)
-                    Log.e("Details","Invalid API/MediaType Input")
-                }
+            val details = when (source) {
+                Source.TMDBMovie -> detailsRepository.getTMDBMovieDetails(id)
+                Source.TMDBShow -> detailsRepository.getTMDBShowDetails(id)
+                else -> TODO("Need to fill this in for other APIs")
+            }.onSuccess {
+                state = state.copy(loading = false, details = it, error = null)
+            }.onFailure {
+                state = state.copy(loading = false, details = null, error = it)
+                Log.e("Details","Failed to load details: $it")
             }
         }
     }

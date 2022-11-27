@@ -16,7 +16,7 @@ data class TMDBShowDetailsDTO(
     val status: String,
     val tagline: String,
     val type: String,
-    val vote_count: Int,
+    val vote_count: Long,
     val name: String,
     val number_of_episodes: Int,
     val number_of_seasons: Int,

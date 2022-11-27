@@ -1,10 +1,11 @@
 package com.gumbachi.watchbuddy.model.interfaces
 
-import com.gumbachi.watchbuddy.model.enums.MediaType
+import com.gumbachi.watchbuddy.model.EditableState
 
-interface Movie: Editable, Media {
+interface Movie: Sortable, Media {
     val runtime: String
 
-    override val type: MediaType
-        get() = MediaType.Movie
+    fun copy(): Movie
+
+    override infix fun with(edits: EditableState): Movie
 }

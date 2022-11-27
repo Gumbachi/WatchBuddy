@@ -6,75 +6,125 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gumbachi.watchbuddy.data.local.SettingsRepository
-import com.gumbachi.watchbuddy.data.remote.tmdb.TMDBApi
-import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBSearchResults
-import com.gumbachi.watchbuddy.model.enums.CardStyle
-import com.gumbachi.watchbuddy.model.enums.ScoreFormat
+import com.gumbachi.watchbuddy.data.repository.MovieRepository
+import com.gumbachi.watchbuddy.data.repository.SearchRepository
+import com.gumbachi.watchbuddy.data.repository.SettingsRepository
+import com.gumbachi.watchbuddy.model.EditableState
+import com.gumbachi.watchbuddy.model.RecentSearch
+import com.gumbachi.watchbuddy.model.SearchFilter
+import com.gumbachi.watchbuddy.model.UserSettings
 import com.gumbachi.watchbuddy.model.interfaces.SearchResult
+import com.gumbachi.watchbuddy.model.tmdb.TMDBMovie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class FilterState(
-    val TMDB: Boolean = true,
-    val anilist: Boolean = true,
-    val movies: Boolean = true,
-    val shows: Boolean = true
-)
+private const val TAG = "SearchViewModel"
 
 data class SearchUiState(
     val loading: Boolean = false,
-    val currentSearch: String? = null,
-    val searchResults: List<SearchResult>? = null,
-    val showFilters: Boolean = false,
-    val filterState: FilterState = FilterState(),
+    val error: Throwable? = null,
+    val warning: Throwable? = null,
 
-    val cardSize: CardStyle = CardStyle.Normal,
-    val scoreFormat: ScoreFormat = ScoreFormat.Decimal
-)
+    val currentSearch: String? = null,
+    val searchResults: List<SearchResult> = emptyList(),
+    val recentSearches: List<RecentSearch> = emptyList(),
+
+    val showFilterDialog: Boolean = false,
+    val filter: SearchFilter = SearchFilter(),
+
+    val settings: UserSettings = UserSettings(),
+
+    val underEdit: SearchResult? = null,
+
+    )
 
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val TMDBApi: TMDBApi,
-    private val settingsRepository: SettingsRepository
+    private val searchRepository: SearchRepository,
+    private val movieRepository: MovieRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     var state by mutableStateOf(SearchUiState())
         private set
 
-    fun onFilterButtonClick(newState: Boolean) {
-        state = state.copy(showFilters = newState)
-    }
-
-    fun updateFilterState(newState: FilterState) {
-        state = state.copy(filterState = newState)
-    }
-
-    fun updateUserSettings() {
+    init {
+        Log.d(TAG, "Search View Model Created")
         viewModelScope.launch {
-            val settings = settingsRepository.getUserSettings()
-            state = state.copy(
-                cardSize = settings.cardStyle,
-                scoreFormat = settings.scoreFormat
-            )
+            settingsRepository.getUserSettingsFlow().collect {
+                state = state.copy(settings = it)
+            }
         }
     }
 
+    // Filter State
+    fun showFilterDialog() {
+        state = state.copy(showFilterDialog = true)
+    }
+
+    fun hideFilterDialog() {
+        state = state.copy(showFilterDialog = false)
+    }
+
+    fun onFilterUpdate(filter: SearchFilter) {
+        state = state.copy(filter = filter)
+    }
+
+    // Search Functions
     fun onSearch(query: String) {
         viewModelScope.launch {
             state = state.copy(loading = true)
-            val movieResults = TMDBApi.searchMovies(query = query).toTMDBSearchResults()
-            val showResults = TMDBApi.searchShows(query = query).toTMDBSearchResults()
-            val results = (movieResults + showResults).sortedByDescending { it.weight() }
-            results.forEach { Log.d("TMDB", "$it") }
-            state = state.copy(loading = false, searchResults = results)
+
+            searchRepository.searchFiltered(
+                query = query,
+                filter = state.filter
+            ).onSuccess {
+                state = state.copy(
+                    loading = false,
+                    searchResults = it,
+                    currentSearch = query
+                )
+            }.onFailure {
+                Log.e(TAG, "Search for '$query' failed: $it")
+                it.printStackTrace()
+                state = state.copy(
+                    loading = false,
+                    error = it,
+                )
+            }
         }
     }
 
-    init {
-        Log.d("VM", "Search VM Created")
-        updateUserSettings()
+    fun showEditDialogFor(searchResult: SearchResult) {
+        state = state.copy(underEdit = searchResult)
+    }
+
+    fun hideEditDialog() {
+        state = state.copy(underEdit = null)
+    }
+
+    fun onMediaSave(
+        searchResult: SearchResult,
+        edits: EditableState,
+        snackbarAction: () -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            searchRepository.generateBlankMedia(searchResult)
+                .onSuccess {
+                    when (it) {
+                        is TMDBMovie -> {
+                            movieRepository.addMovie(it with edits)
+                                .onSuccess { snackbarAction() }
+                        }
+                        else -> TODO("Need to implement other branches")
+                    }
+
+                }
+                .onFailure {
+                    throw it //TODO
+                }
+        }
     }
 }

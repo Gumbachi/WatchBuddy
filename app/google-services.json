@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "818393625875",
+    "project_id": "watchbuddy-b79a5",
+    "storage_bucket": "watchbuddy-b79a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818393625875:android:6ae9f9008f2fe3a43ed6e6",
+        "android_client_info": {
+          "package_name": "com.gumbachi.watchbuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "818393625875-g6j4jk9tb1c666bn4a8r3s31vf6p5vlm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhYqO7BK1aemTfk3ERXb-SlIAsOzy-Qs0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "818393625875-g6j4jk9tb1c666bn4a8r3s31vf6p5vlm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

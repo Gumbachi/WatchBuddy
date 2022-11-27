@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.gumbachi.watchbuddy.ui.app.Watchbuddy
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 import dagger.hilt.android.AndroidEntryPoint
 

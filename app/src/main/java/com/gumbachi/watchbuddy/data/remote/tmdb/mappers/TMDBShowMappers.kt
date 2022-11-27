@@ -5,7 +5,8 @@ import com.gumbachi.watchbuddy.data.remote.tmdb.dto.show.TMDBShowSearchResponseD
 import com.gumbachi.watchbuddy.data.remote.tmdb.dto.show.TMDBShowSearchResultDTO
 import com.gumbachi.watchbuddy.model.tmdb.TMDBShowDetails
 import com.gumbachi.watchbuddy.model.tmdb.TMDBShowSearchResult
-import com.gumbachi.watchbuddy.utils.parseDate
+import com.gumbachi.watchbuddy.utils.parseDateOrNow
+import kotlin.math.roundToInt
 
 fun TMDBShowSearchResultDTO.toTMDBShowSearchResult(): TMDBShowSearchResult {
     this.apply {
@@ -13,8 +14,8 @@ fun TMDBShowSearchResultDTO.toTMDBShowSearchResult(): TMDBShowSearchResult {
             id = id,
             title = name,
             posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
-            airDate = parseDate(first_air_date),
-            averageScore = vote_average,
+            airDate = first_air_date.parseDateOrNow(),
+            averageScore = (vote_average * 10).roundToInt(),
             popularity = popularity
         )
     }
@@ -36,8 +37,8 @@ fun TMDBShowDetailsDTO.toTMDBShowDetails(): TMDBShowDetails {
             averageScore = vote_average,
             backdropURL = backdrop_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
             posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
-            firstAirDate = parseDate(first_air_date),
-            lastAirDate = parseDate(last_air_date)
+            firstAirDate = first_air_date.parseDateOrNow(),
+            lastAirDate = last_air_date.parseDateOrNow()
         )
     }
 }

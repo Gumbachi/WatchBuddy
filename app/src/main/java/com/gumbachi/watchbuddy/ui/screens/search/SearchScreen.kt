@@ -1,19 +1,27 @@
 package com.gumbachi.watchbuddy.ui.screens.search
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -26,118 +34,152 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gumbachi.watchbuddy.model.enums.CardStyle
+import com.gumbachi.watchbuddy.components.appbars.WatchbuddySearchAppBar
+import com.gumbachi.watchbuddy.components.cards.CompactMediaCard
+import com.gumbachi.watchbuddy.components.cards.MediaCard
+import com.gumbachi.watchbuddy.components.dialogs.MediaSaveDialog
+import com.gumbachi.watchbuddy.components.dialogs.SearchScreenFilterDialog
+import com.gumbachi.watchbuddy.model.enums.configuration.CardStyle
 import com.gumbachi.watchbuddy.model.interfaces.SearchResult
-import com.gumbachi.watchbuddy.ui.app.components.CompactMediaCard
-import com.gumbachi.watchbuddy.ui.app.components.MediaCard
-import com.gumbachi.watchbuddy.ui.screens.search.components.AppSearchBar
-import com.gumbachi.watchbuddy.ui.screens.search.components.SearchScreenFilterDialog
-import kotlinx.coroutines.launch
+import com.gumbachi.watchbuddy.ui.screens.search.components.NothingFoundPrompt
+import com.gumbachi.watchbuddy.ui.screens.search.components.RecentSearchesList
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = viewModel(),
-    onBackClicked: () -> Unit = {},
-    navigateToDetails: (SearchResult) -> Unit = {}
+    onBackClick: () -> Unit = {},
+    navigateToDetails: (SearchResult) -> Unit = {},
+    navigateToWatchlist: () -> Unit = {}
 ) {
 
     val state = viewModel.state
+    val settings = state.settings
 
-    val scope = rememberCoroutineScope()
     val lazyGridState = rememberLazyGridState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
-        viewModel.updateUserSettings()
         focusRequester.requestFocus()
     }
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 4.dp)
-        ) {
-            IconButton(
-                onClick = {
-                    focusManager.clearFocus()
-                    onBackClicked()
-                }
-            ) { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Go Back") }
-
-            AppSearchBar(
-                hint = "Search for Movies/Shows...",
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            WatchbuddySearchAppBar(
+                hint = "Search Movies/Shows...",
                 focusRequester = focusRequester,
-                onSearch = {
-                    focusManager.clearFocus()
+                onSearchClick = {
                     viewModel.onSearch(it)
-                    scope.launch { lazyGridState.scrollToItem(0) }
+                    focusManager.clearFocus()
                 },
+                onFilterClick = { viewModel.showFilterDialog() },
+                onBackClick = onBackClick
             )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { innerPadding ->
 
-            IconButton(onClick = { viewModel.onFilterButtonClick(false) }) {
-                Icon(imageVector = Icons.Filled.FilterList, contentDescription = "Filter Results")
+        // Loading results
+        if (state.loading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
-
-            if (state.showFilters)
-                SearchScreenFilterDialog(
-                    onDismissRequest = { viewModel.onFilterButtonClick(false) },
-                    filterState = state.filterState,
-                    onFilterStateChange = { viewModel.updateFilterState(it) },
-                )
+            return@Scaffold
         }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(state.cardSize.columns),
-            contentPadding = PaddingValues(vertical = 4.dp),
-            horizontalArrangement = Arrangement.Center,
-            state = lazyGridState
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            state.currentSearch?.let { query ->
-                items(1) {
-                    SearchResultsLabel(
-                        unemphasizedText = "Results for ",
-                        emphasizedText = query,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
-                    )
+            if (state.searchResults.isEmpty()) {
+                when {
+                    state.currentSearch != null -> {
+                        NothingFoundPrompt(query = state.currentSearch)
+                    }
+
+                    state.recentSearches.isNotEmpty() -> {
+                        RecentSearchesList(searches = state.recentSearches)
+                    }
                 }
+                return@Column
             }
 
-            state.searchResults?.let { searchResults ->
-                items(searchResults) {
-                    when (state.cardSize) {
+            state.currentSearch?.let { query ->
+                SearchResultsLabel(
+                    unemphasizedText = "Results for ",
+                    emphasizedText = query,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
+                )
+            }
+
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(settings.cardStyle.requiredWidth),
+                contentPadding = PaddingValues(vertical = 4.dp),
+                horizontalArrangement = Arrangement.Center,
+                state = lazyGridState
+            ) {
+                items(state.searchResults, key = { it.id }) {
+                    when (state.settings.cardStyle) {
                         CardStyle.Normal -> {
                             MediaCard(
                                 searchResult = it,
                                 onClick = { navigateToDetails(it) },
-                                onLongClick = { /* TODO */ },
-                                scoreFormat = state.scoreFormat
+                                onLongClick = { viewModel.showEditDialogFor(it) },
+                                scoreFormat = settings.scoreFormat,
+                                modifier = Modifier.animateItemPlacement()
                             )
                         }
                         CardStyle.Compact -> {
                             CompactMediaCard(
                                 searchResult = it,
                                 onClick = { navigateToDetails(it) },
-                                onLongClick = { /* TODO */ },
-                                scoreFormat = state.scoreFormat
+                                onLongClick = { viewModel.showEditDialogFor(it) },
+                                scoreFormat = settings.scoreFormat,
+                                modifier = Modifier.animateItemPlacement()
                             )
                         }
                     }
                 }
             }
         }
+    }
+
+
+
+    if (state.showFilterDialog) {
+        SearchScreenFilterDialog(
+            defaultFilter = state.filter,
+            onSubmit = {
+                viewModel.hideFilterDialog()
+                viewModel.onFilterUpdate(it)
+            },
+        )
+    }
+
+    state.underEdit?.let {
+        MediaSaveDialog(
+            title = state.underEdit.title,
+            searchResult = state.underEdit,
+            scoreFormat = settings.scoreFormat,
+            onCancel = viewModel::hideEditDialog,
+            onSubmit = {
+                viewModel.hideEditDialog()
+                viewModel.onMediaSave(state.underEdit, it)
+            }
+        )
     }
 }
 
