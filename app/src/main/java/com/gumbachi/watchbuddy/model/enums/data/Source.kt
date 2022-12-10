@@ -1,5 +1,6 @@
 package com.gumbachi.watchbuddy.model.enums.data
 
+
 enum class Source(val api: API, val type: MediaType) {
     // TMDB
     TMDBMovie(API.TMDB, MediaType.Movie),
@@ -25,19 +26,18 @@ enum class Source(val api: API, val type: MediaType) {
     }
 
     companion object {
-        fun fromNavArgs(api: String?, type: String?): Source? {
-            return when {
-                api?.lowercase() == "tmdb" && type?.lowercase() == "movie" -> TMDBMovie
-                api?.lowercase() == "tmdb" && type?.lowercase() == "show" -> TMDBShow
 
-                api?.lowercase() == "anilist" && type?.lowercase() == "movie" -> AnilistMovie
-                api?.lowercase() == "anilist" && type?.lowercase() == "show" -> AnilistShow
+        fun from(api: API, type: MediaType) = when {
+            api == API.TMDB && type == MediaType.Movie -> TMDBMovie
+            api == API.TMDB && type == MediaType.Show -> TMDBShow
 
-                api?.lowercase() == "custom" && type?.lowercase() == "movie" -> CustomMovie
-                api?.lowercase() == "custom" && type?.lowercase() == "show" -> CustomShow
+            api == API.Anilist && type == MediaType.Movie -> AnilistMovie
+            api == API.Anilist && type == MediaType.Show -> AnilistShow
 
-                else -> null
-            }
+            api == API.Unknown && type == MediaType.Movie -> CustomMovie
+            api == API.Unknown && type == MediaType.Show -> CustomShow
+
+            else -> throw Exception("Couldn't Find Source Type for $api and $type")
         }
     }
 }

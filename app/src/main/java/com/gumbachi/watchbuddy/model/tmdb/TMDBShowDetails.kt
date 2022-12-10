@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.model.tmdb
 
-import com.gumbachi.watchbuddy.model.interfaces.Details
+import com.gumbachi.watchbuddy.model.interfaces.Detailable
 import java.time.LocalDate
 
 data class TMDBShowDetails(
@@ -18,7 +18,7 @@ data class TMDBShowDetails(
 
     val popularity: Double,
     val averageScore: Double,
-): Details {
+): Detailable {
 
     override fun shortDetails(): List<String> {
         return listOf(

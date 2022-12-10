@@ -12,8 +12,11 @@ data class Watchlist<T : Media>(
     private val categorizedMedia = entries.sortedBy(sort).groupBy { it.watchStatus }
 
     fun getListFor(status: WatchStatus) = categorizedMedia.getOrElse(status) {
-//        Log.d("Watchlist", "Couldn't fetch value for $status")
         emptyList()
     }
 
+    fun findByID(id: WatchbuddyID): T? = entries.find { it.watchbuddyID == id }
+
+    fun contains(element: T) = entries.contains(element)
+    fun contains(id: WatchbuddyID) = id in entries.map { it.watchbuddyID }
 }

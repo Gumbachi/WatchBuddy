@@ -1,22 +1,23 @@
 package com.gumbachi.watchbuddy.model.interfaces
 
+import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
-import com.gumbachi.watchbuddy.model.enums.data.Source
 
-interface SearchResult {
+interface SearchResult : Cardable {
 
     val id: Int
-    val source: Source
+    val watchbuddyID: WatchbuddyID
 
-    val title: String
-    val posterURL: String
+    override val title: String
+    override val posterURL: String
     val averageScore: Int
 
-    val primaryDetail: String
-    val secondaryDetail: String
-    val releaseStatus: ReleaseStatus
+    override val primaryDetail: String
+    override val secondaryDetail: String
+    override val releaseStatus: ReleaseStatus
 
     /** A function to determine the weight of a result in the search results list */
     fun weight(): Double
+
 
 }

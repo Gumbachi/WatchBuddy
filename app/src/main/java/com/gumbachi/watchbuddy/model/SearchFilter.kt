@@ -1,12 +1,14 @@
 package com.gumbachi.watchbuddy.model
 
 data class SearchFilter(
-    val tmdb: Boolean = true,
-    val anilist: Boolean = true,
-    val movies: Boolean = true,
-    val shows: Boolean = true
+    val includeTMDB: Boolean = true,
+    val includeAnilist: Boolean = true,
+    val includeMovies: Boolean = true,
+    val includeShows: Boolean = true
 ) {
-    val tmdbMovies = tmdb && movies
-    val tmdbShows = tmdb && shows
+    val includeTMDBMovies = includeTMDB && includeMovies
+    val includeTMDBShows = includeTMDB && includeShows
+    val includeAnilistMovies = includeAnilist && includeMovies
+    val includeAnilistShows = includeAnilist && includeShows
 }
 

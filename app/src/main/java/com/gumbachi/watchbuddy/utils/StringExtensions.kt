@@ -2,8 +2,14 @@ package com.gumbachi.watchbuddy.utils
 
 import android.util.Log
 import com.gumbachi.watchbuddy.model.enums.configuration.ScoreFormat
+import com.gumbachi.watchbuddy.model.enums.data.Source
 import java.time.LocalDate
 import kotlin.math.roundToInt
+
+fun String.parseWatchbuddyID(): Pair<Source, Int> {
+    val split = split("|", limit = 2)
+    return Source.valueOf(split.first()) to split.last().toInt()
+}
 
 fun String?.parseDateOrNow(): LocalDate {
     return try {

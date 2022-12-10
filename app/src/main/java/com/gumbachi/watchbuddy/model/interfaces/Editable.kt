@@ -1,6 +1,5 @@
 package com.gumbachi.watchbuddy.model.interfaces
 
-import com.gumbachi.watchbuddy.model.EditableState
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,7 +16,4 @@ interface Editable {
     var finishDate: LocalDate?
 
     var lastUpdate: LocalDateTime?
-
-    infix fun with(edits: EditableState): Editable
-
 }

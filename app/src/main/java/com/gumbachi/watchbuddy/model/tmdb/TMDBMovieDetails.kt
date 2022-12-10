@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.model.tmdb
 
-import com.gumbachi.watchbuddy.model.interfaces.Details
+import com.gumbachi.watchbuddy.model.interfaces.Detailable
 import com.gumbachi.watchbuddy.utils.getMovieReleaseStatus
 import java.time.LocalDate
 
@@ -25,7 +25,7 @@ data class TMDBMovieDetails(
 
     val popularity: Double,
     val averageScore: Double,
-): Details {
+): Detailable {
 
     val releaseStatus = releaseDate.getMovieReleaseStatus()
 

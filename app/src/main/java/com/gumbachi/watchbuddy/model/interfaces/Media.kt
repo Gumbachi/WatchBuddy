@@ -1,11 +1,9 @@
 package com.gumbachi.watchbuddy.model.interfaces
 
-import com.gumbachi.watchbuddy.model.enums.data.Source
+import com.gumbachi.watchbuddy.model.WatchbuddyID
 
-interface Media: Editable, Sortable {
-    val source: Source
-    val posterURL: String
-    
-    val qualifiedID: String
-        get() = "$source|$id"
+interface Media: Editable, Sortable, Cardable {
+    val watchbuddyID: WatchbuddyID
+
+    fun clone(): Media
 }

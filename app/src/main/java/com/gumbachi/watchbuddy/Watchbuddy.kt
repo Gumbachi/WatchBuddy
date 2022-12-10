@@ -5,12 +5,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.gumbachi.watchbuddy.components.appbars.WatchbuddyNavigationBar
 import com.gumbachi.watchbuddy.model.enums.configuration.BottomBarStyle
-import com.gumbachi.watchbuddy.navigation.WatchbuddyNavActions
-import com.gumbachi.watchbuddy.navigation.WatchbuddyNavGraph
+import com.gumbachi.watchbuddy.ui.components.appbars.WatchbuddyNavigationBar
+import com.gumbachi.watchbuddy.ui.navigation.WatchbuddyNavGraph
+import com.gumbachi.watchbuddy.ui.navigation.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,10 +20,7 @@ fun Watchbuddy() {
     var navIndex by remember { mutableStateOf(0) }
 
     val navController = rememberNavController()
-
-    val navActions = remember(navController) {
-        WatchbuddyNavActions(navController)
-    }
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
     var bottomBarStyle by remember { mutableStateOf(BottomBarStyle.Shown) }
     val systemUiController = rememberSystemUiController()
@@ -38,16 +36,10 @@ fun Watchbuddy() {
                 systemUiController.setNavigationBarColor(
                     MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
                 )
+
                 WatchbuddyNavigationBar(
-                    selected = navIndex,
-                    onNavItemClick = {
-                        when (it) {
-                            1 -> navActions.navigateToShows()
-                            2 -> navActions.navigateToDiscover()
-                            3 -> navActions.navigateToSettings()
-                            else -> navActions.navigateToMovies()
-                        }
-                    }
+                    currentNavBackStackEntry = currentBackStackEntry,
+                    onClick = { navController.navigateTo(it) }
                 )
             })
         }

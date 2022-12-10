@@ -30,10 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.gumbachi.watchbuddy.components.cards.CompactMediaCard
-import com.gumbachi.watchbuddy.components.cards.MediaCard
 import com.gumbachi.watchbuddy.model.enums.configuration.CardStyle
 import com.gumbachi.watchbuddy.model.enums.configuration.ScoreFormat
+import com.gumbachi.watchbuddy.ui.components.cards.CompactMediaCard
+import com.gumbachi.watchbuddy.ui.components.cards.NormalMediaCard
 import com.gumbachi.watchbuddy.ui.theme.getElevation
 
 @Composable
@@ -58,6 +58,7 @@ fun CardCustomizer(
             CardStyle.Normal -> {
                 200.dp
             }
+
             CardStyle.Compact -> {
                 400.dp
             }
@@ -66,77 +67,76 @@ fun CardCustomizer(
 
     val cardHeight by transition.animateDp(
         label = "",
-        transitionSpec = { tween(800)  }
+        transitionSpec = { tween(800) }
     ) {
         when (it) {
             CardStyle.Normal -> {
                 350.dp
             }
+
             CardStyle.Compact -> {
                 105.dp
             }
         }
     }
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(onClick = { cardStyleExpanded = true }) {
-                Text(text = "Card: $cardStyle")
-                Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
-                DropdownMenu(
-                    expanded = cardStyleExpanded,
-                    onDismissRequest = { cardStyleExpanded = false }
-                ) {
-                    CardStyle.values().forEach {
-                        DropdownMenuItem(
-                            text = { Text(text = it.toString()) },
-                            onClick = {
-                                onCardStyleChange(it)
-                                cardStyleExpanded = false
-                            }
-                        )
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(getElevation(1)))
+            .padding(16.dp)
+    ) {
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(onClick = { cardStyleExpanded = true }) {
+                    Text(text = "Card: $cardStyle")
+                    Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
+                    DropdownMenu(
+                        expanded = cardStyleExpanded,
+                        onDismissRequest = { cardStyleExpanded = false }
+                    ) {
+                        CardStyle.values().forEach {
+                            DropdownMenuItem(
+                                text = { Text(text = it.toString()) },
+                                onClick = {
+                                    onCardStyleChange(it)
+                                    cardStyleExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+                Button(onClick = { scoreFormatExpanded = true }) {
+                    Text(text = "Score: $scoreFormat")
+                    Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
+                    DropdownMenu(
+                        expanded = scoreFormatExpanded,
+                        onDismissRequest = { scoreFormatExpanded = false }
+                    ) {
+                        ScoreFormat.values().forEach {
+                            DropdownMenuItem(
+                                text = { Text(text = it.toString()) },
+                                onClick = {
+                                    onScoreFormatChange(it)
+                                    scoreFormatExpanded = false
+                                }
+                            )
+                        }
                     }
                 }
             }
-            Button(onClick = { scoreFormatExpanded = true }) {
-                Text(text = "Score: $scoreFormat")
-                Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
-                DropdownMenu(
-                    expanded = scoreFormatExpanded,
-                    onDismissRequest = { scoreFormatExpanded = false }
-                ) {
-                    ScoreFormat.values().forEach {
-                        DropdownMenuItem(
-                            text = { Text(text = it.toString()) },
-                            onClick = {
-                                onScoreFormatChange(it)
-                                scoreFormatExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
-        }
-
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(getElevation(1)))
-                .padding(vertical = 16.dp)
-        ) {
-
 
             when (cardStyle) {
                 CardStyle.Normal -> {
-                    MediaCard(
+                    NormalMediaCard(
                         imageURL = "",
                         headline = "Media Title",
                         primarySubtitle = "Label 1",
@@ -148,6 +148,7 @@ fun CardCustomizer(
                         modifier = Modifier.size(cardWidth, cardHeight)
                     )
                 }
+
                 CardStyle.Compact -> {
                     CompactMediaCard(
                         imageURL = "",

@@ -7,10 +7,7 @@ enum class WatchStatus {
     Dropped,
     Repeating;
 
-    fun toIndex(): Int = values().indexOf(this)
-
     companion object {
         fun random(): WatchStatus = values().random()
-        fun fromIndex(index: Int): WatchStatus = values()[index]
     }
 }

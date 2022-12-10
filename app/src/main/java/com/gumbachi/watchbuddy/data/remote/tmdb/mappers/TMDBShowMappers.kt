@@ -4,9 +4,12 @@ package com.gumbachi.watchbuddy.data.remote.tmdb.mappers
 import com.gumbachi.watchbuddy.data.remote.tmdb.dto.show.TMDBShowDetailsDTO
 import com.gumbachi.watchbuddy.data.remote.tmdb.dto.show.TMDBShowSearchResponseDTO
 import com.gumbachi.watchbuddy.data.remote.tmdb.dto.show.TMDBShowSearchResultDTO
+import com.gumbachi.watchbuddy.model.tmdb.TMDBShow
 import com.gumbachi.watchbuddy.model.tmdb.TMDBShowDetails
 import com.gumbachi.watchbuddy.model.tmdb.TMDBShowSearchResult
+import com.gumbachi.watchbuddy.utils.getMovieReleaseStatus
 import com.gumbachi.watchbuddy.utils.parseDateOrNow
+import com.gumbachi.watchbuddy.utils.parseDateOrNull
 import kotlin.math.roundToInt
 
 fun TMDBShowSearchResultDTO.toTMDBShowSearchResult(): TMDBShowSearchResult {
@@ -37,5 +40,16 @@ fun TMDBShowDetailsDTO.toTMDBShowDetails(): TMDBShowDetails {
         posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
         firstAirDate = first_air_date.parseDateOrNow(),
         lastAirDate = last_air_date.parseDateOrNow()
+    )
+}
+
+fun TMDBShowDetailsDTO.toTMDBShow(): TMDBShow {
+    return TMDBShow(
+        id = id,
+        posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
+        title = name,
+        releaseDate = first_air_date.parseDateOrNow(),
+        releaseStatus = first_air_date.parseDateOrNull().getMovieReleaseStatus(), // TODO
+        totalEpisodes = number_of_episodes,
     )
 }
