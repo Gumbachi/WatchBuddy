@@ -6,6 +6,7 @@ import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Movie
+import com.gumbachi.watchbuddy.utils.toMovieReleaseStatus
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 
@@ -27,8 +28,9 @@ data class TMDBMovie(
 ) : Movie {
 
     override val watchbuddyID = WatchbuddyID(API.TMDB, MediaType.Movie, id)
+
     override val releaseStatus: ReleaseStatus
-        get() = ReleaseStatus.Released() // TODO: Release Status
+        get() = releaseDate.toMovieReleaseStatus()
 
     // Card Details
     override val primaryDetail = runtime

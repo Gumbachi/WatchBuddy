@@ -29,7 +29,7 @@ data class TMDBShow(
     override val watchbuddyID = WatchbuddyID(API.TMDB, MediaType.Show, id)
 
     override val releaseStatus: ReleaseStatus
-        get() = ReleaseStatus.Released() // TODO: Release Status
+        get() = ReleaseStatus.Unknown() // TODO: Release Status for shows
 
     // Card Details
     override val primaryDetail = "TBD"

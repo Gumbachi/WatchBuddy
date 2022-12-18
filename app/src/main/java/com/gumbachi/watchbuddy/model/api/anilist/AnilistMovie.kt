@@ -22,12 +22,11 @@ data class AnilistMovie(
     override val runtime: String,
 
     override val releaseDate: LocalDate?,
+    override val releaseStatus: ReleaseStatus
 
 ) : Movie {
 
     override val watchbuddyID = WatchbuddyID(API.Anilist, MediaType.Movie, id)
-    override val releaseStatus: ReleaseStatus
-        get() = TODO("Calculate Release Status")
 
     // Card Details
     override val primaryDetail = runtime

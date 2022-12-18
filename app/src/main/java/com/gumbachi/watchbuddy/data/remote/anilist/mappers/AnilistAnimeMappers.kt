@@ -25,7 +25,7 @@ fun AnimeSearchResultsDTOQuery.Medium.toAnilistAnimeSearchResult(): AnilistSearc
         MediaStatus.FINISHED -> ReleaseStatus.Released()
         MediaStatus.RELEASING -> ReleaseStatus.Releasing()
         MediaStatus.NOT_YET_RELEASED -> ReleaseStatus.Unreleased()
-        MediaStatus.CANCELLED -> ReleaseStatus.Released("Cancelled")
+        MediaStatus.CANCELLED -> ReleaseStatus.Cancelled()
         else -> ReleaseStatus.Unknown()
     }
 

@@ -2,6 +2,7 @@ package com.gumbachi.watchbuddy.model.api.tmdb
 
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.interfaces.Detailable
+import com.gumbachi.watchbuddy.utils.toMovieReleaseStatus
 import kotlinx.datetime.LocalDate
 
 data class TMDBMovieDetails(
@@ -28,7 +29,7 @@ data class TMDBMovieDetails(
 ): Detailable {
 
     val releaseStatus: ReleaseStatus
-        get() = TODO()
+        get() = releaseDate.toMovieReleaseStatus()
 
     override fun shortDetails(): List<String> {
         return listOf(

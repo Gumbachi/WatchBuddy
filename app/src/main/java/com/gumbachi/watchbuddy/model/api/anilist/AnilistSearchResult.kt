@@ -19,7 +19,7 @@ data class AnilistSearchResult(
 
     override val watchbuddyID = WatchbuddyID(API.Anilist, type, id)
 
-    override val primaryDetail = "Movie"
+    override val primaryDetail = type.toString()
     override val secondaryDetail = "TODO"
 
     override fun weight() = popularity.toDouble()

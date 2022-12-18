@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gumbachi.watchbuddy.model.RecentSearch
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
-import com.gumbachi.watchbuddy.utils.formattedTimeFromNow
 import java.time.LocalDateTime
 
 @Composable
@@ -41,7 +40,7 @@ fun RecentSearchesList(
                 )
                 Text(text = it.query)
                 Text(text = "${it.resultCount} results")
-                Text(text = it.searchTime.formattedTimeFromNow())
+                Text(text = "TODOm ago")
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = "Remove from history",

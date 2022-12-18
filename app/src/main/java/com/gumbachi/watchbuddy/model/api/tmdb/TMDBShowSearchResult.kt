@@ -21,7 +21,9 @@ data class TMDBShowSearchResult(
 
     override val watchbuddyID = WatchbuddyID(API.TMDB, MediaType.Show, id)
 
-    override val releaseStatus = ReleaseStatus.Unknown() // TODO Fix this
+    override val releaseStatus: ReleaseStatus
+        get() = ReleaseStatus.Unknown() // TODO Fix this
+
     override val primaryDetail = "TV Show"
     override val secondaryDetail = "Aired: $airDate"
 

@@ -25,7 +25,6 @@ fun TMDBMovieSearchResponseDTO.toTMDBSearchResults(): List<TMDBMovieSearchResult
     return results.map { it.toTMDBMovieSearchResult() }
 }
 
-
 fun TMDBMovieDetailsDTO.toTMDBMovieDetails(): TMDBMovieDetails {
     return TMDBMovieDetails(
         backdropURL = backdrop_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",

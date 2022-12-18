@@ -5,6 +5,7 @@ import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.interfaces.SearchResult
+import com.gumbachi.watchbuddy.utils.toMovieReleaseStatus
 import kotlinx.datetime.LocalDate
 
 data class TMDBMovieSearchResult(
@@ -26,7 +27,7 @@ data class TMDBMovieSearchResult(
     override val primaryDetail = "Movie"
     override val secondaryDetail = releaseDate.toString()
     override val releaseStatus: ReleaseStatus
-        get() = TODO()
+        get() = releaseDate.toMovieReleaseStatus()
 
     override fun weight() = popularity
 
