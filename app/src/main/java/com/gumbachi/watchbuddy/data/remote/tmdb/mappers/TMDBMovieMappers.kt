@@ -3,9 +3,9 @@ package com.gumbachi.watchbuddy.data.remote.tmdb.mappers
 import com.gumbachi.watchbuddy.data.remote.tmdb.dto.movie.TMDBMovieDetailsDTO
 import com.gumbachi.watchbuddy.data.remote.tmdb.dto.movie.TMDBMovieSearchResponseDTO
 import com.gumbachi.watchbuddy.data.remote.tmdb.dto.movie.TMDBMovieSearchResultDTO
-import com.gumbachi.watchbuddy.model.tmdb.TMDBMovie
-import com.gumbachi.watchbuddy.model.tmdb.TMDBMovieDetails
-import com.gumbachi.watchbuddy.model.tmdb.TMDBMovieSearchResult
+import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovie
+import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovieDetails
+import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovieSearchResult
 import com.gumbachi.watchbuddy.utils.getMovieReleaseStatus
 import com.gumbachi.watchbuddy.utils.parseDateOrNow
 import com.gumbachi.watchbuddy.utils.parseDateOrNull

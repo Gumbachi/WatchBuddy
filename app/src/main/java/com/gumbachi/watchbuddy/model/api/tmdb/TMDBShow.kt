@@ -1,4 +1,4 @@
-package com.gumbachi.watchbuddy.model.tmdb
+package com.gumbachi.watchbuddy.model.api.tmdb
 
 import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API

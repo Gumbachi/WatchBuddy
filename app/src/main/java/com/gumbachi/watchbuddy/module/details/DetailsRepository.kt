@@ -4,8 +4,8 @@ import android.util.Log
 import com.gumbachi.watchbuddy.data.remote.tmdb.TMDBApi
 import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBMovieDetails
 import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBShowDetails
-import com.gumbachi.watchbuddy.model.tmdb.TMDBMovieDetails
-import com.gumbachi.watchbuddy.model.tmdb.TMDBShowDetails
+import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovieDetails
+import com.gumbachi.watchbuddy.model.api.tmdb.TMDBShowDetails
 
 interface DetailsRepository {
     suspend fun getTMDBMovieDetails(id: Int): Result<TMDBMovieDetails>

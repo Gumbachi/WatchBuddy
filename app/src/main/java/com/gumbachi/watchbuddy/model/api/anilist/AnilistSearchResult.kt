@@ -1,4 +1,4 @@
-package com.gumbachi.watchbuddy.model.anilist
+package com.gumbachi.watchbuddy.model.api.anilist
 
 import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API
@@ -6,7 +6,7 @@ import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.interfaces.SearchResult
 
-data class AnilistAnimeSearchResult(
+data class AnilistSearchResult(
     override val id: Int,
     override val title: String,
     override val posterURL: String,

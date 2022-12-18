@@ -1,10 +1,10 @@
 package com.gumbachi.watchbuddy.data.local.realm.objects
 
-import com.gumbachi.watchbuddy.model.anilist.AnilistMovie
+import com.gumbachi.watchbuddy.model.api.anilist.AnilistMovie
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Movie
-import com.gumbachi.watchbuddy.model.tmdb.TMDBMovie
+import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovie
 import com.gumbachi.watchbuddy.model.toWatchbuddyID
 import com.gumbachi.watchbuddy.utils.getMovieReleaseStatus
 import io.realm.kotlin.types.RealmObject

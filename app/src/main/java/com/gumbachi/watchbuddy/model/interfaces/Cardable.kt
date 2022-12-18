@@ -12,5 +12,6 @@ interface Cardable {
     val progress: String?
         get() = null
     val score: Int
+
     val releaseStatus: ReleaseStatus
 }

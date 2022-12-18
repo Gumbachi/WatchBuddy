@@ -14,17 +14,6 @@ enum class Source(val api: API, val type: MediaType) {
     CustomMovie(API.Custom, MediaType.Movie),
     CustomShow(API.Custom, MediaType.Show);
 
-    fun toDetailsRoute(id: Int): String {
-        return when (this) {
-            TMDBMovie -> "tmdb/movie/$id"
-            TMDBShow -> "tmdb/show/$id"
-            AnilistMovie -> "anilist/movie/$id"
-            AnilistShow -> "anilist/show/$id"
-            CustomMovie -> "custom/movie/$id"
-            CustomShow -> "custom/show/$id"
-        }
-    }
-
     companion object {
 
         fun from(api: API, type: MediaType) = when {

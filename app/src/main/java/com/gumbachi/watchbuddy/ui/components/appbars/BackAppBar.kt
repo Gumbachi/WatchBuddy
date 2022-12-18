@@ -11,8 +11,8 @@ import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WatchbuddyBackAppBar(
+    title: String,
     modifier: Modifier = Modifier,
-    title: String = "WatchBuddy",
     onBackClicked: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
     colors: TopAppBarColors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -41,7 +41,7 @@ fun WatchbuddyBackAppBar(
 private fun ActionBarPreview(darkMode: Boolean = true) {
     WatchBuddyTheme(darkTheme = darkMode) {
         Surface {
-            WatchbuddyBackAppBar()
+            WatchbuddyBackAppBar("Watchbuddy")
         }
     }
 }
