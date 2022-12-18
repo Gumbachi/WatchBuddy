@@ -1,13 +1,13 @@
 package com.gumbachi.watchbuddy.model.api.tmdb
 
+import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.interfaces.Detailable
-import com.gumbachi.watchbuddy.utils.getMovieReleaseStatus
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 data class TMDBMovieDetails(
     override val backdropURL: String,
     override val posterURL: String,
-    val releaseDate: LocalDate,
+    val releaseDate: LocalDate?,
 
     override val id: Int,
     val adult: Boolean,
@@ -27,7 +27,8 @@ data class TMDBMovieDetails(
     val averageScore: Double,
 ): Detailable {
 
-    val releaseStatus = releaseDate.getMovieReleaseStatus()
+    val releaseStatus: ReleaseStatus
+        get() = TODO()
 
     override fun shortDetails(): List<String> {
         return listOf(

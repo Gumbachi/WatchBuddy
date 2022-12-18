@@ -6,8 +6,8 @@ import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Show
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
 data class CustomShow(
     override val primaryDetail: String,
@@ -21,7 +21,7 @@ data class CustomShow(
     override var watchStatus: WatchStatus,
     override var startDate: LocalDate?,
     override var finishDate: LocalDate?,
-    override var lastUpdate: LocalDateTime?,
+    override var lastUpdate: Instant?,
     override val totalEpisodes: Int,
     override val episodesWatched: Int,
     override val releaseDate: LocalDate,

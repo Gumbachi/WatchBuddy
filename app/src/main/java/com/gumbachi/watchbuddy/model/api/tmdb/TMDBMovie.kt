@@ -6,16 +6,15 @@ import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Movie
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
 data class TMDBMovie(
     override val id: Int,
     override val posterURL: String,
     override val title: String,
-    override val releaseDate: LocalDate,
+    override val releaseDate: LocalDate?,
     override val runtime: String,
-    override val releaseStatus: ReleaseStatus,
 
     override var userScore: Int = 0,
     override var userNotes: String = "",
@@ -24,10 +23,12 @@ data class TMDBMovie(
     override var startDate: LocalDate? = null,
     override var finishDate: LocalDate? = null,
 
-    override var lastUpdate: LocalDateTime? = null
+    override var lastUpdate: Instant? = null
 ) : Movie {
 
     override val watchbuddyID = WatchbuddyID(API.TMDB, MediaType.Movie, id)
+    override val releaseStatus: ReleaseStatus
+        get() = ReleaseStatus.Released() // TODO: Release Status
 
     // Card Details
     override val primaryDetail = runtime

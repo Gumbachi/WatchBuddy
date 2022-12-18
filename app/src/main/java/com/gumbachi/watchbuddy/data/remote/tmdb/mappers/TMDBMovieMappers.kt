@@ -6,8 +6,6 @@ import com.gumbachi.watchbuddy.data.remote.tmdb.dto.movie.TMDBMovieSearchResultD
 import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovie
 import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovieDetails
 import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovieSearchResult
-import com.gumbachi.watchbuddy.utils.getMovieReleaseStatus
-import com.gumbachi.watchbuddy.utils.parseDateOrNow
 import com.gumbachi.watchbuddy.utils.parseDateOrNull
 import kotlin.math.roundToInt
 
@@ -17,7 +15,7 @@ fun TMDBMovieSearchResultDTO.toTMDBMovieSearchResult(): TMDBMovieSearchResult {
         id = id,
         posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
         averageScore = (vote_average * 10).roundToInt(),
-        releaseDate = release_date.parseDateOrNow(),
+        releaseDate = release_date.parseDateOrNull(),
         popularity = popularity,
         title = title
     )
@@ -41,7 +39,7 @@ fun TMDBMovieDetailsDTO.toTMDBMovieDetails(): TMDBMovieDetails {
         voteCount = vote_count,
         averageScore = vote_average,
         popularity = popularity,
-        releaseDate = release_date.parseDateOrNow(),
+        releaseDate = release_date.parseDateOrNull(),
         runtime = runtime?.let { "${it / 60}h ${it % 60}m" } ?: "??h ??m",
         overview = overview,
         tagline = tagline,
@@ -53,8 +51,7 @@ fun TMDBMovieDetailsDTO.toTMDBMovie(): TMDBMovie {
         id = id,
         posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
         title = title,
-        releaseDate = release_date.parseDateOrNow(),
+        releaseDate = release_date.parseDateOrNull(),
         runtime = runtime?.let { "${it / 60}h ${it % 60}m" } ?: "??h ??m",
-        releaseStatus = release_date.parseDateOrNull().getMovieReleaseStatus()
     )
 }

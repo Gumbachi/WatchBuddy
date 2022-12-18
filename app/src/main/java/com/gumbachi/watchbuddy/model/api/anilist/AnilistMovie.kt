@@ -6,8 +6,8 @@ import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Movie
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
 data class AnilistMovie(
     override val posterURL: String,
@@ -18,15 +18,16 @@ data class AnilistMovie(
     override var watchStatus: WatchStatus,
     override var startDate: LocalDate?,
     override var finishDate: LocalDate?,
-    override var lastUpdate: LocalDateTime?,
-
+    override var lastUpdate: Instant?,
     override val runtime: String,
-    override val releaseDate: LocalDate,
-    override val releaseStatus: ReleaseStatus
+
+    override val releaseDate: LocalDate?,
 
 ) : Movie {
 
     override val watchbuddyID = WatchbuddyID(API.Anilist, MediaType.Movie, id)
+    override val releaseStatus: ReleaseStatus
+        get() = TODO("Calculate Release Status")
 
     // Card Details
     override val primaryDetail = runtime

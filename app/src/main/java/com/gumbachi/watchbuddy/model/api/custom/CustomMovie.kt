@@ -6,10 +6,10 @@ import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Movie
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
-// TODO: Implement this class
+// TODO: Implement this class better
 data class CustomMovie(
     override val id: Int,
     override val primaryDetail: String,
@@ -22,7 +22,7 @@ data class CustomMovie(
     override var watchStatus: WatchStatus,
     override var startDate: LocalDate?,
     override var finishDate: LocalDate?,
-    override var lastUpdate: LocalDateTime?,
+    override var lastUpdate: Instant?,
     override val releaseDate: LocalDate,
     override val releaseStatus: ReleaseStatus,
     override val runtime: String

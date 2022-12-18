@@ -10,8 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.enums.configuration.BottomBarStyle
+import com.gumbachi.watchbuddy.model.toWatchbuddyID
 import com.gumbachi.watchbuddy.module.details.DetailsScreen
 import com.gumbachi.watchbuddy.module.movies.MoviesScreen
 import com.gumbachi.watchbuddy.module.search.SearchScreen
@@ -48,7 +48,7 @@ fun WatchbuddyNavGraph(
                     navController.navigateToDetails(movie.watchbuddyID)
                 },
                 focusedItemId = it.arguments?.getString("id")?.let { idString ->
-                    if (idString == "") null else WatchbuddyID from idString
+                    if (idString == "") null else idString.toWatchbuddyID()
                 }
             )
         }
@@ -105,7 +105,7 @@ fun WatchbuddyNavGraph(
             setBottomBarStyle(WatchbuddyDestination.DETAILS.bottomBarStyle)
             it.arguments?.getString("wbid")?.let { idString ->
                 DetailsScreen(
-                    watchbuddyID = WatchbuddyID from idString,
+                    watchbuddyID = idString.toWatchbuddyID(),
                     viewModel = koinViewModel()
                 )
             } ?: run {

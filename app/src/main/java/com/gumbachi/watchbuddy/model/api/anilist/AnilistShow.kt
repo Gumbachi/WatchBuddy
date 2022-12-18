@@ -6,15 +6,15 @@ import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Show
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
 data class AnilistShow(
     override val id: Int,
     override val title: String,
     override val posterURL: String,
 
-    override val releaseDate: LocalDate,
+    override val releaseDate: LocalDate?,
     override val releaseStatus: ReleaseStatus,
 
     override var episodesWatched: Int = 0,
@@ -25,7 +25,7 @@ data class AnilistShow(
     override var watchStatus: WatchStatus = WatchStatus.Watching,
     override var startDate: LocalDate? = null,
     override var finishDate: LocalDate? = null,
-    override var lastUpdate: LocalDateTime? = null,
+    override var lastUpdate: Instant? = null,
 ): Show {
     override val watchbuddyID = WatchbuddyID(API.Anilist, MediaType.Show, id)
 

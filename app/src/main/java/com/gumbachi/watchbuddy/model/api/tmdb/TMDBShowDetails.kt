@@ -1,14 +1,14 @@
 package com.gumbachi.watchbuddy.model.api.tmdb
 
 import com.gumbachi.watchbuddy.model.interfaces.Detailable
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 data class TMDBShowDetails(
     override val id: Int,
     override val title: String,
     override val overview: String?,
-    val firstAirDate: LocalDate,
-    val lastAirDate: LocalDate,
+    val firstAirDate: LocalDate?,
+    val lastAirDate: LocalDate?,
 
     val totalSeasons: Int,
     val totalEpisodes: Int,

@@ -1,8 +1,8 @@
 package com.gumbachi.watchbuddy.model.interfaces
 
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
 interface Editable {
     val title: String
@@ -14,6 +14,5 @@ interface Editable {
 
     var startDate: LocalDate?
     var finishDate: LocalDate?
-
-    var lastUpdate: LocalDateTime?
+    var lastUpdate: Instant?
 }

@@ -1,7 +1,6 @@
 package com.gumbachi.watchbuddy.model.interfaces
 
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmShow
-import java.time.ZoneOffset
 
 interface Show: Media {
     val totalEpisodes: Int
@@ -15,7 +14,7 @@ interface Show: Media {
             id = show.watchbuddyID.toString()
             title = show.title
             posterURL = show.posterURL
-            releaseDate = show.releaseDate.toEpochDay()
+            releaseDate = show.releaseDate?.toEpochDays()
             watchStatus = show.watchStatus.toString()
             userScore = show.userScore
             userNotes = show.userNotes
@@ -23,9 +22,9 @@ interface Show: Media {
             episodesWatched = show.episodesWatched
             totalEpisodes = show.totalEpisodes
 
-            startDate = show.startDate?.toEpochDay()
-            finishDate = show.finishDate?.toEpochDay()
-            lastUpdate = show.lastUpdate?.toEpochSecond(ZoneOffset.UTC)
+            startDate = show.startDate?.toEpochDays()
+            finishDate = show.finishDate?.toEpochDays()
+            lastUpdate = show.lastUpdate?.epochSeconds
         }
     }
 }
