@@ -10,6 +10,7 @@ import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.interfaces.Media
 import com.gumbachi.watchbuddy.model.interfaces.Movie
 import com.gumbachi.watchbuddy.model.interfaces.Show
+import com.gumbachi.watchbuddy.model.toWatchbuddyID
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.UpdatePolicy
@@ -85,7 +86,7 @@ class WatchbuddyDB : WatchbuddyDatabase {
     override suspend fun updateUserSettingsTo(settings: UserSettings) {
         realm.write {
             copyToRealm(
-                instance = RealmUserSettings from settings,
+                instance = settings.toRealmUserSettings(),
                 updatePolicy = UpdatePolicy.ALL
             )
         }
@@ -104,7 +105,7 @@ class WatchbuddyDB : WatchbuddyDatabase {
 
     override suspend fun addMovie(movie: Movie) {
         realm.write {
-            copyToRealm(RealmMovie from movie)
+            copyToRealm(movie.toRealmMovie())
         }
         Log.d(TAG, "Movie Write Performed")
     }
@@ -119,7 +120,7 @@ class WatchbuddyDB : WatchbuddyDatabase {
     override suspend fun updateMovie(updatedMovie: Movie) {
         realm.write {
             copyToRealm(
-                instance = RealmMovie from updatedMovie,
+                instance = updatedMovie.toRealmMovie(),
                 updatePolicy = UpdatePolicy.ALL
             )
         }
@@ -142,7 +143,7 @@ class WatchbuddyDB : WatchbuddyDatabase {
 
     override suspend fun addShow(show: Show) {
         realm.write {
-            copyToRealm(RealmShow from show)
+            copyToRealm(show.toRealmShow())
         }
         Log.d(TAG, "Show Write Performed")
     }
@@ -157,7 +158,7 @@ class WatchbuddyDB : WatchbuddyDatabase {
     override suspend fun updateShow(updatedShow: Show) {
         realm.write {
             copyToRealm(
-                instance = RealmShow from updatedShow,
+                instance = updatedShow.toRealmShow(),
                 updatePolicy = UpdatePolicy.ALL
             )
         }
@@ -171,10 +172,10 @@ class WatchbuddyDB : WatchbuddyDatabase {
     //region Media Operations
     override suspend fun getSavedMediaIDs(): Flow<List<WatchbuddyID>> {
         val savedMovieIDs = realm.query<RealmMovie>().asFlow().map { changes ->
-            changes.list.map { WatchbuddyID from it.id }
+            changes.list.map { it.id.toWatchbuddyID() }
         }
         val savedShowIDs = realm.query<RealmShow>().asFlow().map { changes ->
-            changes.list.map { WatchbuddyID from it.id }
+            changes.list.map { it.id.toWatchbuddyID() }
         }
 
         // Merge IDs into one flow

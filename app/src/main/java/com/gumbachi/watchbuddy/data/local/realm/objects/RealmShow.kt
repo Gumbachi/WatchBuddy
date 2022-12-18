@@ -1,11 +1,16 @@
 package com.gumbachi.watchbuddy.data.local.realm.objects
 
-import com.gumbachi.watchbuddy.data.local.realm.mappers.toTMDBShow
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.anilist.AnilistShow
 import com.gumbachi.watchbuddy.model.enums.data.API
+import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Show
+import com.gumbachi.watchbuddy.model.tmdb.TMDBShow
+import com.gumbachi.watchbuddy.model.toWatchbuddyID
+import com.gumbachi.watchbuddy.utils.getMovieReleaseStatus
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 class RealmShow() : RealmObject {
@@ -28,32 +33,33 @@ class RealmShow() : RealmObject {
     var finishDate: Long? = null
     var lastUpdate: Long? = null
 
+    //region Converters
+    fun toTMDBShow(): TMDBShow = TMDBShow(
+        id = id.toWatchbuddyID().sourceID,
+        title = title,
+        posterURL = posterURL,
+        releaseDate = LocalDate.ofEpochDay(releaseDate),
+        releaseStatus = LocalDate.ofEpochDay(releaseDate).getMovieReleaseStatus(),
+        episodesWatched = episodesWatched,
+        totalEpisodes = totalEpisodes,
+        userScore = userScore,
+        userNotes = userNotes,
+        watchStatus = WatchStatus.valueOf(watchStatus),
+        startDate = startDate?.let { LocalDate.ofEpochDay(it) },
+        finishDate = finishDate?.let { LocalDate.ofEpochDay(it) },
+        lastUpdate = lastUpdate?.let { LocalDateTime.ofEpochSecond(it, 0, ZoneOffset.UTC) }
+    )
+
+    fun toAnilistShow(): AnilistShow = TODO("ANILIST SUPPORT")
+
+    fun toCustomShow(): Show = TODO("Custom Show Support")
+
     // Converters
-    fun toShow(): Show {
-        val watchbuddyID = WatchbuddyID from id
-        return when (watchbuddyID.api) {
-            API.TMDB -> toTMDBShow(watchbuddyID.sourceID)
-            API.Anilist -> TODO()
-            API.Custom -> TODO()
-        }
+    fun toShow(): Show = when (id.toWatchbuddyID().api) {
+        API.TMDB -> toTMDBShow()
+        API.Anilist -> toAnilistShow()
+        API.Custom -> toCustomShow()
     }
+    //endregion
 
-    companion object {
-        infix fun from(show: Show): RealmShow = RealmShow().apply {
-            id = show.watchbuddyID.toString()
-            title = show.title
-            posterURL = show.posterURL
-            releaseDate = show.releaseDate.toEpochDay()
-            watchStatus = show.watchStatus.toString()
-            userScore = show.userScore
-            userNotes = show.userNotes
-
-            episodesWatched = show.episodesWatched
-            totalEpisodes = show.totalEpisodes
-
-            startDate = show.startDate?.toEpochDay()
-            finishDate = show.finishDate?.toEpochDay()
-            lastUpdate = show.lastUpdate?.toEpochSecond(ZoneOffset.UTC)
-        }
-    }
 }

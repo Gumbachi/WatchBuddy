@@ -12,16 +12,15 @@ data class WatchbuddyID(
     val sourceID: Int
 ) {
     override fun toString() = "$api|$type|$sourceID"
-
     val source = Source.from(api, type)
 
-    companion object {
-        infix fun from(string: String) = string.split("|", limit = 3).let { (api, type, sourceID) ->
-            WatchbuddyID(
-                api = API.valueOf(api),
-                type = MediaType.valueOf(type),
-                sourceID = sourceID.toInt()
-            )
-        }
-    }
+}
+
+fun String.toWatchbuddyID(): WatchbuddyID {
+    val (api, type, sourceID) = split("|", limit = 3)
+    return WatchbuddyID(
+        api = API.valueOf(api),
+        type = MediaType.valueOf(type),
+        sourceID = sourceID.toInt()
+    )
 }

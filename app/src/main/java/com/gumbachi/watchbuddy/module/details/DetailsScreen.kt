@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.interfaces.Detailable
-import com.gumbachi.watchbuddy.model.interfaces.DetailableDummy
 import com.gumbachi.watchbuddy.ui.components.appbars.WatchbuddyBackAppBar
 import com.gumbachi.watchbuddy.ui.components.cards.PosterImage
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
@@ -158,7 +157,7 @@ private fun DetailsScreenContent(
 fun DetailsContentPreview() {
     WatchBuddyTheme {
         Surface {
-            DetailsScreenContent(details = DetailableDummy(title = "Made in Abyss: The Golden City of the Scorching Sun"))
+            DetailsScreenContent(details = Detailable.Dummy(title = "Made in Abyss: The Golden City of the Scorching Sun"))
         }
     }
 }

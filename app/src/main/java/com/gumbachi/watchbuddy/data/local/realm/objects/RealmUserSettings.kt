@@ -31,6 +31,8 @@ class RealmUserSettings() : RealmObject {
     // Other
     var defaultSearchFilter: RealmMediaFilter? = RealmMediaFilter()
 
+
+    //region Converters
     fun toUserSettings(): UserSettings = UserSettings(
         cardStyle = CardStyle.valueOf(cardStyle),
         scoreFormat = ScoreFormat.valueOf(scoreFormat),
@@ -40,17 +42,5 @@ class RealmUserSettings() : RealmObject {
         hiddenShowStatuses = hiddenShowStatuses.map { WatchStatus.valueOf(it) }.toSet(),
         defaultSearchFilter = defaultSearchFilter?.toMediaFilter() ?: MediaFilter()
     )
-
-    companion object {
-        infix fun from(settings: UserSettings) = RealmUserSettings().apply {
-            cardStyle = settings.cardStyle.toString()
-            scoreFormat = settings.scoreFormat.toString()
-            movieSort = settings.movieSort.toString()
-            hiddenMovieStatuses = settings.hiddenMovieStatuses.map { it.toString() }.toRealmSet()
-            showSort = settings.showSort.toString()
-            hiddenShowStatuses = settings.hiddenShowStatuses.map { it.toString() }.toRealmSet()
-            defaultSearchFilter = RealmMediaFilter from settings.defaultSearchFilter
-        }
-    }
-
+    //endregion
 }

@@ -1,11 +1,16 @@
 package com.gumbachi.watchbuddy.data.local.realm.objects
 
-import com.gumbachi.watchbuddy.data.local.realm.mappers.toTMDBMovie
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.anilist.AnilistMovie
 import com.gumbachi.watchbuddy.model.enums.data.API
+import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Movie
+import com.gumbachi.watchbuddy.model.tmdb.TMDBMovie
+import com.gumbachi.watchbuddy.model.toWatchbuddyID
+import com.gumbachi.watchbuddy.utils.getMovieReleaseStatus
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 class RealmMovie() : RealmObject {
@@ -26,29 +31,30 @@ class RealmMovie() : RealmObject {
     var finishDate: Long? = null
     var lastUpdate: Long? = null
 
-    // Converters
-    fun toMovie(): Movie {
-        val watchbuddyID = WatchbuddyID from id
-        return when (watchbuddyID.api) {
-            API.TMDB -> toTMDBMovie(watchbuddyID.sourceID)
-            API.Anilist -> TODO()
-            API.Custom -> TODO()
-        }
-    }
+    //region Converters
+    fun toTMDBMovie(): TMDBMovie = TMDBMovie(
+            id = id.toWatchbuddyID().sourceID,
+            posterURL = posterURL,
+            title = title,
+            releaseDate = LocalDate.ofEpochDay(releaseDate),
+            runtime = runtime,
+            releaseStatus = LocalDate.ofEpochDay(releaseDate).getMovieReleaseStatus(),
+            userScore = userScore,
+            userNotes = userNotes,
+            watchStatus = WatchStatus.valueOf(watchStatus),
+            startDate = startDate?.let { LocalDate.ofEpochDay(it) },
+            finishDate = finishDate?.let { LocalDate.ofEpochDay(it) },
+            lastUpdate = lastUpdate?.let { LocalDateTime.ofEpochSecond(it, 0, ZoneOffset.UTC) }
+    )
 
-    companion object {
-        infix fun from(movie: Movie): RealmMovie = RealmMovie().apply {
-            id = movie.watchbuddyID.toString()
-            title = movie.title
-            posterURL = movie.posterURL
-            releaseDate = movie.releaseDate.toEpochDay()
-            runtime = movie.runtime
-            watchStatus = movie.watchStatus.toString()
-            userScore = movie.userScore
-            userNotes = movie.userNotes
-            startDate = movie.startDate?.toEpochDay()
-            finishDate = movie.finishDate?.toEpochDay()
-            lastUpdate = movie.lastUpdate?.toEpochSecond(ZoneOffset.UTC)
-        }
+    fun toAnilistMovie(): AnilistMovie = TODO("ANILIST SUPPORT")
+
+    fun toCustomMovie(): Movie = TODO("CUSTOM SUPPORT")
+
+    fun toMovie(): Movie = when (id.toWatchbuddyID().api) {
+        API.TMDB -> toTMDBMovie()
+        API.Anilist -> toAnilistMovie()
+        API.Custom -> toCustomMovie()
     }
+    //endregion
 }
