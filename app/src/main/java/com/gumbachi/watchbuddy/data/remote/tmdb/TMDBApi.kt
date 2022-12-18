@@ -16,7 +16,7 @@ import io.ktor.client.request.url
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-//TODO This could be cleaned up
+// TODO This could be cleaned up
 object Endpoints {
     private const val BASE_URL = "https://api.themoviedb.org/3"
     const val SEARCH_MOVIES = "$BASE_URL/search/movie?language=en-US"

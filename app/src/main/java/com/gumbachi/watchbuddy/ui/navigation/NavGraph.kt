@@ -15,7 +15,6 @@ import com.gumbachi.watchbuddy.model.enums.configuration.BottomBarStyle
 import com.gumbachi.watchbuddy.module.details.DetailsScreen
 import com.gumbachi.watchbuddy.module.movies.MoviesScreen
 import com.gumbachi.watchbuddy.module.search.SearchScreen
-import com.gumbachi.watchbuddy.module.search.SearchViewModel
 import com.gumbachi.watchbuddy.module.settings.SettingsScreen
 import com.gumbachi.watchbuddy.module.shows.ShowsScreen
 import org.koin.androidx.compose.koinViewModel
@@ -26,7 +25,6 @@ private const val TAG = "NavGraph"
 fun WatchbuddyNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    setNavIndex: (Int) -> Unit = {},
     setBottomBarStyle: (BottomBarStyle) -> Unit = {}
 ) {
     NavHost(
@@ -41,11 +39,9 @@ fun WatchbuddyNavGraph(
                 type = NavType.StringType
             })
         ) {
-            setNavIndex(0)
             setBottomBarStyle(WatchbuddyDestination.MOVIES.bottomBarStyle)
 
             MoviesScreen(
-                modifier = modifier,
                 viewModel = koinViewModel(),
                 navigateToSearch = navController::navigateToSearch,
                 navigateToDetails = { movie ->
@@ -60,7 +56,6 @@ fun WatchbuddyNavGraph(
 
         // Shows Screen
         composable(route = WatchbuddyDestination.SHOWS.route) {
-            setNavIndex(1)
             setBottomBarStyle(WatchbuddyDestination.SHOWS.bottomBarStyle)
             ShowsScreen(
                 modifier = modifier,
@@ -74,14 +69,12 @@ fun WatchbuddyNavGraph(
 
         // Discover Screen
         composable(route = WatchbuddyDestination.DISCOVER.route) {
-            setNavIndex(2)
             setBottomBarStyle(WatchbuddyDestination.DISCOVER.bottomBarStyle)
             Text(text = "Discover Screen")
         }
 
         // Settings Screen
         composable(route = WatchbuddyDestination.SETTINGS.route) {
-            setNavIndex(3)
             setBottomBarStyle(WatchbuddyDestination.SETTINGS.bottomBarStyle)
             SettingsScreen(
                 modifier = modifier,
@@ -92,10 +85,9 @@ fun WatchbuddyNavGraph(
         // Search Screen
         composable(route = WatchbuddyDestination.SEARCH.route) {
             setBottomBarStyle(WatchbuddyDestination.SEARCH.bottomBarStyle)
-            val vm: SearchViewModel = koinViewModel()
             SearchScreen(
                 modifier = modifier,
-                viewModel = vm,
+                viewModel = koinViewModel(),
                 onBackClick = { navController.popBackStack() },
                 navigateToDetails = { navController.navigateToDetails(it.watchbuddyID) },
                 navigateToWatchlist = {

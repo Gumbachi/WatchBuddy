@@ -32,10 +32,14 @@ fun WatchbuddyNavigationBar(
         tonalElevation = 3.dp
     ) {
         destinations.forEach { destination ->
+            val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
             NavigationBarItem(
                 label = { Text(text = destination.name) },
-                icon = { Icon(destination.icon, contentDescription = null) },
-                selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true,
+                icon = { Icon(
+                    imageVector = if (selected) destination.selectedIcon else destination.unselectedIcon,
+                    contentDescription = null
+                ) },
+                selected = selected,
                 onClick = { onClick(destination) },
             )
         }

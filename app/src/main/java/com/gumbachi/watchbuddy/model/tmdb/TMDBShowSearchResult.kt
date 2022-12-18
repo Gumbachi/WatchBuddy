@@ -27,7 +27,7 @@ data class TMDBShowSearchResult(
 
     override fun weight() = popularity
 
-    override val progress = null
+    override val progress = popularity.toString()
     override val score: Int
         get() = averageScore
 }

@@ -1,5 +1,6 @@
 package com.gumbachi.watchbuddy.data.local.realm.objects
 
+import com.gumbachi.watchbuddy.model.MediaFilter
 import com.gumbachi.watchbuddy.model.UserSettings
 import com.gumbachi.watchbuddy.model.enums.configuration.CardStyle
 import com.gumbachi.watchbuddy.model.enums.configuration.ScoreFormat
@@ -20,11 +21,15 @@ class RealmUserSettings() : RealmObject {
 
     // Movie Related
     var movieSort = Sort.ScoreDescending.toString()
-    var hiddenMovieStatuses = listOf(WatchStatus.Watching, WatchStatus.Repeating).map{ it.toString() }.toRealmSet()
+    var hiddenMovieStatuses =
+        listOf(WatchStatus.Watching, WatchStatus.Repeating).map { it.toString() }.toRealmSet()
 
     // Show Related
     var showSort = Sort.ScoreDescending.toString()
     var hiddenShowStatuses = realmSetOf<String>()
+
+    // Other
+    var defaultSearchFilter: RealmMediaFilter? = RealmMediaFilter()
 
     fun toUserSettings(): UserSettings = UserSettings(
         cardStyle = CardStyle.valueOf(cardStyle),
@@ -32,7 +37,8 @@ class RealmUserSettings() : RealmObject {
         movieSort = Sort.valueOf(movieSort),
         hiddenMovieStatuses = hiddenMovieStatuses.map { WatchStatus.valueOf(it) }.toSet(),
         showSort = Sort.valueOf(showSort),
-        hiddenShowStatuses = hiddenShowStatuses.map { WatchStatus.valueOf(it) }.toSet()
+        hiddenShowStatuses = hiddenShowStatuses.map { WatchStatus.valueOf(it) }.toSet(),
+        defaultSearchFilter = defaultSearchFilter?.toMediaFilter() ?: MediaFilter()
     )
 
     companion object {
@@ -43,6 +49,7 @@ class RealmUserSettings() : RealmObject {
             hiddenMovieStatuses = settings.hiddenMovieStatuses.map { it.toString() }.toRealmSet()
             showSort = settings.showSort.toString()
             hiddenShowStatuses = settings.hiddenShowStatuses.map { it.toString() }.toRealmSet()
+            defaultSearchFilter = RealmMediaFilter from settings.defaultSearchFilter
         }
     }
 

@@ -1,11 +1,13 @@
 package com.gumbachi.watchbuddy.data.local.realm
 
 import android.util.Log
+import com.gumbachi.watchbuddy.data.local.realm.objects.RealmMediaFilter
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmMovie
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmShow
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmUserSettings
 import com.gumbachi.watchbuddy.model.UserSettings
 import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.interfaces.Media
 import com.gumbachi.watchbuddy.model.interfaces.Movie
 import com.gumbachi.watchbuddy.model.interfaces.Show
 import io.realm.kotlin.Realm
@@ -14,6 +16,7 @@ import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private const val TAG = "Database"
@@ -40,6 +43,8 @@ interface WatchbuddyDatabase {
 
     // Media Operations
     suspend fun getSavedMediaIDs(): Flow<List<WatchbuddyID>>
+    suspend fun findMedia(id: WatchbuddyID): Media?
+    suspend fun containsMedia(id: WatchbuddyID): Boolean
 }
 
 class WatchbuddyDB : WatchbuddyDatabase {
@@ -49,9 +54,9 @@ class WatchbuddyDB : WatchbuddyDatabase {
     }
 
     private val realmConfig = RealmConfiguration
-        .Builder(schema = setOf(RealmUserSettings::class, RealmMovie::class, RealmShow::class))
+        .Builder(schema = setOf(RealmUserSettings::class, RealmMovie::class, RealmShow::class, RealmMediaFilter::class))
         .name("Watchbuddy Realm")
-        .deleteRealmIfMigrationNeeded()
+        .deleteRealmIfMigrationNeeded() // TODO Delete this
         .build()
 
     private val realm: Realm = Realm.open(realmConfig)
@@ -122,7 +127,7 @@ class WatchbuddyDB : WatchbuddyDatabase {
     }
 
     override suspend fun findMovieByID(id: WatchbuddyID): Movie? {
-        return realm.query<RealmMovie>("id == $id").first().find()?.toMovie()
+        return realm.query<RealmMovie>("id == $0", "$id").first().find()?.toMovie()
     }
     //endregion
 
@@ -159,7 +164,7 @@ class WatchbuddyDB : WatchbuddyDatabase {
     }
 
     override suspend fun findShowByID(id: WatchbuddyID): Show? {
-        return realm.query<RealmShow>("id == $id").first().find()?.toShow()
+        return realm.query<RealmShow>("id == $0", "$id").first().find()?.toShow()
     }
     //endregion
 
@@ -175,5 +180,12 @@ class WatchbuddyDB : WatchbuddyDatabase {
         // Merge IDs into one flow
         return savedMovieIDs.combine(savedShowIDs) { movieIDs, showIDs -> movieIDs + showIDs }
     }
+
+    override suspend fun findMedia(id: WatchbuddyID): Media? =
+        findMovieByID(id) ?: findShowByID(id)
+
+    override suspend fun containsMedia(id: WatchbuddyID): Boolean =
+        getSavedMediaIDs().first().contains(id)
+
     //endregion
 }

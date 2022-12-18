@@ -1,11 +1,24 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
+// Versions
+val composeVersion = "1.4.0-alpha02"
+val composeNavVersion = "2.6.0-alpha04"
+val material2Version = "1.4.0-alpha02"
+val material3Version = "1.1.0-alpha02"
+val lifecycleVersion = "2.6.0-alpha03"
+val accompanistVersion = "0.28.0"
+val ktorVersion = "2.2.1"
+val koinAndroidVersion = "3.3.0"
+val apolloVersion = "3.7.2"
+val realmVersion = "1.5.1"
+
 plugins {
     id("com.android.application")
     kotlin("android")
     id("kotlin-kapt")
     kotlin("plugin.serialization") version "1.7.20"
-    id("io.realm.kotlin") version "1.4.0"
+    id("io.realm.kotlin") version "1.5.1"
+    id("com.apollographql.apollo3").version("3.7.2")
 }
 
 android {
@@ -28,7 +41,7 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -52,15 +65,7 @@ android {
     }
 }
 
-// Versions
-val composeVersion = "1.4.0-alpha02"
-val composeNavVersion = "2.6.0-alpha04"
-val material2Version = "1.4.0-alpha02"
-val material3Version = "1.1.0-alpha02"
-val lifecycleVersion = "2.6.0-alpha03"
-val accompanistVersion = "0.28.0"
-val ktorVersion = "2.1.3"
-val koinAndroidVersion = "3.3.0"
+
 
 dependencies {
 
@@ -108,11 +113,18 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
-    //MongoDB Realm
-    implementation("io.realm.kotlin:library-sync:1.4.0")
+    // MongoDB Realm
+    implementation("io.realm.kotlin:library-sync:$realmVersion")
+
+    // Apollo GraphQL
+    implementation("com.apollographql.apollo3:apollo-runtime:$apolloVersion")
 }
 
 // Allow references to generated code
 kapt {
     correctErrorTypes = true
+}
+
+apollo {
+    packageName.set("com.gumbachi.watchbuddy")
 }

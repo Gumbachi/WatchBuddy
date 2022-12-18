@@ -17,8 +17,6 @@ import com.gumbachi.watchbuddy.ui.navigation.navigateTo
 @Composable
 fun Watchbuddy() {
 
-    var navIndex by remember { mutableStateOf(0) }
-
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -47,7 +45,6 @@ fun Watchbuddy() {
         WatchbuddyNavGraph(
             navController = navController,
             modifier = Modifier.padding(paddingValues),
-            setNavIndex = { navIndex = it },
             setBottomBarStyle = { bottomBarStyle = it },
         )
     }

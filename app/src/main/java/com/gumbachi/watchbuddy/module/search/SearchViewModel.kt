@@ -3,8 +3,8 @@ package com.gumbachi.watchbuddy.module.search
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gumbachi.watchbuddy.model.MediaFilter
 import com.gumbachi.watchbuddy.model.RecentSearch
-import com.gumbachi.watchbuddy.model.SearchFilter
 import com.gumbachi.watchbuddy.model.UserSettings
 import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.interfaces.Editable
@@ -34,7 +34,7 @@ data class SearchScreenUiState(
     val recentSearches: List<RecentSearch> = emptyList(),
 
     val showFilterDialog: Boolean = false,
-    val filter: SearchFilter = SearchFilter(),
+    val filter: MediaFilter = MediaFilter(),
 
     val settings: UserSettings = UserSettings(),
 
@@ -65,7 +65,7 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
         }
     }
 
-    // Filter State
+    //region Filter State
     fun showFilterDialog() {
         _uiState.update { it.copy(showFilterDialog = true) }
     }
@@ -74,26 +74,27 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
         _uiState.update { it.copy(showFilterDialog = false) }
     }
 
-    fun onFilterUpdate(filter: SearchFilter) {
-        _uiState.update { it.copy(filter = filter) }
+    fun onFilterUpdate(filter: MediaFilter) {
+        _uiState.update { it.copy(filter = filter, showFilterDialog = false) }
     }
+    //endregion
 
     // Search Functions
-    fun onSearch(query: String) {
+    fun searchFor(query: String) {
         _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
             delay(1000L) //TODO Don't keep this
 
             runCatching {
-                repository.searchFor(
-                    query = query,
-                    filter = uiState.value.filter
-                )
+                repository.searchFor(query = query)
             }.onSuccess { results ->
                 _uiState.update {
                     it.copy(
                         loading = false,
-                        searchState = SearchState(query, results)
+                        searchState = SearchState(
+                            query = query,
+                            results = results // TODO Filter this
+                        )
                     )
                 }
             }.onFailure { error ->
@@ -106,8 +107,10 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
 
     fun showEditDialogFor(searchResult: SearchResult) {
         viewModelScope.launch {
-            val media = repository.generateBlankMedia(searchResult)
-            _uiState.update { it.copy(underEdit = media) }
+            val media = repository.findMedia(searchResult)
+            _uiState.update {
+                it.copy(underEdit = media?.clone() ?: repository.generateBlankMedia(searchResult))
+            }
         }
     }
 
@@ -123,6 +126,38 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
         viewModelScope.launch {
             runCatching {
                 repository.saveMedia(editable as Media)
+            }.onSuccess {
+                onSuccess()
+            }.onFailure { error ->
+                throw error //TODO handle this
+            }
+        }
+    }
+
+    fun updateMedia(
+        editable: Editable,
+        onSuccess: suspend () -> Unit = {}
+    ) {
+        hideEditDialog()
+        viewModelScope.launch {
+            runCatching {
+                repository.updateMedia(editable as Media)
+            }.onSuccess {
+                onSuccess()
+            }.onFailure { error ->
+                throw error //TODO handle this
+            }
+        }
+    }
+
+    fun deleteMedia(
+        editable: Editable,
+        onSuccess: suspend () -> Unit = {}
+    ) {
+        hideEditDialog()
+        viewModelScope.launch {
+            runCatching {
+                repository.deleteMedia(editable as Media)
             }.onSuccess {
                 onSuccess()
             }.onFailure { error ->

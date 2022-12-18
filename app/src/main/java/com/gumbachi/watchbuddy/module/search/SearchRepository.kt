@@ -2,12 +2,13 @@ package com.gumbachi.watchbuddy.module.search
 
 import android.util.Log
 import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDatabase
+import com.gumbachi.watchbuddy.data.remote.anilist.AnilistAPI
+import com.gumbachi.watchbuddy.data.remote.anilist.mappers.toAnilistAnimeSearchResults
 import com.gumbachi.watchbuddy.data.remote.tmdb.TMDBApi
 import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBMovie
 import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBSearchResults
 import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBShow
 import com.gumbachi.watchbuddy.model.RecentSearch
-import com.gumbachi.watchbuddy.model.SearchFilter
 import com.gumbachi.watchbuddy.model.UserSettings
 import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.enums.data.Source
@@ -26,8 +27,11 @@ interface SearchRepository {
     // New
     suspend fun getUserSettingsFlow(): Flow<UserSettings>
     suspend fun getSavedMediaIDs(): Flow<List<WatchbuddyID>>
-    suspend fun searchFor(query: String, filter: SearchFilter): List<SearchResult>
+    suspend fun searchFor(query: String): List<SearchResult>
     suspend fun saveMedia(media: Media)
+    suspend fun updateMedia(media: Media)
+    suspend fun deleteMedia(media: Media)
+    suspend fun findMedia(searchResult: SearchResult): Media?
 
     // Old
     suspend fun generateBlankMedia(searchResult: SearchResult): Media
@@ -38,6 +42,7 @@ interface SearchRepository {
 
 class SearchRepositoryImpl(
     private val tmdb: TMDBApi,
+    private val anilist: AnilistAPI,
     private val db: WatchbuddyDatabase
 ) : SearchRepository {
 
@@ -54,23 +59,15 @@ class SearchRepositoryImpl(
         return db.getSavedMediaIDs().distinctUntilChanged()
     }
 
-    override suspend fun searchFor(query: String, filter: SearchFilter): List<SearchResult> {
+    override suspend fun searchFor(query: String): List<SearchResult> {
 
-        val accumulatedResults = mutableListOf<SearchResult>()
+        val tmdbMovieResults = tmdb.searchMovies(query).toTMDBSearchResults()
+        val tmdbShowResults = tmdb.searchShows(query).toTMDBSearchResults()
+        val anilistResults = anilist.searchAnime(query).toAnilistAnimeSearchResults()
 
-        if (filter.includeTMDBMovies) {
-            val tmdbMovieResults = tmdb.searchMovies(query).toTMDBSearchResults()
-            accumulatedResults += tmdbMovieResults
-        }
-
-        if (filter.includeTMDBShows) {
-            val tmdbShowResults = tmdb.searchShows(query).toTMDBSearchResults()
-            accumulatedResults += tmdbShowResults
-        }
-
-        //TODO Add Anilist
-
-        return accumulatedResults.sortedByDescending { it.weight() }.toList()
+        return (tmdbMovieResults + tmdbShowResults + anilistResults)
+            .sortedByDescending { it.weight() }
+            .toList()
     }
 
     override suspend fun saveMedia(media: Media) {
@@ -80,6 +77,25 @@ class SearchRepositoryImpl(
         }
     }
 
+    override suspend fun updateMedia(media: Media) {
+        when (media) {
+            is Movie -> db.updateMovie(media)
+            is Show -> db.updateShow(media)
+        }
+    }
+
+    override suspend fun deleteMedia(media: Media) {
+        when (media) {
+            is Movie -> db.removeMovie(media)
+            is Show -> db.removeShow(media)
+        }
+    }
+
+    override suspend fun findMedia(searchResult: SearchResult): Media? {
+        return db.findMedia(searchResult.watchbuddyID)
+
+    }
+
     override suspend fun generateBlankMedia(searchResult: SearchResult): Media {
         return when (searchResult.watchbuddyID.source) {
             Source.TMDBMovie -> tmdb.getMovieDetails(searchResult.id).toTMDBMovie()
@@ -87,6 +103,7 @@ class SearchRepositoryImpl(
             else -> TODO("Fill remaining branches")
         }
     }
+
 
     override suspend fun clearSearchHistory() {
         return searchHistory.clear()

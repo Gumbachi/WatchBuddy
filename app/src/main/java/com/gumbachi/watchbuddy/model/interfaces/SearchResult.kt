@@ -6,7 +6,7 @@ import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 interface SearchResult : Cardable {
 
     val id: Int
-    val watchbuddyID: WatchbuddyID
+    override val watchbuddyID: WatchbuddyID
 
     override val title: String
     override val posterURL: String

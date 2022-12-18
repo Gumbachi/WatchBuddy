@@ -7,9 +7,13 @@ import com.gumbachi.watchbuddy.utils.sortedBy
 
 data class Watchlist<T : Media>(
     val entries: List<T> = emptyList(),
-    val sort: Sort = Sort.ScoreDescending
+    val sort: Sort = Sort.ScoreDescending,
+    val filter: (T) -> Boolean = { true }
 ) {
-    private val categorizedMedia = entries.sortedBy(sort).groupBy { it.watchStatus }
+    private val categorizedMedia = entries
+        .filter(filter)
+        .sortedBy(sort)
+        .groupBy { it.watchStatus }
 
     fun getListFor(status: WatchStatus) = categorizedMedia.getOrElse(status) {
         emptyList()

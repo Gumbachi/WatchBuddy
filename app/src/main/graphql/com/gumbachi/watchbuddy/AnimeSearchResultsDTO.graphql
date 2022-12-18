@@ -1,0 +1,30 @@
+query AnimeSearchResultsDTO($search: String) {
+    Page {
+        media(search: $search, type: ANIME) {
+            id
+            title {
+                english
+                romaji
+                native
+            }
+            format
+            status
+            startDate {
+                year
+                month
+                day
+            }
+            endDate {
+                year
+                month
+                day
+            }
+            episodes
+            popularity
+            averageScore
+            coverImage {
+                medium
+            }
+        }
+    }
+}

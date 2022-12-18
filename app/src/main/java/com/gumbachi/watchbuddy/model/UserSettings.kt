@@ -16,5 +16,7 @@ data class UserSettings(
 
     // Show Related Settings
     val showSort: Sort = Sort.ScoreDescending,
-    val hiddenShowStatuses: Set<WatchStatus> = emptySet()
+    val hiddenShowStatuses: Set<WatchStatus> = emptySet(),
+
+    val defaultSearchFilter: MediaFilter = MediaFilter()
 )

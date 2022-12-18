@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.model
 
-data class SearchFilter(
+data class OldMediaFilter(
     val includeTMDB: Boolean = true,
     val includeAnilist: Boolean = true,
     val includeMovies: Boolean = true,

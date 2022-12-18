@@ -6,5 +6,5 @@ import com.gumbachi.watchbuddy.R
 enum class API(@DrawableRes val logo:  Int) {
     TMDB(R.drawable.tmdb),
     Anilist(R.drawable.anilist),
-    Unknown(R.drawable.unknown_api)
+    Custom(R.drawable.unknown_api)
 }

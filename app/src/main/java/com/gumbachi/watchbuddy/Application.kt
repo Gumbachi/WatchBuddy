@@ -4,6 +4,8 @@ import android.app.Application
 import android.util.Log
 import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDB
 import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDatabase
+import com.gumbachi.watchbuddy.data.remote.anilist.AnilistAPI
+import com.gumbachi.watchbuddy.data.remote.anilist.AnilistAPIImpl
 import com.gumbachi.watchbuddy.data.remote.tmdb.TMDBApi
 import com.gumbachi.watchbuddy.data.remote.tmdb.TMDBApiImpl
 import com.gumbachi.watchbuddy.module.details.DetailsRepository
@@ -33,6 +35,7 @@ val appModule = module {
     // Universal
     singleOf(::WatchbuddyDB) { bind<WatchbuddyDatabase>() }
     singleOf(::TMDBApiImpl) { bind<TMDBApi>() }
+    singleOf(::AnilistAPIImpl) { bind<AnilistAPI>() }
 
     // Repositories
     singleOf(::MoviesRepositoryImpl) { bind<MoviesRepository>() }

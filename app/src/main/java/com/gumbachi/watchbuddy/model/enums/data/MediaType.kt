@@ -1,5 +1,7 @@
 package com.gumbachi.watchbuddy.model.enums.data
 
-enum class MediaType {
-    Movie, Show
+// TODO May need to switch to sealed class
+enum class MediaType(subtype: String) {
+    Movie("Movie"),
+    Show("Show"),
 }

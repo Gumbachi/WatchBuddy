@@ -11,8 +11,8 @@ enum class Source(val api: API, val type: MediaType) {
     AnilistShow(API.Anilist, MediaType.Show),
 
     // Custom
-    CustomMovie(API.Unknown, MediaType.Movie),
-    CustomShow(API.Unknown, MediaType.Show);
+    CustomMovie(API.Custom, MediaType.Movie),
+    CustomShow(API.Custom, MediaType.Show);
 
     fun toDetailsRoute(id: Int): String {
         return when (this) {
@@ -34,8 +34,8 @@ enum class Source(val api: API, val type: MediaType) {
             api == API.Anilist && type == MediaType.Movie -> AnilistMovie
             api == API.Anilist && type == MediaType.Show -> AnilistShow
 
-            api == API.Unknown && type == MediaType.Movie -> CustomMovie
-            api == API.Unknown && type == MediaType.Show -> CustomShow
+            api == API.Custom && type == MediaType.Movie -> CustomMovie
+            api == API.Custom && type == MediaType.Show -> CustomShow
 
             else -> throw Exception("Couldn't Find Source Type for $api and $type")
         }

@@ -7,6 +7,7 @@ import com.gumbachi.watchbuddy.model.Watchlist
 import com.gumbachi.watchbuddy.model.enums.configuration.Sort
 import com.gumbachi.watchbuddy.model.interfaces.Movie
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -15,11 +16,13 @@ private const val TAG = "MovieRepository"
 
 interface MoviesRepository {
     suspend fun getSettingsFlow(): Flow<UserSettings>
+    suspend fun getMoviesFlow(): Flow<List<Movie>>
     suspend fun getWatchlistFlow(): Flow<Watchlist<Movie>>
     suspend fun addMovie(movie: Movie)
     suspend fun updateMovieTo(updatedMovie: Movie)
     suspend fun removeMovie(movie: Movie)
     suspend fun updateMovieSortTo(sort: Sort)
+
 }
 
 class MoviesRepositoryImpl(
@@ -37,10 +40,17 @@ class MoviesRepositoryImpl(
 
     override suspend fun getWatchlistFlow(): Flow<Watchlist<Movie>> {
         Log.d(TAG, "Fetching Watchlist...")
-        val currentSort = db.getUserSettingsFlow().first().movieSort
-        return db.getMoviesFlow().distinctUntilChanged().map {
-            Watchlist(entries = it, sort = currentSort)
-        }
+        val sortFlow = db.getUserSettingsFlow().map { it.movieSort }
+        val moviesFlow = db.getMoviesFlow()
+
+        return combine(moviesFlow, sortFlow) { movies, sort ->
+            Watchlist(entries = movies, sort = sort)
+        }.distinctUntilChanged()
+    }
+
+    override suspend fun getMoviesFlow(): Flow<List<Movie>> {
+        Log.d(TAG, "Fetching Movies...")
+        return db.getMoviesFlow()
     }
 
     override suspend fun addMovie(movie: Movie) {

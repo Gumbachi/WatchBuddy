@@ -32,7 +32,7 @@ class RealmMovie() : RealmObject {
         return when (watchbuddyID.api) {
             API.TMDB -> toTMDBMovie(watchbuddyID.sourceID)
             API.Anilist -> TODO()
-            API.Unknown -> TODO()
+            API.Custom -> TODO()
         }
     }
 

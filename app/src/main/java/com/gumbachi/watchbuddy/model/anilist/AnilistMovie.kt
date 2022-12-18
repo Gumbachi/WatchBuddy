@@ -1,4 +1,4 @@
-package com.gumbachi.watchbuddy.model.tmdb
+package com.gumbachi.watchbuddy.model.anilist
 
 import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API
@@ -9,25 +9,24 @@ import com.gumbachi.watchbuddy.model.interfaces.Movie
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-data class TMDBMovie(
-    override val id: Int,
+data class AnilistMovie(
     override val posterURL: String,
     override val title: String,
-    override val releaseDate: LocalDate,
+    override val id: Int,
+    override var userScore: Int,
+    override var userNotes: String,
+    override var watchStatus: WatchStatus,
+    override var startDate: LocalDate?,
+    override var finishDate: LocalDate?,
+    override var lastUpdate: LocalDateTime?,
+
     override val runtime: String,
-    override val releaseStatus: ReleaseStatus,
+    override val releaseDate: LocalDate,
+    override val releaseStatus: ReleaseStatus
 
-    override var userScore: Int = 0,
-    override var userNotes: String = "",
-    override var watchStatus: WatchStatus = WatchStatus.Watching,
-
-    override var startDate: LocalDate? = null,
-    override var finishDate: LocalDate? = null,
-
-    override var lastUpdate: LocalDateTime? = null
 ) : Movie {
 
-    override val watchbuddyID = WatchbuddyID(API.TMDB, MediaType.Movie, id)
+    override val watchbuddyID = WatchbuddyID(API.Anilist, MediaType.Movie, id)
 
     // Card Details
     override val primaryDetail = runtime
@@ -35,6 +34,5 @@ data class TMDBMovie(
     override val score: Int
         get() = userScore
 
-    override fun clone() = copy() // pass parameters to create deep copy
-
+    override fun clone(): AnilistMovie = copy()
 }

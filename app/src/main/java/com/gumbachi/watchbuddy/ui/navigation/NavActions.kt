@@ -8,6 +8,11 @@ import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tv
+import androidx.compose.material.icons.outlined.CellTower
+import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -20,13 +25,15 @@ private const val TAG = "Navigation"
 sealed class WatchbuddyDestination(
     val route: String,
     val name: String,
-    val icon: ImageVector,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector,
     val bottomBarStyle: BottomBarStyle
 ) {
     object MOVIES : WatchbuddyDestination(
         route = "movies?id={id}",
         name = "Movies",
-        icon = Icons.Filled.Movie,
+        selectedIcon = Icons.Filled.Movie,
+        unselectedIcon = Icons.Outlined.Movie,
         bottomBarStyle = BottomBarStyle.Shown
     ) {
         fun buildRoute(startID: WatchbuddyID?) =
@@ -36,7 +43,8 @@ sealed class WatchbuddyDestination(
     object SHOWS : WatchbuddyDestination(
         route = "shows?id={id}",
         name = "Shows",
-        icon = Icons.Filled.Tv,
+        selectedIcon = Icons.Filled.Tv,
+        unselectedIcon = Icons.Outlined.Tv,
         bottomBarStyle = BottomBarStyle.Shown
     ) {
         fun buildRoute(startID: WatchbuddyID?) =
@@ -46,28 +54,32 @@ sealed class WatchbuddyDestination(
     object DISCOVER : WatchbuddyDestination(
         route = "discover",
         name = "Discover",
-        icon = Icons.Filled.CellTower,
+        selectedIcon = Icons.Filled.CellTower,
+        unselectedIcon = Icons.Outlined.CellTower,
         bottomBarStyle = BottomBarStyle.Shown
     )
 
     object SETTINGS : WatchbuddyDestination(
         route = "settings",
         name = "Settings",
-        icon = Icons.Filled.Settings,
+        selectedIcon = Icons.Filled.Settings,
+        unselectedIcon = Icons.Outlined.Settings,
         bottomBarStyle = BottomBarStyle.Shown
     )
 
     object SEARCH : WatchbuddyDestination(
         route = "search",
         name = "Search",
-        icon = Icons.Filled.Search,
+        selectedIcon = Icons.Filled.Search,
+        unselectedIcon = Icons.Outlined.Search,
         bottomBarStyle = BottomBarStyle.Hidden
     )
 
     object DETAILS : WatchbuddyDestination(
         route = "details/{wbid}",
         name = "Details",
-        icon = Icons.Filled.Details,
+        selectedIcon = Icons.Filled.Details,
+        unselectedIcon = Icons.Outlined.Search,
         bottomBarStyle = BottomBarStyle.Hidden
     ) {
         fun buildRoute(id: WatchbuddyID) = "details/$id"
@@ -88,17 +100,23 @@ fun NavHostController.navigateTo(destination: WatchbuddyDestination) {
 
 
 fun NavHostController.navigateToMovies() {
+
+    if (currentDestination?.route == WatchbuddyDestination.MOVIES.route) return
+
     Log.d(TAG, "Navigating to Movies")
+
     navigate(WatchbuddyDestination.MOVIES.route) {
-        popUpTo(0) {
+        popUpTo(graph.findStartDestination().id) {
             saveState = true
             inclusive = true
         }
         restoreState = true
+        launchSingleTop = true
     }
 }
 
 fun NavHostController.navigateToShows() {
+    if (currentDestination?.route == WatchbuddyDestination.SHOWS.route) return
     Log.d(TAG, "Navigating to Shows")
 
     navigate(WatchbuddyDestination.SHOWS.route) {
@@ -107,10 +125,12 @@ fun NavHostController.navigateToShows() {
             inclusive = true
         }
         restoreState = true
+        launchSingleTop = true
     }
 }
 
 fun NavHostController.navigateToDiscover() {
+    if (currentDestination?.route == WatchbuddyDestination.DISCOVER.route) return
     Log.d(TAG, "Navigating to Discover")
     navigate(WatchbuddyDestination.DISCOVER.route) {
         popUpTo(graph.findStartDestination().id) {
@@ -118,10 +138,12 @@ fun NavHostController.navigateToDiscover() {
             inclusive = true
         }
         restoreState = true
+        launchSingleTop = true
     }
 }
 
 fun NavHostController.navigateToSettings() {
+    if (currentDestination?.route == WatchbuddyDestination.SETTINGS.route) return
     Log.d(TAG, "Navigating to SETTINGS")
     navigate(WatchbuddyDestination.SETTINGS.route) {
         popUpTo(graph.findStartDestination().id) {
@@ -129,10 +151,12 @@ fun NavHostController.navigateToSettings() {
             inclusive = true
         }
         restoreState = true
+        launchSingleTop = true
     }
 }
 
 fun NavHostController.navigateToSearch() {
+    if (currentDestination?.route == WatchbuddyDestination.SEARCH.route) return
     Log.d(TAG, "Navigating to Search")
     navigate(WatchbuddyDestination.SEARCH.route) {
         launchSingleTop = true
@@ -160,6 +184,7 @@ fun NavHostController.navigateToMedia(id: WatchbuddyID) {
                  inclusive = true
              }
              restoreState = true
+             launchSingleTop = true
          }
      }
 }

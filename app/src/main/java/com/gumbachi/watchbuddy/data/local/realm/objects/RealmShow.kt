@@ -34,7 +34,7 @@ class RealmShow() : RealmObject {
         return when (watchbuddyID.api) {
             API.TMDB -> toTMDBShow(watchbuddyID.sourceID)
             API.Anilist -> TODO()
-            API.Unknown -> TODO()
+            API.Custom -> TODO()
         }
     }
 

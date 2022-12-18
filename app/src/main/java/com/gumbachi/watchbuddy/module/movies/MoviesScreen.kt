@@ -13,8 +13,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.gumbachi.watchbuddy.model.WatchbuddyID
@@ -24,6 +26,7 @@ import com.gumbachi.watchbuddy.ui.components.MediaTabRow
 import com.gumbachi.watchbuddy.ui.components.appbars.MediaAppBar
 import com.gumbachi.watchbuddy.ui.components.cards.MediaCard
 import com.gumbachi.watchbuddy.ui.components.dialogs.MediaEditDialog
+import com.gumbachi.watchbuddy.ui.components.dialogs.MediaFilterDialog
 import com.gumbachi.watchbuddy.ui.components.dialogs.MediaSortDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -63,12 +66,11 @@ fun MoviesScreen(
     MediaScreenScaffold(
         isLoading = state.loading,
         error = state.error,
-        modifier = modifier,
         topBar = {
             MediaAppBar(
                 title = "Movies",
                 onSortClicked = { viewModel.showSortDialog() },
-                onFilterClicked = { /*TODO viewModel.showFilterDialog() */ }
+                onFilterClicked = { viewModel.showFilterDialog() }
             )
         },
         snackbarHost = {
@@ -96,6 +98,19 @@ fun MoviesScreen(
                             gridState.animateScrollToItem(0)
                         }
                     },
+                )
+            }
+
+            // Filter Dialog
+            if (state.showFilterDialog) {
+                // temporary state
+                var filter by remember { mutableStateOf(state.filter) }
+                MediaFilterDialog(
+                    title = "Filter Movies",
+                    filter = filter,
+                    onFilterChange = { filter = it },
+                    onFinish = { viewModel.changeFilterTo(filter) },
+                    onCancel = { viewModel.hideFilterDialog() }
                 )
             }
 

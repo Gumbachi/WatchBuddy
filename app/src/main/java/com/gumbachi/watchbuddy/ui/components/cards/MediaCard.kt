@@ -14,7 +14,8 @@ fun MediaCard(
     scoreFormat: ScoreFormat,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSaved: Boolean = false
 ) {
     when (cardStyle) {
         CardStyle.Normal -> {
@@ -40,6 +41,8 @@ fun MediaCard(
                 secondarySubtitle = cardData.secondaryDetail,
                 score = cardData.score.toString(format = scoreFormat, decorated = true),
                 progress = cardData.progress,
+                api = cardData.watchbuddyID.api,
+                isSaved = isSaved,
                 statusColor = cardData.releaseStatus.color,
                 onClick = onClick,
                 onLongClick = onLongClick,

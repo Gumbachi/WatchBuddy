@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -34,6 +35,8 @@ fun NormalMediaCard(
     statusText: String,
     statusColor: Color,
     modifier: Modifier = Modifier,
+    api: API? = null,
+    isSaved: Boolean = false,
     progress: String? = null,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {}
@@ -198,7 +201,7 @@ private fun StatusBubble(
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = false)
 @Composable
 private fun MediaCardPreview(darkMode: Boolean = true) {
     WatchBuddyTheme(darkTheme = darkMode) {
@@ -211,7 +214,7 @@ private fun MediaCardPreview(darkMode: Boolean = true) {
             statusText = "Released",
             statusColor = Color.Blue,
             progress = "50 / 128",
-            modifier = Modifier.size(200.dp, 200.dp)
+            modifier = Modifier.size(230.dp, 400.dp)
         )
     }
 }

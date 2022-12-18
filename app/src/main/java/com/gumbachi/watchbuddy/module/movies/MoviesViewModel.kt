@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gumbachi.watchbuddy.model.MediaFilter
 import com.gumbachi.watchbuddy.model.UserSettings
 import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.Watchlist
@@ -15,6 +16,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
@@ -22,7 +25,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "MoviesViewModel"
 
 data class MoviesScreenUiState(
-    val loading: Boolean = true,
+    val loading: Boolean = false,
     val error: Throwable? = null,
 
     val watchlist: Watchlist<Movie> = Watchlist(),
@@ -32,7 +35,10 @@ data class MoviesScreenUiState(
     val movieUnderEdit: Movie? = null,
 
     val showSortDialog: Boolean = false,
+    val showFilterDialog: Boolean = false,
+
     val settings: UserSettings = UserSettings(),
+    val filter: MediaFilter = MediaFilter()
 ) {
 
     val shownTabs: List<WatchStatus>
@@ -50,32 +56,51 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
 
     init {
         Log.d(TAG, "Movies View Model Created")
+        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
-            launch {
-                repository.getSettingsFlow().withIndex().collectLatest { (index, settings) ->
-                    Log.d(TAG, "Collected Settings State Change")
-
-                    // Reset selected tab if tab layout changes to avoid index problems
-                    if (uiState.value.settings.hiddenMovieStatuses != settings.hiddenMovieStatuses) {
-                        _uiState.update { it.copy(selectedTab = 0) }
-                    }
-
-                    // Only dismiss initial load
-                    when (index) {
-                        0 -> _uiState.update { it.copy(settings = settings, loading = false) }
-                        else -> _uiState.update { it.copy(settings = settings) }
-                    }
-
-                }
-            }
-            launch {
-                repository.getWatchlistFlow().collectLatest { watchlist ->
-                    Log.d(TAG, "Collected Watchlist State Change")
-                    _uiState.update { it.copy(watchlist = watchlist) }
-                }
-            }
+            launch { beginCollectingSettings() }
+            launch { beginCollectingWatchlist() }
         }
     }
+
+    //region State Collectors
+    private suspend fun beginCollectingWatchlist() {
+        val moviesFlow = repository.getMoviesFlow()
+        val sortFlow = uiState.map { it.settings.movieSort }
+        val filterFlow = uiState.map { it.filter.predicate }
+        val watchlistFlow = combine(moviesFlow, sortFlow, filterFlow) { movies, sort, filter ->
+            Watchlist(
+                entries = movies,
+                sort = sort,
+                filter = filter
+            )
+        }
+
+        watchlistFlow.collectLatest { watchlist ->
+            Log.d(TAG, "Collected Watchlist State Change")
+            _uiState.update { it.copy(watchlist = watchlist) }
+        }
+    }
+
+    private suspend fun beginCollectingSettings() {
+        delay(1000L)
+        repository.getSettingsFlow().withIndex().collectLatest { (index, settings) ->
+            Log.d(TAG, "Collected Settings State Change")
+
+            // Reset selected tab if tab layout changes to avoid index problems
+            if (uiState.value.settings.hiddenMovieStatuses != settings.hiddenMovieStatuses) {
+                _uiState.update { it.copy(selectedTab = 0) }
+            }
+
+            // Only dismiss initial load
+            when (index) {
+                0 -> _uiState.update { it.copy(settings = settings, loading = false) }
+                else -> _uiState.update { it.copy(settings = settings) }
+            }
+
+        }
+    }
+    //endregion
 
     fun acknowledgeError() {
         _uiState.update { it.copy(error = null) }
@@ -149,7 +174,8 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
         }
     }
 
-    // Sort Dialog State
+
+    //region Sort Dialog Functions
     fun showSortDialog() {
         _uiState.update { it.copy(showSortDialog = true) }
     }
@@ -171,6 +197,24 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
             }
         }
     }
+    //endregion
+
+    //region Filter Dialog Functions
+    fun showFilterDialog() {
+        _uiState.update { it.copy(showFilterDialog = true) }
+    }
+
+    fun hideFilterDialog() {
+        _uiState.update { it.copy(showFilterDialog = false) }
+    }
+
+    fun changeFilterTo(filter: MediaFilter) {
+        viewModelScope.launch {
+            hideFilterDialog()
+            _uiState.update { it.copy(filter = filter) }
+        }
+    }
+    //endregion
 
     fun findItemOnScreen(
         id: WatchbuddyID,
@@ -185,7 +229,8 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
                     Log.d(TAG, "Item found running onfind")
                     uiState.value.watchlist.findByID(id)?.let { movie ->
                         onFind(
-                            uiState.value.watchlist.getListFor(movie.watchStatus).indexOf(movie),
+                            uiState.value.watchlist.getListFor(movie.watchStatus)
+                                .indexOf(movie),
                             movie.watchStatus
                         )
                     }
