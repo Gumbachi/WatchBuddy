@@ -1,4 +1,4 @@
-query AnimeSearchResultsDTO($search: String) {
+query AnimeSearch($search: String) {
     Page {
         media(search: $search, type: ANIME) {
             id

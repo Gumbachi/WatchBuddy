@@ -8,18 +8,17 @@ import kotlinx.datetime.todayIn
 
 fun LocalDate?.toMovieReleaseStatus(): ReleaseStatus = this?.let {
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    return if (it < today) ReleaseStatus.Released() else ReleaseStatus.Unreleased()
-} ?: ReleaseStatus.Unknown()
+    return if (it < today) ReleaseStatus.Released else ReleaseStatus.Unreleased
+} ?: ReleaseStatus.Unknown
 
+fun LocalDate?.toShowReleaseStatus(endDate: LocalDate?): ReleaseStatus {
+    if (this == null || endDate == null) return ReleaseStatus.Unknown
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
-//fun LocalDateTime.formattedTimeFromNow(): String {
-//    val now = LocalDateTime.now()
-//
-//    val minutesElapsed = ChronoUnit.MINUTES.between(this, now)
-//    val hoursElapsed = ChronoUnit.HOURS.between(this, now)
-//    val daysElapsed = ChronoUnit.DAYS.between(this, now)
-//
-//    if (daysElapsed != 0L) return "${daysElapsed}d ago"
-//    if (hoursElapsed != 0L) return "${hoursElapsed}hr ago"
-//    return "${minutesElapsed}m ago"
-//}
+     return when {
+         this > today -> ReleaseStatus.Unreleased
+         this < today && endDate < today -> ReleaseStatus.Released
+         this < today && endDate > today -> ReleaseStatus.Releasing
+         else -> ReleaseStatus.Unknown
+     }
+}

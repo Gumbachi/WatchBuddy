@@ -25,7 +25,7 @@ fun MediaCard(
                 primarySubtitle = cardData.primaryDetail,
                 secondarySubtitle = cardData.secondaryDetail,
                 score = cardData.score.toString(format = scoreFormat, decorated = true),
-                statusText = cardData.releaseStatus.text,
+                statusText = cardData.releaseStatus.name,
                 statusColor = cardData.releaseStatus.color,
                 progress = cardData.progress,
                 onClick = onClick,

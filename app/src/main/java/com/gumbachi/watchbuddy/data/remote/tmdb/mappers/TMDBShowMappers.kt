@@ -47,6 +47,7 @@ fun TMDBShowDetailsDTO.toTMDBShow(): TMDBShow {
         posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
         title = name,
         releaseDate = first_air_date.parseDateOrNull(),
+        endDate = last_air_date.parseDateOrNull(),
         totalEpisodes = number_of_episodes,
     )
 }

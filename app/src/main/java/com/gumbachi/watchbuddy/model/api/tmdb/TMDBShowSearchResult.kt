@@ -5,6 +5,7 @@ import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.interfaces.SearchResult
+import com.gumbachi.watchbuddy.utils.toShowReleaseStatus
 import kotlinx.datetime.LocalDate
 
 data class TMDBShowSearchResult(
@@ -22,7 +23,7 @@ data class TMDBShowSearchResult(
     override val watchbuddyID = WatchbuddyID(API.TMDB, MediaType.Show, id)
 
     override val releaseStatus: ReleaseStatus
-        get() = ReleaseStatus.Unknown() // TODO Fix this
+        get() = airDate.toShowReleaseStatus(endDate = null) // TODO: See if i can get an end date
 
     override val primaryDetail = "TV Show"
     override val secondaryDetail = "Aired: $airDate"

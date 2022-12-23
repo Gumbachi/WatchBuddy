@@ -1,0 +1,31 @@
+query BlankAnime($mediaId: Int) {
+  Media(id: $mediaId) {
+    coverImage {
+      medium
+    }
+    id
+    format
+    episodes
+    endDate {
+      day
+      month
+      year
+    }
+    nextAiringEpisode {
+      timeUntilAiring
+      episode
+      airingAt
+    }
+    startDate {
+      day
+      month
+      year
+    }
+    status
+    title {
+      english
+      native
+      romaji
+    }
+  }
+}

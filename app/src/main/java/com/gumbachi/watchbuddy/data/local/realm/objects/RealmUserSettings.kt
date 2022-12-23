@@ -1,7 +1,5 @@
 package com.gumbachi.watchbuddy.data.local.realm.objects
 
-import com.gumbachi.watchbuddy.model.MediaFilter
-import com.gumbachi.watchbuddy.model.UserSettings
 import com.gumbachi.watchbuddy.model.enums.configuration.CardStyle
 import com.gumbachi.watchbuddy.model.enums.configuration.ScoreFormat
 import com.gumbachi.watchbuddy.model.enums.configuration.Sort
@@ -31,16 +29,4 @@ class RealmUserSettings() : RealmObject {
     // Other
     var defaultSearchFilter: RealmMediaFilter? = RealmMediaFilter()
 
-
-    //region Converters
-    fun toUserSettings(): UserSettings = UserSettings(
-        cardStyle = CardStyle.valueOf(cardStyle),
-        scoreFormat = ScoreFormat.valueOf(scoreFormat),
-        movieSort = Sort.valueOf(movieSort),
-        hiddenMovieStatuses = hiddenMovieStatuses.map { WatchStatus.valueOf(it) }.toSet(),
-        showSort = Sort.valueOf(showSort),
-        hiddenShowStatuses = hiddenShowStatuses.map { WatchStatus.valueOf(it) }.toSet(),
-        defaultSearchFilter = defaultSearchFilter?.toMediaFilter() ?: MediaFilter()
-    )
-    //endregion
 }

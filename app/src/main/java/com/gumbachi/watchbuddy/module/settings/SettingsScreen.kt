@@ -1,23 +1,19 @@
 package com.gumbachi.watchbuddy.module.settings
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.MovieFilter
 import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.gumbachi.watchbuddy.ui.components.WatchbuddyScaffold
 import com.gumbachi.watchbuddy.ui.screens.settings.SettingsScreenOption
 import com.gumbachi.watchbuddy.ui.screens.settings.SettingsScreenSections
 import com.gumbachi.watchbuddy.ui.screens.settings.components.CardCustomizer
@@ -33,26 +29,15 @@ fun SettingsScreen(
 
     val state by viewModel.uiState.collectAsState()
 
-    Scaffold(
+    WatchbuddyScaffold(
+        isLoading = state.loading,
+        error = state.error,
         modifier = modifier,
         topBar = {
             CenterAlignedTopAppBar(title = { Text(text = "Settings") })
         }
-    ) { innerPadding ->
-
-        // Loading settings
-        if (state.loading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-            return@Scaffold
-        }
-
-
-        SettingsScreenSections(modifier = Modifier.padding(innerPadding)) {
+    ) {
+        SettingsScreenSections {
             SettingsScreenOption(
                 title = "Card Customization",
                 description = "Customize card style, score format, and more",
@@ -86,11 +71,25 @@ fun SettingsScreen(
                 )
             }
             SettingsScreenOption(
+                title = "TMDB Settings",
+                description = "Modify settings for TMDB Specific Media",
+                icon = Icons.Filled.Settings
+            ) {
+                Text("In Progress") // TODO Fill in about section
+            }
+            SettingsScreenOption(
+                title = "Anilist Settings",
+                description = "Modify settings for Anilist Specific Media",
+                icon = Icons.Filled.Settings
+            ) {
+                Text("In Progress") // TODO Fill in section
+            }
+            SettingsScreenOption(
                 title = "About",
                 description = "Extra information about WatchBuddy",
                 icon = Icons.Filled.QuestionMark
             ) {
-                Text("In Progress") // TODO
+                Text("In Progress") // TODO Fill in about section
             }
         }
     }

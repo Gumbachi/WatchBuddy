@@ -15,6 +15,8 @@ data class AnilistShow(
     override val posterURL: String,
 
     override val releaseDate: LocalDate?,
+    override val endDate: LocalDate?,
+
     override val releaseStatus: ReleaseStatus,
 
     override var episodesWatched: Int = 0,
@@ -30,7 +32,7 @@ data class AnilistShow(
     override val watchbuddyID = WatchbuddyID(API.Anilist, MediaType.Show, id)
 
     // Card Details
-    override val primaryDetail = "TBD"
+    override val primaryDetail = "TBD" // TODO
     override val secondaryDetail = "Aired $releaseDate"
     override val progress
         get() = "$episodesWatched / $totalEpisodes"

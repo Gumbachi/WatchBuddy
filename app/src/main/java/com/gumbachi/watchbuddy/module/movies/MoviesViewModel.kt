@@ -83,7 +83,6 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
     }
 
     private suspend fun beginCollectingSettings() {
-        delay(1000L)
         repository.getSettingsFlow().withIndex().collectLatest { (index, settings) ->
             Log.d(TAG, "Collected Settings State Change")
 

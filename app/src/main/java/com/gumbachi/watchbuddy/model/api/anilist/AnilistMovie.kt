@@ -13,16 +13,16 @@ data class AnilistMovie(
     override val posterURL: String,
     override val title: String,
     override val id: Int,
-    override var userScore: Int,
-    override var userNotes: String,
-    override var watchStatus: WatchStatus,
-    override var startDate: LocalDate?,
-    override var finishDate: LocalDate?,
-    override var lastUpdate: Instant?,
     override val runtime: String,
-
     override val releaseDate: LocalDate?,
-    override val releaseStatus: ReleaseStatus
+    override val releaseStatus: ReleaseStatus,
+
+    override var userScore: Int = 0,
+    override var userNotes: String = "",
+    override var watchStatus: WatchStatus = WatchStatus.Watching,
+    override var startDate: LocalDate? = null,
+    override var finishDate: LocalDate? = null,
+    override var lastUpdate: Instant? = null,
 
 ) : Movie {
 

@@ -1,0 +1,69 @@
+query AnimeDetails($mediaId: Int) {
+  Media(id: $mediaId) {
+    coverImage {
+      medium
+    }
+    id
+    format
+    episodes
+    endDate {
+      day
+      month
+      year
+    }
+    nextAiringEpisode {
+      timeUntilAiring
+      episode
+      airingAt
+    }
+    startDate {
+      day
+      month
+      year
+    }
+    status
+    title {
+      english
+      native
+      romaji
+    }
+    bannerImage
+    averageScore
+    characters {
+      nodes {
+        description
+        id
+        image {
+          medium
+        }
+        name {
+          full
+        }
+      }
+    }
+    countryOfOrigin
+    description
+    duration
+    genres
+    hashtag
+    idMal
+    isAdult
+    meanScore
+    popularity
+    season
+    seasonYear
+    relations {
+      nodes {
+        id
+        title {
+          romaji
+          native
+          english
+        }
+        coverImage {
+          medium
+        }
+      }
+    }
+  }
+}

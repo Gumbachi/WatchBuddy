@@ -1,6 +1,12 @@
 package com.gumbachi.watchbuddy.data.local.realm
 
 import android.util.Log
+import com.gumbachi.watchbuddy.data.local.realm.mappers.toMovie
+import com.gumbachi.watchbuddy.data.local.realm.mappers.toRealmMovie
+import com.gumbachi.watchbuddy.data.local.realm.mappers.toRealmShow
+import com.gumbachi.watchbuddy.data.local.realm.mappers.toRealmUserSettings
+import com.gumbachi.watchbuddy.data.local.realm.mappers.toShow
+import com.gumbachi.watchbuddy.data.local.realm.mappers.toUserSettings
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmMediaFilter
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmMovie
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmShow

@@ -10,7 +10,6 @@ import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.interfaces.Editable
 import com.gumbachi.watchbuddy.model.interfaces.Media
 import com.gumbachi.watchbuddy.model.interfaces.SearchResult
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -83,8 +82,6 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
     fun searchFor(query: String) {
         _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
-            delay(1000L) //TODO Don't keep this
-
             runCatching {
                 repository.searchFor(query = query)
             }.onSuccess { results ->

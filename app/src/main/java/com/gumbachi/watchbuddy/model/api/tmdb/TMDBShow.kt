@@ -3,7 +3,6 @@ package com.gumbachi.watchbuddy.model.api.tmdb
 import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
-import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Show
 import kotlinx.datetime.Instant
@@ -15,6 +14,7 @@ data class TMDBShow(
     override val posterURL: String,
 
     override val releaseDate: LocalDate?,
+    override val endDate: LocalDate?,
 
     override var episodesWatched: Int = 0,
     override val totalEpisodes: Int,
@@ -27,9 +27,6 @@ data class TMDBShow(
     override var lastUpdate: Instant? = null,
 ): Show {
     override val watchbuddyID = WatchbuddyID(API.TMDB, MediaType.Show, id)
-
-    override val releaseStatus: ReleaseStatus
-        get() = ReleaseStatus.Unknown() // TODO: Release Status for shows
 
     // Card Details
     override val primaryDetail = "TBD"

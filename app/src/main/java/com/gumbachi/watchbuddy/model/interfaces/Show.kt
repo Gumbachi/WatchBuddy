@@ -1,30 +1,17 @@
 package com.gumbachi.watchbuddy.model.interfaces
 
-import com.gumbachi.watchbuddy.data.local.realm.objects.RealmShow
+import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
+import com.gumbachi.watchbuddy.utils.toShowReleaseStatus
+import kotlinx.datetime.LocalDate
 
 interface Show: Media {
     val totalEpisodes: Int
     val episodesWatched: Int
+    val endDate: LocalDate?
 
     override fun clone(): Show
 
-    fun toRealmShow(): RealmShow {
-        val show = this
-        return RealmShow().apply {
-            id = show.watchbuddyID.toString()
-            title = show.title
-            posterURL = show.posterURL
-            releaseDate = show.releaseDate?.toEpochDays()
-            watchStatus = show.watchStatus.toString()
-            userScore = show.userScore
-            userNotes = show.userNotes
+    override val releaseStatus: ReleaseStatus
+        get() = releaseDate.toShowReleaseStatus(endDate = endDate)
 
-            episodesWatched = show.episodesWatched
-            totalEpisodes = show.totalEpisodes
-
-            startDate = show.startDate?.toEpochDays()
-            finishDate = show.finishDate?.toEpochDays()
-            lastUpdate = show.lastUpdate?.epochSeconds
-        }
-    }
 }

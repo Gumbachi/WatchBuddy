@@ -8,8 +8,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.gumbachi.watchbuddy.model.enums.configuration.BottomBarStyle
 import com.gumbachi.watchbuddy.ui.components.appbars.WatchbuddyNavigationBar
+import com.gumbachi.watchbuddy.ui.navigation.WatchbuddyDestination
 import com.gumbachi.watchbuddy.ui.navigation.WatchbuddyNavGraph
 import com.gumbachi.watchbuddy.ui.navigation.navigateTo
 
@@ -17,35 +17,46 @@ import com.gumbachi.watchbuddy.ui.navigation.navigateTo
 @Composable
 fun Watchbuddy() {
 
+    val mainRoutes = listOf(
+        WatchbuddyDestination.MOVIES.route,
+        WatchbuddyDestination.SHOWS.route,
+        WatchbuddyDestination.SEARCH.route,
+        WatchbuddyDestination.DISCOVER.route,
+        WatchbuddyDestination.SETTINGS.route,
+    )
+
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
-    var bottomBarStyle by remember { mutableStateOf(BottomBarStyle.Shown) }
+    val showBottomBar by remember {
+        derivedStateOf { currentBackStackEntry?.destination?.route in mainRoutes }
+    }
+
     val systemUiController = rememberSystemUiController()
 
     Scaffold(
-        bottomBar = when (bottomBarStyle) {
-            BottomBarStyle.Hidden -> ({
-                systemUiController.setNavigationBarColor(
-                    MaterialTheme.colorScheme.background
-                )
-            })
-            BottomBarStyle.Shown -> ({
+        bottomBar = when (showBottomBar) {
+            true -> ({
                 systemUiController.setNavigationBarColor(
                     MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
                 )
-
                 WatchbuddyNavigationBar(
                     currentNavBackStackEntry = currentBackStackEntry,
                     onClick = { navController.navigateTo(it) }
                 )
             })
+
+            false -> ({
+                systemUiController.setNavigationBarColor(
+                    MaterialTheme.colorScheme.background
+                )
+            })
+
         }
     ) { paddingValues ->
         WatchbuddyNavGraph(
             navController = navController,
-            modifier = Modifier.padding(paddingValues),
-            setBottomBarStyle = { bottomBarStyle = it },
+            modifier = Modifier.padding(paddingValues)
         )
     }
 }

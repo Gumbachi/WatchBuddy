@@ -137,10 +137,7 @@ fun SearchScreen(
                             scoreFormat = state.settings.scoreFormat,
                             isSaved = searchResult.watchbuddyID in state.savedMediaIDs,
                             onClick = { navigateToDetails(searchResult) },
-                            onLongClick = {
-
-                                viewModel.showEditDialogFor(searchResult)
-                            },
+                            onLongClick = { viewModel.showEditDialogFor(searchResult) },
                             modifier = Modifier.animateItemPlacement()
                         )
                     }

@@ -1,10 +1,8 @@
 package com.gumbachi.watchbuddy.model
 
-import com.gumbachi.watchbuddy.data.local.realm.objects.RealmMediaFilter
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.interfaces.Media
-import io.realm.kotlin.ext.toRealmSet
 
 data class MediaFilter(
     val allowedAPIs: Set<API> = API.values().toSet(), // allow all by default
@@ -25,15 +23,6 @@ data class MediaFilter(
 
     val predicate: (Media) -> Boolean = {
         it.watchbuddyID.api in allowedAPIs && it.watchbuddyID.type in allowedMediaTypes
-    }
-
-
-    fun toRealmMediaFilter(): RealmMediaFilter {
-        val filter = this
-        return RealmMediaFilter().apply {
-            allowedApis = filter.allowedAPIs.map { it.toString() }.toRealmSet()
-            allowedMediaTypes = filter.allowedMediaTypes.map { it.toString() }.toRealmSet()
-        }
     }
 }
 

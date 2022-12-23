@@ -40,7 +40,6 @@ fun MoviesScreen(
     modifier: Modifier = Modifier,
     viewModel: MoviesViewModel = koinViewModel(),
     focusedItemId: WatchbuddyID? = null,
-    navigateToSearch: () -> Unit = {},
     navigateToDetails: (Movie) -> Unit = {}
 ) {
 

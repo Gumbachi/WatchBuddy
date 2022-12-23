@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.gumbachi.watchbuddy.model.WatchbuddyID
-import com.gumbachi.watchbuddy.model.enums.configuration.BottomBarStyle
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 
 private const val TAG = "Navigation"
@@ -27,14 +26,12 @@ sealed class WatchbuddyDestination(
     val name: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-    val bottomBarStyle: BottomBarStyle
 ) {
     object MOVIES : WatchbuddyDestination(
         route = "movies?id={id}",
         name = "Movies",
         selectedIcon = Icons.Filled.Movie,
         unselectedIcon = Icons.Outlined.Movie,
-        bottomBarStyle = BottomBarStyle.Shown
     ) {
         fun buildRoute(startID: WatchbuddyID?) =
             if (startID == null) route else "movies?id=$startID"
@@ -45,7 +42,6 @@ sealed class WatchbuddyDestination(
         name = "Shows",
         selectedIcon = Icons.Filled.Tv,
         unselectedIcon = Icons.Outlined.Tv,
-        bottomBarStyle = BottomBarStyle.Shown
     ) {
         fun buildRoute(startID: WatchbuddyID?) =
             if (startID == null) route else "shows?id=$startID"
@@ -56,7 +52,6 @@ sealed class WatchbuddyDestination(
         name = "Discover",
         selectedIcon = Icons.Filled.CellTower,
         unselectedIcon = Icons.Outlined.CellTower,
-        bottomBarStyle = BottomBarStyle.Shown
     )
 
     object SETTINGS : WatchbuddyDestination(
@@ -64,7 +59,6 @@ sealed class WatchbuddyDestination(
         name = "Settings",
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings,
-        bottomBarStyle = BottomBarStyle.Shown
     )
 
     object SEARCH : WatchbuddyDestination(
@@ -72,7 +66,6 @@ sealed class WatchbuddyDestination(
         name = "Search",
         selectedIcon = Icons.Filled.Search,
         unselectedIcon = Icons.Outlined.Search,
-        bottomBarStyle = BottomBarStyle.Hidden
     )
 
     object DETAILS : WatchbuddyDestination(
@@ -80,7 +73,6 @@ sealed class WatchbuddyDestination(
         name = "Details",
         selectedIcon = Icons.Filled.Details,
         unselectedIcon = Icons.Outlined.Search,
-        bottomBarStyle = BottomBarStyle.Hidden
     ) {
         fun buildRoute(id: WatchbuddyID) = "details/$id"
     }

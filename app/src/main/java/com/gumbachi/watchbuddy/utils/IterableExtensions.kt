@@ -10,7 +10,7 @@ fun <T: Sortable> Iterable<T>.sortedBy(mode: Sort): List<T> {
         Sort.ReleaseDateAscending -> this.sortedBy { it.releaseDate }
         Sort.ReleaseDateDescending -> this.sortedByDescending { it.releaseDate }
         Sort.Alphabetical -> this.sortedBy { it.title }
-        Sort.ReleaseStatus -> this.sortedBy { it.releaseStatus.text }
+        Sort.ReleaseStatus -> this.sortedBy { it.releaseStatus.name }
         Sort.RecentlyUpdated -> this.sortedBy { it.lastUpdate }
     }
 }

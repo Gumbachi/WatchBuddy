@@ -4,6 +4,8 @@ import android.util.Log
 import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDatabase
 import com.gumbachi.watchbuddy.data.remote.anilist.AnilistAPI
 import com.gumbachi.watchbuddy.data.remote.anilist.mappers.toAnilistAnimeSearchResults
+import com.gumbachi.watchbuddy.data.remote.anilist.mappers.toAnilistMovie
+import com.gumbachi.watchbuddy.data.remote.anilist.mappers.toAnilistShow
 import com.gumbachi.watchbuddy.data.remote.tmdb.TMDBApi
 import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBMovie
 import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBSearchResults
@@ -100,7 +102,9 @@ class SearchRepositoryImpl(
         return when (searchResult.watchbuddyID.source) {
             Source.TMDBMovie -> tmdb.getMovieDetails(searchResult.id).toTMDBMovie()
             Source.TMDBShow -> tmdb.getShowDetails(searchResult.id).toTMDBShow()
-            else -> TODO("Fill remaining branches")
+            Source.AnilistMovie -> anilist.getRequiredAnimeDetails(searchResult.id).toAnilistMovie()
+            Source.AnilistShow -> anilist.getRequiredAnimeDetails(searchResult.id).toAnilistShow()
+            else -> TODO("Add Support for custom items")
         }
     }
 
