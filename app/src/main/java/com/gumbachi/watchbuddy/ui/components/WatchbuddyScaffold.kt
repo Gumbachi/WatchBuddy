@@ -1,8 +1,8 @@
 package com.gumbachi.watchbuddy.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,14 +33,14 @@ fun WatchbuddyScaffold(
 
         AnimatedVisibility(
             visible = isLoading,
-            exit = shrinkVertically(shrinkTowards = Alignment.Top) { 0 }
+            exit = fadeOut()
         ) {
             LoadingDisplay()
         }
 
         AnimatedVisibility(
             visible = !isLoading,
-            enter = expandVertically { 0 }
+            enter = fadeIn()
         ) {
             // Main Content
             Column(

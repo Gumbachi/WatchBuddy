@@ -1,4 +1,4 @@
-package com.gumbachi.watchbuddy.ui.screens.settings.components
+package com.gumbachi.watchbuddy.ui.screens.settings
 
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
@@ -82,7 +82,7 @@ fun CardCustomizer(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surfaceColorAtElevation(getElevation(1)))

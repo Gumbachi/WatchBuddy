@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.gumbachi.watchbuddy.model.toWatchbuddyID
-import com.gumbachi.watchbuddy.module.details.DetailsScreen
+import com.gumbachi.watchbuddy.module.details.NewDetailsScreen
 import com.gumbachi.watchbuddy.module.movies.MoviesScreen
 import com.gumbachi.watchbuddy.module.search.SearchScreen
 import com.gumbachi.watchbuddy.module.settings.SettingsScreen
@@ -94,9 +94,11 @@ fun WatchbuddyNavGraph(
             arguments = listOf(navArgument("wbid") { type = NavType.StringType })
         ) {
             it.arguments?.getString("wbid")?.let { idString ->
-                DetailsScreen(
+                NewDetailsScreen(
                     watchbuddyID = idString.toWatchbuddyID(),
-                    viewModel = koinViewModel()
+                    viewModel = koinViewModel(),
+                    onBackClicked = { navController.popBackStack() },
+                    modifier = modifier
                 )
             } ?: run {
                 Text(

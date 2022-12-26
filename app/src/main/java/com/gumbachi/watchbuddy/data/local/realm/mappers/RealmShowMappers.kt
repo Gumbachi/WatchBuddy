@@ -4,23 +4,11 @@ import com.gumbachi.watchbuddy.data.local.realm.objects.RealmShow
 import com.gumbachi.watchbuddy.model.api.anilist.AnilistShow
 import com.gumbachi.watchbuddy.model.api.custom.CustomShow
 import com.gumbachi.watchbuddy.model.api.tmdb.TMDBShow
-import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
-import com.gumbachi.watchbuddy.model.interfaces.Show
 import com.gumbachi.watchbuddy.model.toWatchbuddyID
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-
-//region RealmShow -> Other
-fun RealmShow.toShow(): Show {
-    val watchbuddyID = id.toWatchbuddyID()
-    return when (watchbuddyID.api) {
-        API.TMDB -> toTMDBShow()
-        API.Anilist -> toAnilistShow()
-        API.Custom -> toCustomShow()
-    }
-}
 
 fun RealmShow.toTMDBShow(): TMDBShow = TMDBShow(
     id = id.toWatchbuddyID().sourceID,
@@ -70,28 +58,3 @@ fun RealmShow.toCustomShow(): CustomShow = CustomShow(
     finishDate = finishDate?.let { LocalDate.fromEpochDays(it) },
     lastUpdate = lastUpdate?.let { Instant.fromEpochSeconds(it) }
 )
-//endregion
-
-//region Other -> RealmShow
-fun Show.toRealmShow(): RealmShow {
-    val show = this
-    return RealmShow().apply {
-        id = show.watchbuddyID.toString()
-        title = show.title
-        posterURL = show.posterURL
-        releaseDate = show.releaseDate?.toEpochDays()
-        watchStatus = show.watchStatus.toString()
-        userScore = show.userScore
-        userNotes = show.userNotes
-
-        episodesWatched = show.episodesWatched
-        totalEpisodes = show.totalEpisodes
-
-        startDate = show.startDate?.toEpochDays()
-        finishDate = show.finishDate?.toEpochDays()
-        lastUpdate = show.lastUpdate?.epochSeconds
-
-        releaseStatus = show.releaseStatus.toString()
-    }
-}
-//endregion

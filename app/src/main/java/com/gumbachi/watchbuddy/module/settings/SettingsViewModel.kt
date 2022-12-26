@@ -21,7 +21,7 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     data class SettingsScreenUiState(
-        val loading: Boolean = true,
+        val loading: Boolean = false,
         val error: Throwable? = null,
         val settings: UserSettings = UserSettings()
     )
@@ -30,6 +30,7 @@ class SettingsViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
+        _uiState.update { it.copy(loading = true) }
         Log.d(TAG, "Settings ViewModel Created")
         viewModelScope.launch {
             repository.getUserSettingsFlow().withIndex().collectLatest { (index, settings) ->

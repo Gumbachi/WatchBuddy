@@ -1,45 +1,56 @@
 package com.gumbachi.watchbuddy.module.details
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.enums.data.Source
 import com.gumbachi.watchbuddy.model.interfaces.Detailable
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class DetailsUiState(
-    val loading: Boolean = false,
-    val error: Throwable? = null,
-    val details: Detailable? = null
-)
+private const val TAG = "DetailsViewModel"
 
-class DetailsViewModel(
-    private val detailsRepository: DetailsRepository
-) : ViewModel() {
+class DetailsViewModel(private val repository: DetailsRepository) : ViewModel() {
+
+    data class DetailsScreenUiState(
+        val loading: Boolean = false,
+        val error: Throwable? = null,
+
+        val details: Detailable? = null
+    )
 
     init {
         Log.d("VM", "Details VM Created")
     }
 
-    var state by mutableStateOf(DetailsUiState())
+    private val _uiState = MutableStateFlow(DetailsScreenUiState())
+    val uiState = _uiState.asStateFlow()
 
-    fun loadDetails(id: WatchbuddyID) {
+    fun loadDetailsFor(id: WatchbuddyID) {
+        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
-            state = state.copy(loading = true)
-
-            val details = when (id.source) {
-                Source.TMDBMovie -> detailsRepository.getTMDBMovieDetails(id.sourceID)
-                Source.TMDBShow -> detailsRepository.getTMDBShowDetails(id.sourceID)
-                else -> TODO("Need to fill this in for other APIs")
-            }.onSuccess {
-                state = state.copy(loading = false, details = it, error = null)
-            }.onFailure {
-                state = state.copy(loading = false, details = null, error = it)
-                Log.e("Details", "Failed to load details: $it")
+            runCatching {
+                when (id.source) {
+                    Source.TMDBMovie -> repository.getTMDBMovieDetails(id.sourceID)
+                    Source.TMDBShow -> repository.getTMDBShowDetails(id.sourceID)
+                    Source.AnilistMovie -> repository.getAnilistMovieDetails(id.sourceID)
+                    Source.AnilistShow -> repository.getAnilistShowDetails(id.sourceID)
+                    else -> TODO("Need to fill this in for other APIs")
+                }
+            }.onSuccess { details ->
+                _uiState.update {
+                    it.copy(
+                        loading = false,
+                        details = details,
+                        error = null
+                    )
+                }
+            }.onFailure { error ->
+                Log.e(TAG, "Failed to load details: $error")
+                _uiState.update { it.copy(loading = false, error = error) }
             }
         }
     }

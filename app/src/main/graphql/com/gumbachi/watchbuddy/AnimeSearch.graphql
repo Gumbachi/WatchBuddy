@@ -23,7 +23,7 @@ query AnimeSearch($search: String) {
             popularity
             averageScore
             coverImage {
-                medium
+              extraLarge
             }
         }
     }

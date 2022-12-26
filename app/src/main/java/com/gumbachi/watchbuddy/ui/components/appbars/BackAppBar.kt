@@ -1,5 +1,6 @@
 package com.gumbachi.watchbuddy.ui.components.appbars
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -12,8 +13,9 @@ import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 @Composable
 fun WatchbuddyBackAppBar(
     title: String,
+    onBackClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    onBackClicked: () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
     colors: TopAppBarColors = TopAppBarDefaults.centerAlignedTopAppBarColors(
         scrolledContainerColor = MaterialTheme.colorScheme.surface
@@ -31,7 +33,8 @@ fun WatchbuddyBackAppBar(
             }
         },
         scrollBehavior = scrollBehavior,
-        colors = colors
+        colors = colors,
+        actions = actions
     )
 }
 
@@ -41,7 +44,7 @@ fun WatchbuddyBackAppBar(
 private fun ActionBarPreview(darkMode: Boolean = true) {
     WatchBuddyTheme(darkTheme = darkMode) {
         Surface {
-            WatchbuddyBackAppBar("Watchbuddy")
+            WatchbuddyBackAppBar("Watchbuddy", {})
         }
     }
 }

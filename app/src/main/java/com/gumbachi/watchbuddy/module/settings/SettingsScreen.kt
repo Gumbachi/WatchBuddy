@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import com.gumbachi.watchbuddy.ui.components.WatchbuddyScaffold
 import com.gumbachi.watchbuddy.ui.screens.settings.SettingsScreenOption
 import com.gumbachi.watchbuddy.ui.screens.settings.SettingsScreenSections
-import com.gumbachi.watchbuddy.ui.screens.settings.components.CardCustomizer
+import com.gumbachi.watchbuddy.ui.screens.settings.CardCustomizer
 import com.gumbachi.watchbuddy.ui.screens.settings.components.WatchStatusTabCustomizer
 import org.koin.androidx.compose.koinViewModel
 

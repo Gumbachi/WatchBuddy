@@ -45,12 +45,12 @@ fun TMDBMovieDetailsDTO.toTMDBMovieDetails(): TMDBMovieDetails {
     )
 }
 
-fun TMDBMovieDetailsDTO.toTMDBMovie(): TMDBMovie {
+fun TMDBMovieDetails.toTMDBMovie(): TMDBMovie {
     return TMDBMovie(
         id = id,
-        posterURL = poster_path?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: "",
+        posterURL = posterURL,
         title = title,
-        releaseDate = release_date.parseDateOrNull(),
-        runtime = runtime?.let { "${it / 60}h ${it % 60}m" } ?: "??h ??m",
+        releaseDate = releaseDate,
+        runtime = runtime
     )
 }

@@ -5,6 +5,13 @@ import com.gumbachi.watchbuddy.data.remote.tmdb.dto.movie.TMDBMovieDetailsDTO
 import com.gumbachi.watchbuddy.data.remote.tmdb.dto.movie.TMDBMovieSearchResponseDTO
 import com.gumbachi.watchbuddy.data.remote.tmdb.dto.show.TMDBShowDetailsDTO
 import com.gumbachi.watchbuddy.data.remote.tmdb.dto.show.TMDBShowSearchResponseDTO
+import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBMovieDetails
+import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBSearchResults
+import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBShowDetails
+import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovieDetails
+import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovieSearchResult
+import com.gumbachi.watchbuddy.model.api.tmdb.TMDBShowDetails
+import com.gumbachi.watchbuddy.model.api.tmdb.TMDBShowSearchResult
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -27,11 +34,11 @@ object Endpoints {
 }
 
 interface TMDBApi {
-    suspend fun searchMovies(query: String): TMDBMovieSearchResponseDTO
-    suspend fun getMovieDetails(id: Int): TMDBMovieDetailsDTO
+    suspend fun searchMovies(query: String): List<TMDBMovieSearchResult>
+    suspend fun getMovieDetails(id: Int): TMDBMovieDetails
 
-    suspend fun searchShows(query: String): TMDBShowSearchResponseDTO
-    suspend fun getShowDetails(id: Int): TMDBShowDetailsDTO
+    suspend fun searchShows(query: String): List<TMDBShowSearchResult>
+    suspend fun getShowDetails(id: Int): TMDBShowDetails
 }
 
 class TMDBApiImpl : TMDBApi {
@@ -51,33 +58,37 @@ class TMDBApiImpl : TMDBApi {
 
     private val tmdbKey = BuildConfig.TMDB_KEY
 
-    override suspend fun searchMovies(query: String): TMDBMovieSearchResponseDTO {
-        return client.get {
+    override suspend fun searchMovies(query: String): List<TMDBMovieSearchResult> {
+        val searchResponseDTO: TMDBMovieSearchResponseDTO =  client.get {
             url(Endpoints.SEARCH_MOVIES)
             parameter("query", query)
             parameter("api_key", tmdbKey)
         }.body()
+        return searchResponseDTO.toTMDBSearchResults()
     }
 
-    override suspend fun getMovieDetails(id: Int): TMDBMovieDetailsDTO {
-        return client.get {
+    override suspend fun getMovieDetails(id: Int): TMDBMovieDetails {
+        val detailsDTO: TMDBMovieDetailsDTO = client.get {
             url(Endpoints.movieDetails(id))
             parameter("api_key", tmdbKey)
         }.body()
+        return detailsDTO.toTMDBMovieDetails()
     }
 
-    override suspend fun searchShows(query: String): TMDBShowSearchResponseDTO {
-        return client.get {
+    override suspend fun searchShows(query: String): List<TMDBShowSearchResult> {
+        val searchResponseDTO: TMDBShowSearchResponseDTO = client.get {
             url(Endpoints.SEARCH_SHOWS)
             parameter("query", query)
             parameter("api_key", tmdbKey)
         }.body()
+        return searchResponseDTO.toTMDBSearchResults()
     }
 
-    override suspend fun getShowDetails(id: Int): TMDBShowDetailsDTO {
-        return client.get {
+    override suspend fun getShowDetails(id: Int): TMDBShowDetails {
+        val detailsDTO: TMDBShowDetailsDTO = client.get {
             url(Endpoints.showDetails(id))
             parameter("api_key", tmdbKey)
         }.body()
+        return detailsDTO.toTMDBShowDetails()
     }
 }

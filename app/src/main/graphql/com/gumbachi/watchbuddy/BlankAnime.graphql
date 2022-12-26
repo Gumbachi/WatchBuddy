@@ -1,7 +1,7 @@
 query BlankAnime($mediaId: Int) {
   Media(id: $mediaId) {
     coverImage {
-      medium
+      extraLarge
     }
     id
     format

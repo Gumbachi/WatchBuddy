@@ -1,12 +1,6 @@
 package com.gumbachi.watchbuddy.data.local.realm
 
 import android.util.Log
-import com.gumbachi.watchbuddy.data.local.realm.mappers.toMovie
-import com.gumbachi.watchbuddy.data.local.realm.mappers.toRealmMovie
-import com.gumbachi.watchbuddy.data.local.realm.mappers.toRealmShow
-import com.gumbachi.watchbuddy.data.local.realm.mappers.toRealmUserSettings
-import com.gumbachi.watchbuddy.data.local.realm.mappers.toShow
-import com.gumbachi.watchbuddy.data.local.realm.mappers.toUserSettings
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmMediaFilter
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmMovie
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmShow
@@ -85,14 +79,14 @@ class WatchbuddyDB : WatchbuddyDatabase {
 
         val settingsFlow = realm.query<RealmUserSettings>().first().asFlow()
         return settingsFlow.map {
-            it.obj?.toUserSettings() ?: UserSettings()
+            it.obj?.toWatchbuddyObject() ?: UserSettings()
         }
     }
 
     override suspend fun updateUserSettingsTo(settings: UserSettings) {
         realm.write {
             copyToRealm(
-                instance = settings.toRealmUserSettings(),
+                instance = settings.toRealmObject(),
                 updatePolicy = UpdatePolicy.ALL
             )
         }
@@ -105,13 +99,13 @@ class WatchbuddyDB : WatchbuddyDatabase {
         Log.d(TAG, "Getting Movies Flow")
         val movies = realm.query<RealmMovie>().asFlow()
         return movies.map { changes ->
-            changes.list.map { it.toMovie() }
+            changes.list.map { it.toWatchbuddyObject() }
         }
     }
 
     override suspend fun addMovie(movie: Movie) {
         realm.write {
-            copyToRealm(movie.toRealmMovie())
+            copyToRealm(movie.toRealmObject())
         }
         Log.d(TAG, "Movie Write Performed")
     }
@@ -126,7 +120,7 @@ class WatchbuddyDB : WatchbuddyDatabase {
     override suspend fun updateMovie(updatedMovie: Movie) {
         realm.write {
             copyToRealm(
-                instance = updatedMovie.toRealmMovie(),
+                instance = updatedMovie.toRealmObject(),
                 updatePolicy = UpdatePolicy.ALL
             )
         }
@@ -134,7 +128,7 @@ class WatchbuddyDB : WatchbuddyDatabase {
     }
 
     override suspend fun findMovieByID(id: WatchbuddyID): Movie? {
-        return realm.query<RealmMovie>("id == $0", "$id").first().find()?.toMovie()
+        return realm.query<RealmMovie>("id == $0", "$id").first().find()?.toWatchbuddyObject()
     }
     //endregion
 
@@ -143,13 +137,13 @@ class WatchbuddyDB : WatchbuddyDatabase {
         Log.d(TAG, "Getting Shows Flow")
         val shows = realm.query<RealmShow>().asFlow()
         return shows.map { changes ->
-            changes.list.map { it.toShow() }
+            changes.list.map { it.toWatchbuddyObject() }
         }
     }
 
     override suspend fun addShow(show: Show) {
         realm.write {
-            copyToRealm(show.toRealmShow())
+            copyToRealm(show.toRealmObject())
         }
         Log.d(TAG, "Show Write Performed")
     }
@@ -164,14 +158,14 @@ class WatchbuddyDB : WatchbuddyDatabase {
     override suspend fun updateShow(updatedShow: Show) {
         realm.write {
             copyToRealm(
-                instance = updatedShow.toRealmShow(),
+                instance = updatedShow.toRealmObject(),
                 updatePolicy = UpdatePolicy.ALL
             )
         }
     }
 
     override suspend fun findShowByID(id: WatchbuddyID): Show? {
-        return realm.query<RealmShow>("id == $0", "$id").first().find()?.toShow()
+        return realm.query<RealmShow>("id == $0", "$id").first().find()?.toWatchbuddyObject()
     }
     //endregion
 

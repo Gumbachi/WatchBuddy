@@ -4,23 +4,11 @@ import com.gumbachi.watchbuddy.data.local.realm.objects.RealmMovie
 import com.gumbachi.watchbuddy.model.api.anilist.AnilistMovie
 import com.gumbachi.watchbuddy.model.api.custom.CustomMovie
 import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovie
-import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
-import com.gumbachi.watchbuddy.model.interfaces.Movie
 import com.gumbachi.watchbuddy.model.toWatchbuddyID
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-
-//region RealmMovie -> Other
-fun RealmMovie.toMovie(): Movie {
-    val watchbuddyID = id.toWatchbuddyID()
-    return when (watchbuddyID.api) {
-        API.TMDB -> toTMDBMovie()
-        API.Anilist -> toAnilistMovie()
-        API.Custom -> toCustomMovie()
-    }
-}
 
 fun RealmMovie.toTMDBMovie(): TMDBMovie = TMDBMovie(
     id = id.toWatchbuddyID().sourceID,
@@ -64,24 +52,3 @@ fun RealmMovie.toCustomMovie(): CustomMovie = CustomMovie(
     finishDate = finishDate?.let { LocalDate.fromEpochDays(it) },
     lastUpdate = lastUpdate?.let { Instant.fromEpochSeconds(it) }
 )
-//endregion
-
-//region Other -> RealmMovie
-fun Movie.toRealmMovie(): RealmMovie {
-    val movie = this
-    return RealmMovie().apply {
-        id = movie.watchbuddyID.toString()
-        title = movie.title
-        posterURL = movie.posterURL
-        releaseDate = movie.releaseDate?.toEpochDays()
-        runtime = movie.runtime
-        watchStatus = movie.watchStatus.toString()
-        userScore = movie.userScore
-        userNotes = movie.userNotes
-        startDate = movie.startDate?.toEpochDays()
-        finishDate = movie.finishDate?.toEpochDays()
-        lastUpdate = movie.lastUpdate?.epochSeconds
-        releaseStatus = movie.releaseStatus.toString()
-    }
-}
-//endregion

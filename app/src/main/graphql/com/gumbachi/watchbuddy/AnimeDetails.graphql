@@ -1,7 +1,7 @@
 query AnimeDetails($mediaId: Int) {
   Media(id: $mediaId) {
     coverImage {
-      medium
+      extraLarge
     }
     id
     format

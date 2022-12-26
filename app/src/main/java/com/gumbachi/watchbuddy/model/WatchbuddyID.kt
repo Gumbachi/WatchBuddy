@@ -13,7 +13,6 @@ data class WatchbuddyID(
 ) {
     override fun toString() = "$api|$type|$sourceID"
     val source = Source.from(api, type)
-
 }
 
 fun String.toWatchbuddyID(): WatchbuddyID {

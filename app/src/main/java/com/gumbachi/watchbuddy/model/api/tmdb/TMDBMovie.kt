@@ -34,5 +34,4 @@ data class TMDBMovie(
         get() = userScore
 
     override fun clone() = copy() // pass parameters to create deep copy
-
 }

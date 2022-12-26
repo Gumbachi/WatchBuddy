@@ -1,15 +1,15 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 // Versions
-val composeVersion = "1.4.0-alpha02"
+val composeVersion = "1.4.0-alpha03"
 val composeNavVersion = "2.6.0-alpha04"
-val material2Version = "1.4.0-alpha02"
-val material3Version = "1.1.0-alpha02"
+val material2Version = "1.4.0-alpha03"
+val material3Version = "1.1.0-alpha03"
 val lifecycleVersion = "2.6.0-alpha03"
 val accompanistVersion = "0.28.0"
 val ktorVersion = "2.2.1"
-val koinAndroidVersion = "3.3.0"
-val apolloVersion = "3.7.2"
+val koinAndroidVersion = "3.4.0"
+val apolloVersion = "3.7.3"
 val realmVersion = "1.5.1"
 
 plugins {
@@ -18,7 +18,7 @@ plugins {
     id("kotlin-kapt")
     kotlin("plugin.serialization") version "1.7.20"
     id("io.realm.kotlin") version "1.5.1"
-    id("com.apollographql.apollo3").version("3.7.2")
+    id("com.apollographql.apollo3").version("3.7.3")
 }
 
 android {
@@ -76,6 +76,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
     implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.core:core-ktx:1.9.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.4")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
