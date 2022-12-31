@@ -24,8 +24,9 @@ class RealmShow() : RealmObject, WatchbuddyRealmObject {
     var watchStatus = ""
     var userScore = 0
     var userNotes = ""
+
     var episodesWatched = 0
-    var totalEpisodes = 0
+    var totalEpisodes: Int? = null
 
 
     var startDate: Int? = null

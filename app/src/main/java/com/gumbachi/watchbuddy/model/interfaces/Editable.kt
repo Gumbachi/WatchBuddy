@@ -8,6 +8,9 @@ interface Editable {
     val title: String
     val id: Int
 
+    var episodesWatched: Int
+    val totalEpisodes: Int?
+
     var userScore: Int
     var userNotes: String
     var watchStatus: WatchStatus

@@ -1,9 +1,9 @@
 package com.gumbachi.watchbuddy.data.local.realm.mappers
 
 import com.gumbachi.watchbuddy.data.local.realm.objects.RealmShow
-import com.gumbachi.watchbuddy.model.api.anilist.AnilistShow
+import com.gumbachi.watchbuddy.datasource.anilist.model.AnilistShow
 import com.gumbachi.watchbuddy.model.api.custom.CustomShow
-import com.gumbachi.watchbuddy.model.api.tmdb.TMDBShow
+import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBShow
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.toWatchbuddyID

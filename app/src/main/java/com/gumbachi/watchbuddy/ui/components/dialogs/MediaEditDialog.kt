@@ -18,6 +18,7 @@ import com.gumbachi.watchbuddy.model.enums.configuration.ScoreFormat
 import com.gumbachi.watchbuddy.model.interfaces.Editable
 import com.gumbachi.watchbuddy.ui.components.common.MaxWidthCenteredRow
 import com.gumbachi.watchbuddy.ui.components.dialogs.components.EditDialogItem
+import com.gumbachi.watchbuddy.ui.components.dialogs.components.ProgressSelector
 import com.gumbachi.watchbuddy.ui.components.dialogs.components.ScoreSelector
 import com.gumbachi.watchbuddy.ui.components.dialogs.components.WatchStatusSelector
 
@@ -71,6 +72,18 @@ fun MediaEditDialog(
                 scoreFormat = scoreFormat,
                 onScoreChange = { state.userScore = it }
             )
+        }
+
+        state.episodesWatched?.let {
+            EditDialogItem(label = "Progress") {
+                ProgressSelector(
+                    current = it,
+                    min = 0,
+                    max = state.totalEpisodes ?: Int.MAX_VALUE,
+                    onValueChange = { state.episodesWatched = it },
+                    suffix = " / ${state.totalEpisodes ?: "?"}"
+                )
+            }
         }
     }
 }

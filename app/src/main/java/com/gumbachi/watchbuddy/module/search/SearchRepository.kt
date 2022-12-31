@@ -2,12 +2,12 @@ package com.gumbachi.watchbuddy.module.search
 
 import android.util.Log
 import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDatabase
-import com.gumbachi.watchbuddy.data.remote.anilist.AnilistAPI
 import com.gumbachi.watchbuddy.data.remote.anilist.mappers.toAnilistMovie
 import com.gumbachi.watchbuddy.data.remote.anilist.mappers.toAnilistShow
-import com.gumbachi.watchbuddy.data.remote.tmdb.TMDBApi
-import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBMovie
-import com.gumbachi.watchbuddy.data.remote.tmdb.mappers.toTMDBShow
+import com.gumbachi.watchbuddy.datasource.anilist.api.AnilistAPI
+import com.gumbachi.watchbuddy.datasource.tmdb.api.TMDBApi
+import com.gumbachi.watchbuddy.datasource.tmdb.api.mappers.toTMDBMovie
+import com.gumbachi.watchbuddy.datasource.tmdb.api.mappers.toTMDBShow
 import com.gumbachi.watchbuddy.model.RecentSearch
 import com.gumbachi.watchbuddy.model.UserSettings
 import com.gumbachi.watchbuddy.model.WatchbuddyID
@@ -63,7 +63,7 @@ class SearchRepositoryImpl(
 
         val tmdbMovieResults = tmdb.searchMovies(query)
         val tmdbShowResults = tmdb.searchShows(query)
-        val anilistResults = anilist.searchAnime(query)
+        val anilistResults = anilist.searchMedia(query)
 
         return (tmdbMovieResults + tmdbShowResults + anilistResults)
             .sortedByDescending { it.weight() }

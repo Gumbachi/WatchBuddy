@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.gumbachi.watchbuddy.model.WatchbuddyID
 import com.gumbachi.watchbuddy.model.interfaces.Movie
-import com.gumbachi.watchbuddy.ui.components.MediaScreenScaffold
 import com.gumbachi.watchbuddy.ui.components.MediaTabRow
+import com.gumbachi.watchbuddy.ui.components.WatchbuddyScaffold
 import com.gumbachi.watchbuddy.ui.components.appbars.MediaAppBar
 import com.gumbachi.watchbuddy.ui.components.cards.MediaCard
 import com.gumbachi.watchbuddy.ui.components.dialogs.MediaEditDialog
@@ -62,7 +62,7 @@ fun MoviesScreen(
 //    }
 
 
-    MediaScreenScaffold(
+    WatchbuddyScaffold(
         isLoading = state.loading,
         error = state.error,
         topBar = {

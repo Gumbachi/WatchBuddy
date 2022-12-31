@@ -151,6 +151,11 @@ fun NavHostController.navigateToSearch() {
     if (currentDestination?.route == WatchbuddyDestination.SEARCH.route) return
     Log.d(TAG, "Navigating to Search")
     navigate(WatchbuddyDestination.SEARCH.route) {
+        popUpTo(graph.findStartDestination().id) {
+            saveState = true
+            inclusive = true
+        }
+        restoreState = true
         launchSingleTop = true
     }
 }

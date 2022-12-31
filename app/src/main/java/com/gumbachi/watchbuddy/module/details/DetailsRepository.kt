@@ -1,12 +1,12 @@
 package com.gumbachi.watchbuddy.module.details
 
 import android.util.Log
-import com.gumbachi.watchbuddy.data.remote.anilist.AnilistAPI
-import com.gumbachi.watchbuddy.data.remote.tmdb.TMDBApi
-import com.gumbachi.watchbuddy.model.api.anilist.AnilistMovieDetails
-import com.gumbachi.watchbuddy.model.api.anilist.AnilistShowDetails
-import com.gumbachi.watchbuddy.model.api.tmdb.TMDBMovieDetails
-import com.gumbachi.watchbuddy.model.api.tmdb.TMDBShowDetails
+import com.gumbachi.watchbuddy.datasource.anilist.api.AnilistAPI
+import com.gumbachi.watchbuddy.datasource.anilist.model.AnilistMovieDetails
+import com.gumbachi.watchbuddy.datasource.anilist.model.AnilistShowDetails
+import com.gumbachi.watchbuddy.datasource.tmdb.api.TMDBApi
+import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBMovieDetails
+import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBShowDetails
 
 private const val TAG = "DetailsRepository"
 
@@ -28,7 +28,7 @@ class DetailsRepositoryImpl(
 
     override suspend fun getTMDBMovieDetails(id: Int) = tmdb.getMovieDetails(id)
     override suspend fun getTMDBShowDetails(id: Int) = tmdb.getShowDetails(id)
-    override suspend fun getAnilistMovieDetails(id: Int) = anilist.getAnilistMovieDetails(id)
-    override suspend fun getAnilistShowDetails(id: Int) = anilist.getAnilistShowDetails(id)
+    override suspend fun getAnilistMovieDetails(id: Int) = anilist.getMovieDetails(id)
+    override suspend fun getAnilistShowDetails(id: Int) = anilist.getShowDetails(id)
 
 }

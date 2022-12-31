@@ -1,16 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
-// Versions
-val composeVersion = "1.4.0-alpha03"
-val composeNavVersion = "2.6.0-alpha04"
-val material2Version = "1.4.0-alpha03"
-val material3Version = "1.1.0-alpha03"
-val lifecycleVersion = "2.6.0-alpha03"
-val accompanistVersion = "0.28.0"
-val ktorVersion = "2.2.1"
-val koinAndroidVersion = "3.4.0"
-val apolloVersion = "3.7.3"
-val realmVersion = "1.5.1"
+
 
 plugins {
     id("com.android.application")
@@ -18,7 +8,8 @@ plugins {
     id("kotlin-kapt")
     kotlin("plugin.serialization") version "1.7.20"
     id("io.realm.kotlin") version "1.5.1"
-    id("com.apollographql.apollo3").version("3.7.3")
+    id("com.apollographql.apollo3") version "3.7.3"
+    id("com.google.devtools.ksp") version "1.7.20-1.0.8"
 }
 
 android {
@@ -63,36 +54,63 @@ android {
             resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
         }
     }
+
+    // Compose Destinations Related
+    applicationVariants.all {
+        kotlin.sourceSets {
+            getByName(name) {
+                kotlin.srcDir("build/generated/ksp/${name}/kotlin")
+            }
+        }
+    }
 }
 
+
+// Versions
+val composeVersion = "1.4.0-alpha03"
+val composeNavVersion = "2.6.0-alpha04"
+val material2Version = "1.4.0-alpha03"
+val material3Version = "1.1.0-alpha03"
+val lifecycleVersion = "2.5.1"
+val accompanistVersion = "0.28.0"
+val ktorVersion = "2.2.1"
+val koinAndroidVersion = "3.4.0"
+val apolloVersion = "3.7.3"
+val realmVersion = "1.5.1"
 
 
 dependencies {
 
+
+    // Compose Dependencies
+    val composeBOM = platform("androidx.compose:compose-bom:2022.12.00")
+    implementation(composeBOM)
+    testImplementation(composeBOM)
+    implementation("androidx.compose.material3:material3")
+
+    // Android Studio Preview support
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // UI Tests
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Icons
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // View Models
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
+
+
     // Koin
     implementation("io.insert-koin:koin-androidx-compose:$koinAndroidVersion")
 
-    // Android
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
-    implementation("androidx.activity:activity-compose:1.6.1")
-    implementation("androidx.core:core-ktx:1.9.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
+    // Compose Destinations
+    implementation("io.github.raamcosta.compose-destinations:core:1.7.30-beta")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.7.30-beta")
 
 
-    // Compose Dependencies
-    implementation("androidx.compose.ui:ui:$composeVersion")
-    implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
-    debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
-
-    // Extra Compose Dependencies
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
-    implementation("androidx.navigation:navigation-compose:$composeNavVersion")
-    
     // Accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-pager:$accompanistVersion")
@@ -100,14 +118,10 @@ dependencies {
     implementation("com.google.accompanist:accompanist-flowlayout:$accompanistVersion")
 
 
-    // Material Dependencies
-    implementation("androidx.compose.material:material-icons-extended:$material2Version")
-    implementation("androidx.compose.material3:material3:$material3Version")
-
     // Coil
     implementation("io.coil-kt:coil-compose:2.2.2")
 
-    // KTOR Client
+    // KTOR
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")

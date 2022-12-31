@@ -6,8 +6,9 @@ import com.gumbachi.watchbuddy.utils.toShowReleaseStatus
 import kotlinx.datetime.LocalDate
 
 interface Show: Media {
-    val totalEpisodes: Int
-    val episodesWatched: Int
+    override val totalEpisodes: Int?
+    override var episodesWatched: Int
+
     val endDate: LocalDate?
 
     override val releaseStatus: ReleaseStatus

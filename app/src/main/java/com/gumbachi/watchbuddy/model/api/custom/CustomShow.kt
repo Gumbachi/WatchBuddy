@@ -18,8 +18,8 @@ data class CustomShow(
     override var startDate: LocalDate?,
     override var finishDate: LocalDate?,
     override var lastUpdate: Instant?,
-    override val totalEpisodes: Int,
-    override val episodesWatched: Int,
+    override val totalEpisodes: Int?,
+    override var episodesWatched: Int,
     override val releaseDate: LocalDate?,
     override val endDate: LocalDate?,
 ) : Show {

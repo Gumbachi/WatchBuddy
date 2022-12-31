@@ -90,7 +90,7 @@ fun WatchStatusSelector(
 
 @Preview
 @Composable
-fun DefaultPreview(dark: Boolean = true) {
+private fun PreviewDark(dark: Boolean = true) {
     WatchBuddyTheme(darkTheme = dark) {
         Surface {
             WatchStatusSelector(
@@ -104,6 +104,6 @@ fun DefaultPreview(dark: Boolean = true) {
 
 @Preview
 @Composable
-fun PreviewLight() {
-    DefaultPreview(false)
+private fun PreviewLight() {
+    PreviewDark(false)
 }
