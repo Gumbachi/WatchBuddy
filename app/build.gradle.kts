@@ -9,7 +9,6 @@ plugins {
     kotlin("plugin.serialization") version "1.7.20"
     id("io.realm.kotlin") version "1.5.1"
     id("com.apollographql.apollo3") version "3.7.3"
-    id("com.google.devtools.ksp") version "1.7.20-1.0.8"
 }
 
 android {
@@ -99,25 +98,15 @@ dependencies {
     // Icons
     implementation("androidx.compose.material:material-icons-extended")
 
-    // View Models
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
-
-
     // Koin
     implementation("io.insert-koin:koin-androidx-compose:$koinAndroidVersion")
-
-    // Compose Destinations
-    implementation("io.github.raamcosta.compose-destinations:core:1.7.30-beta")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.7.30-beta")
-
 
     // Accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-pager:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-pager-indicators:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-flowlayout:$accompanistVersion")
-
-
+    
     // Coil
     implementation("io.coil-kt:coil-compose:2.2.2")
 

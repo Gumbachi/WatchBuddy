@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.datasource.tmdb.model
 
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
@@ -26,7 +26,7 @@ data class TMDBShow(
     override var finishDate: LocalDate? = null,
     override var lastUpdate: Instant? = null,
 ): Show {
-    override val watchbuddyID = WatchbuddyID(API.TMDB, MediaType.Show, id)
+    override val watchbuddyID = WatchBuddyID(API.TMDB, MediaType.Show, id)
 
     // Card Details
     override val primaryDetail = "TBD"

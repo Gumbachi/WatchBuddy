@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.datasource.tmdb.model
 
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
@@ -22,7 +22,7 @@ data class TMDBMovieSearchResult(
 
     ): SearchResult {
 
-    override val watchbuddyID = WatchbuddyID(API.TMDB, MediaType.Movie, id)
+    override val watchbuddyID = WatchBuddyID(API.TMDB, MediaType.Movie, id)
 
     override val primaryDetail = "Movie"
     override val secondaryDetail = releaseDate.toString()

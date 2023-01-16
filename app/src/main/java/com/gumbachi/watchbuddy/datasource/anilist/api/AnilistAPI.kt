@@ -5,10 +5,10 @@ import com.apollographql.apollo3.api.Optional
 import com.gumbachi.watchbuddy.AnimeDetailsQuery
 import com.gumbachi.watchbuddy.AnimeSearchQuery
 import com.gumbachi.watchbuddy.BlankAnimeQuery
-import com.gumbachi.watchbuddy.data.remote.anilist.mappers.toAnilistMovieDetails
-import com.gumbachi.watchbuddy.data.remote.anilist.mappers.toAnilistSearchResults
-import com.gumbachi.watchbuddy.data.remote.anilist.mappers.toAnilistShowDetails
 import com.gumbachi.watchbuddy.datasource.WatchBuddyDataSource
+import com.gumbachi.watchbuddy.datasource.anilist.api.mappers.toAnilistMovieDetails
+import com.gumbachi.watchbuddy.datasource.anilist.api.mappers.toAnilistSearchResults
+import com.gumbachi.watchbuddy.datasource.anilist.api.mappers.toAnilistShowDetails
 import com.gumbachi.watchbuddy.datasource.anilist.model.AnilistMovieDetails
 import com.gumbachi.watchbuddy.datasource.anilist.model.AnilistSearchResult
 import com.gumbachi.watchbuddy.datasource.anilist.model.AnilistShowDetails

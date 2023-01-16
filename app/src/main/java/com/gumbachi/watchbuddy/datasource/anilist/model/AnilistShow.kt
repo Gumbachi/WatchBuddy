@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.datasource.anilist.model
 
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
@@ -29,7 +29,7 @@ data class AnilistShow(
     override var finishDate: LocalDate? = null,
     override var lastUpdate: Instant? = null,
 ): Show {
-    override val watchbuddyID = WatchbuddyID(API.Anilist, MediaType.Show, id)
+    override val watchbuddyID = WatchBuddyID(API.Anilist, MediaType.Show, id)
 
     // Card Details
     override val primaryDetail = "TBD" // TODO

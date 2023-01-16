@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.model.api.custom
 
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
@@ -23,7 +23,7 @@ data class CustomMovie(
     override val runtime: String
 ): Movie {
 
-    override val watchbuddyID = WatchbuddyID(API.Custom, MediaType.Movie, id)
+    override val watchbuddyID = WatchBuddyID(API.Custom, MediaType.Movie, id)
 
     // Card Details
     override val primaryDetail = runtime

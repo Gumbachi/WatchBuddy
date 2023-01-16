@@ -14,14 +14,14 @@ fun String.parseDateOrNull(): LocalDate? {
     }
 }
 
-fun String.toInt(scoreFormat: ScoreFormat): Int {
-    val trimmed = removePrefix(scoreFormat.prefix).removeSuffix(scoreFormat.suffix)
+fun String.toInt(format: ScoreFormat): Int {
+    val trimmed = removePrefix(format.prefix).removeSuffix(format.suffix)
 
     if (trimmed.isBlank()) {
         return 0
     }
 
-    return  when (scoreFormat) {
+    return when (format) {
         ScoreFormat.Percentage -> trimmed.toInt()
         ScoreFormat.Integer -> trimmed.toInt() * 10
         ScoreFormat.Decimal -> (trimmed.toDouble() * 10).roundToInt()

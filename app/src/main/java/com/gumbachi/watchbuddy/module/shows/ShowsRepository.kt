@@ -1,11 +1,11 @@
 package com.gumbachi.watchbuddy.module.shows
 
 import android.util.Log
-import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDatabase
-import com.gumbachi.watchbuddy.model.UserSettings
+import com.gumbachi.watchbuddy.database.WatchbuddyDatabase
 import com.gumbachi.watchbuddy.model.Watchlist
 import com.gumbachi.watchbuddy.model.enums.configuration.Sort
 import com.gumbachi.watchbuddy.model.interfaces.Show
+import com.gumbachi.watchbuddy.model.settings.UserSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -39,7 +39,7 @@ class ShowsRepositoryImpl(
 
     override suspend fun getWatchListFlow(): Flow<Watchlist<Show>> {
         Log.d(TAG, "Fetching Watchlist...")
-        val currentSort = db.getUserSettingsFlow().first().showSort
+        val currentSort = db.getUserSettingsFlow().first().shows.sort
         return db.getShowsFlow().distinctUntilChanged().map {
             Watchlist(entries = it, sort = currentSort)
         }
@@ -63,6 +63,6 @@ class ShowsRepositoryImpl(
     override suspend fun updateShowSortTo(sort: Sort) {
         Log.d(TAG, "Updating show sort")
         val current = db.getUserSettingsFlow().first()
-        db.updateUserSettingsTo(current.copy(showSort = sort))
+        db.updateUserSettingsTo(current.copy(shows = current.shows.copy(sort = sort)))
     }
 }

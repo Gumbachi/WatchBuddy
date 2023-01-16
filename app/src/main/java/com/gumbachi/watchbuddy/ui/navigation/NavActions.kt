@@ -1,187 +1,123 @@
 package com.gumbachi.watchbuddy.ui.navigation
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CellTower
-import androidx.compose.material.icons.filled.Details
-import androidx.compose.material.icons.filled.Movie
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Tv
-import androidx.compose.material.icons.outlined.CellTower
-import androidx.compose.material.icons.outlined.Movie
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Tv
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import com.gumbachi.watchbuddy.model.WatchbuddyID
-import com.gumbachi.watchbuddy.model.enums.data.MediaType
+import androidx.navigation.NavController
+import com.gumbachi.watchbuddy.model.WatchBuddyID
+import com.gumbachi.watchbuddy.model.interfaces.Media
+import com.gumbachi.watchbuddy.model.interfaces.Movie
+import com.gumbachi.watchbuddy.model.interfaces.Show
+import com.gumbachi.watchbuddy.module.movies.navigateToMovies
+import com.gumbachi.watchbuddy.module.search.home.navigateToSearchHome
+import com.gumbachi.watchbuddy.module.settings.navigateToSettings
+import com.gumbachi.watchbuddy.module.shows.navigateToShows
 
 private const val TAG = "Navigation"
 
-sealed class WatchbuddyDestination(
-    val route: String,
+interface WatchBuddyDestination {
+    val route: String
+}
+
+sealed class WatchbuddyMainDestination(
+    override val route: String,
     val name: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-) {
-    object MOVIES : WatchbuddyDestination(
+): WatchBuddyDestination {
+    object Movies : WatchbuddyMainDestination(
         route = "movies?id={id}",
         name = "Movies",
         selectedIcon = Icons.Filled.Movie,
         unselectedIcon = Icons.Outlined.Movie,
     ) {
-        fun buildRoute(startID: WatchbuddyID?) =
+        fun buildRoute(startID: WatchBuddyID?) =
             if (startID == null) route else "movies?id=$startID"
+
+        override fun toString() = name
     }
 
-    object SHOWS : WatchbuddyDestination(
+    object Shows : WatchbuddyMainDestination(
         route = "shows?id={id}",
         name = "Shows",
         selectedIcon = Icons.Filled.Tv,
         unselectedIcon = Icons.Outlined.Tv,
     ) {
-        fun buildRoute(startID: WatchbuddyID?) =
+        fun buildRoute(startID: WatchBuddyID?) =
             if (startID == null) route else "shows?id=$startID"
+
+        override fun toString() = name
     }
 
-    object DISCOVER : WatchbuddyDestination(
+    object Discover : WatchbuddyMainDestination(
         route = "discover",
         name = "Discover",
         selectedIcon = Icons.Filled.CellTower,
         unselectedIcon = Icons.Outlined.CellTower,
-    )
+    ) {
+        override fun toString() = name
+    }
 
-    object SETTINGS : WatchbuddyDestination(
+    object Settings : WatchbuddyMainDestination(
         route = "settings",
         name = "Settings",
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings,
-    )
+    ) {
+        override fun toString() = name
+    }
 
-    object SEARCH : WatchbuddyDestination(
-        route = "search",
+    object SearchHome : WatchbuddyMainDestination(
+        route = "search/home",
         name = "Search",
         selectedIcon = Icons.Filled.Search,
         unselectedIcon = Icons.Outlined.Search,
+    ) {
+        override fun toString() = name
+    }
+
+    companion object {
+        fun values() = listOf(
+            Movies,
+            Shows,
+            SearchHome,
+            Settings
+        )
+
+        fun routes() = values().map { it.route }
+        fun valueOf(name: String) = values().find { it.name == name }!!
+    }
+}
+
+sealed class WatchBuddySecondaryDestination(
+    override val route: String,
+): WatchBuddyDestination {
+
+    object MediaSearch : WatchBuddySecondaryDestination(
+        route = "search/media",
     )
 
-    object DETAILS : WatchbuddyDestination(
-        route = "details/{wbid}",
-        name = "Details",
-        selectedIcon = Icons.Filled.Details,
-        unselectedIcon = Icons.Outlined.Search,
+    object Details : WatchBuddySecondaryDestination(
+        route = "details/{id}",
     ) {
-        fun buildRoute(id: WatchbuddyID) = "details/$id"
+        fun buildRoute(id: WatchBuddyID) = "details/$id"
     }
-
 }
 
-fun NavHostController.navigateTo(destination: WatchbuddyDestination) {
+fun NavController.navigateToMedia(media: Media) {
+    when (media) {
+        is Movie -> navigateToMovies(media.watchbuddyID)
+        is Show -> navigateToShows() // TODO
+    }
+}
+
+fun NavController.navigate(destination: WatchbuddyMainDestination) {
     when (destination) {
-        WatchbuddyDestination.MOVIES -> navigateToMovies()
-        WatchbuddyDestination.DISCOVER -> navigateToDiscover()
-        WatchbuddyDestination.SEARCH -> navigateToSearch()
-        WatchbuddyDestination.SETTINGS -> navigateToSettings()
-        WatchbuddyDestination.SHOWS -> navigateToShows()
-        else -> TODO("Do Something fancy with this or throw an error")
+        is WatchbuddyMainDestination.Movies -> navigateToMovies()
+        is WatchbuddyMainDestination.Shows -> navigateToShows()
+        is WatchbuddyMainDestination.SearchHome -> navigateToSearchHome()
+        is WatchbuddyMainDestination.Settings -> navigateToSettings()
+        else -> TODO("Discover Page NYI")
     }
-}
-
-
-fun NavHostController.navigateToMovies() {
-
-    if (currentDestination?.route == WatchbuddyDestination.MOVIES.route) return
-
-    Log.d(TAG, "Navigating to Movies")
-
-    navigate(WatchbuddyDestination.MOVIES.route) {
-        popUpTo(graph.findStartDestination().id) {
-            saveState = true
-            inclusive = true
-        }
-        restoreState = true
-        launchSingleTop = true
-    }
-}
-
-fun NavHostController.navigateToShows() {
-    if (currentDestination?.route == WatchbuddyDestination.SHOWS.route) return
-    Log.d(TAG, "Navigating to Shows")
-
-    navigate(WatchbuddyDestination.SHOWS.route) {
-        popUpTo(graph.findStartDestination().id) {
-            saveState = true
-            inclusive = true
-        }
-        restoreState = true
-        launchSingleTop = true
-    }
-}
-
-fun NavHostController.navigateToDiscover() {
-    if (currentDestination?.route == WatchbuddyDestination.DISCOVER.route) return
-    Log.d(TAG, "Navigating to Discover")
-    navigate(WatchbuddyDestination.DISCOVER.route) {
-        popUpTo(graph.findStartDestination().id) {
-            saveState = true
-            inclusive = true
-        }
-        restoreState = true
-        launchSingleTop = true
-    }
-}
-
-fun NavHostController.navigateToSettings() {
-    if (currentDestination?.route == WatchbuddyDestination.SETTINGS.route) return
-    Log.d(TAG, "Navigating to SETTINGS")
-    navigate(WatchbuddyDestination.SETTINGS.route) {
-        popUpTo(graph.findStartDestination().id) {
-            saveState = true
-            inclusive = true
-        }
-        restoreState = true
-        launchSingleTop = true
-    }
-}
-
-fun NavHostController.navigateToSearch() {
-    if (currentDestination?.route == WatchbuddyDestination.SEARCH.route) return
-    Log.d(TAG, "Navigating to Search")
-    navigate(WatchbuddyDestination.SEARCH.route) {
-        popUpTo(graph.findStartDestination().id) {
-            saveState = true
-            inclusive = true
-        }
-        restoreState = true
-        launchSingleTop = true
-    }
-}
-
-fun NavHostController.navigateToDetails(id: WatchbuddyID) {
-    WatchbuddyDestination.DETAILS.buildRoute(id = id).let { route ->
-        Log.d(TAG, "Navigating to $route")
-        navigate(route) {
-            launchSingleTop = true
-        }
-    }
-}
-
-fun NavHostController.navigateToMedia(id: WatchbuddyID) {
-    Log.d(TAG, "Navigating to Media $id")
-     when (id.type) {
-        MediaType.Movie -> WatchbuddyDestination.MOVIES.buildRoute(id)
-        MediaType.Show -> WatchbuddyDestination.SHOWS.buildRoute(id)
-    }.let { route ->
-         navigate(route) {
-             popUpTo(0) {
-                 saveState = true
-                 inclusive = true
-             }
-             restoreState = true
-             launchSingleTop = true
-         }
-     }
 }

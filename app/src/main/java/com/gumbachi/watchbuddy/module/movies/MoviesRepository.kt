@@ -1,16 +1,13 @@
 package com.gumbachi.watchbuddy.module.movies
 
 import android.util.Log
-import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDatabase
-import com.gumbachi.watchbuddy.model.UserSettings
+import com.gumbachi.watchbuddy.database.WatchbuddyDatabase
 import com.gumbachi.watchbuddy.model.Watchlist
 import com.gumbachi.watchbuddy.model.enums.configuration.Sort
+import com.gumbachi.watchbuddy.model.enums.configuration.SortOrder
 import com.gumbachi.watchbuddy.model.interfaces.Movie
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import com.gumbachi.watchbuddy.model.settings.UserSettings
+import kotlinx.coroutines.flow.*
 
 private const val TAG = "MovieRepository"
 
@@ -21,7 +18,7 @@ interface MoviesRepository {
     suspend fun addMovie(movie: Movie)
     suspend fun updateMovieTo(updatedMovie: Movie)
     suspend fun removeMovie(movie: Movie)
-    suspend fun updateMovieSortTo(sort: Sort)
+    suspend fun updateMovieSortTo(sort: Sort, order: SortOrder)
 
 }
 
@@ -40,11 +37,11 @@ class MoviesRepositoryImpl(
 
     override suspend fun getWatchlistFlow(): Flow<Watchlist<Movie>> {
         Log.d(TAG, "Fetching Watchlist...")
-        val sortFlow = db.getUserSettingsFlow().map { it.movieSort }
+        val sortFlow = db.getUserSettingsFlow().map { it.movies.sort to it.movies.sortOrder }
         val moviesFlow = db.getMoviesFlow()
 
-        return combine(moviesFlow, sortFlow) { movies, sort ->
-            Watchlist(entries = movies, sort = sort)
+        return combine(moviesFlow, sortFlow) { movies, (sort, order) ->
+            Watchlist(entries = movies, sort = sort, order = order)
         }.distinctUntilChanged()
     }
 
@@ -68,9 +65,10 @@ class MoviesRepositoryImpl(
         db.removeMovie(movie)
     }
 
-    override suspend fun updateMovieSortTo(sort: Sort) {
+    override suspend fun updateMovieSortTo(sort: Sort, order: SortOrder) {
         Log.d(TAG, "Updating movie sort")
         val current = db.getUserSettingsFlow().first()
-        db.updateUserSettingsTo(current.copy(movieSort = sort))
+        val movieSettings = current.movies
+        db.updateUserSettingsTo(current.copy(movies = movieSettings.copy(sort = sort, sortOrder = order)))
     }
 }

@@ -4,17 +4,14 @@ import android.util.Log
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gumbachi.watchbuddy.model.UserSettings
 import com.gumbachi.watchbuddy.model.Watchlist
 import com.gumbachi.watchbuddy.model.enums.configuration.Sort
+import com.gumbachi.watchbuddy.model.enums.configuration.SortOrder
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Show
+import com.gumbachi.watchbuddy.model.settings.UserSettings
 import com.gumbachi.watchbuddy.utils.displaySnackbar
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.withIndex
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 private const val TAG = "ShowsViewModel"
@@ -34,7 +31,7 @@ data class ShowsScreenUiState(
 ) {
 
     val shownTabs: List<WatchStatus>
-        get() = WatchStatus.values().toList() - settings.hiddenShowStatuses
+        get() = WatchStatus.values().toList() - settings.shows.hiddenStatuses
 
     val currentList: List<Show>
         get() = watchlist.getListFor(shownTabs[selectedTab])
@@ -55,7 +52,7 @@ class ShowsViewModel(private val repository: ShowsRepository) : ViewModel() {
                     Log.d(TAG, "Collected Settings State Change")
 
                     // Reset selected tab if tab layout changes to avoid index problems
-                    if (uiState.value.settings.hiddenMovieStatuses != settings.hiddenMovieStatuses) {
+                    if (uiState.value.settings.shows.hiddenStatuses != settings.shows.hiddenStatuses) {
                         _uiState.update { it.copy(selectedTab = 0) }
                     }
 
@@ -144,7 +141,21 @@ class ShowsViewModel(private val repository: ShowsRepository) : ViewModel() {
                     }
                 }
             }.onFailure { error ->
-                Log.e(TAG, "Couldn't Update Movie: $error")
+                Log.e(TAG, "Couldn't Update Show: $error")
+                displayError(error)
+            }
+        }
+    }
+
+    fun incrementShowProgress(show: Show) {
+
+        if (show.episodesWatched == show.totalEpisodes) return
+
+        viewModelScope.launch {
+            runCatching {
+                repository.updateShowTo(show.clone().apply { episodesWatched += 1 })
+            }.onFailure { error ->
+                Log.e(TAG, "Couldn't Update Show: $error")
                 displayError(error)
             }
         }
@@ -159,13 +170,13 @@ class ShowsViewModel(private val repository: ShowsRepository) : ViewModel() {
         _uiState.update { it.copy(showSortDialog = false) }
     }
 
-    fun updateShowSortTo(new: Sort) {
+    fun updateShowSort(sort: Sort, order: SortOrder) {
         hideSortDialog()
         viewModelScope.launch {
             runCatching {
-                repository.updateShowSortTo(new)
+                repository.updateShowSortTo(sort)
             }.onSuccess {
-                _uiState.update { it.copy(watchlist = it.watchlist.copy(sort = new)) }
+                _uiState.update { it.copy(watchlist = it.watchlist.copy(sort = sort, order = order)) }
             }.onFailure { error ->
                 Log.d(TAG, "Failed to update Show Sort method $error")
                 displayError(error)

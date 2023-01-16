@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.datasource.anilist.model
 
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
@@ -17,7 +17,7 @@ data class AnilistSearchResult(
 
 ): SearchResult {
 
-    override val watchbuddyID = WatchbuddyID(API.Anilist, type, id)
+    override val watchbuddyID = WatchBuddyID(API.Anilist, type, id)
 
     override val primaryDetail = type.toString()
     override val secondaryDetail = "TODO"

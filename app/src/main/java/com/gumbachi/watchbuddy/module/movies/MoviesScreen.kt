@@ -1,5 +1,6 @@
 package com.gumbachi.watchbuddy.module.movies
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,26 +11,20 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
+import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Movie
+import com.gumbachi.watchbuddy.ui.cards.MediaCard
 import com.gumbachi.watchbuddy.ui.components.MediaTabRow
 import com.gumbachi.watchbuddy.ui.components.WatchbuddyScaffold
-import com.gumbachi.watchbuddy.ui.components.appbars.MediaAppBar
-import com.gumbachi.watchbuddy.ui.components.cards.MediaCard
-import com.gumbachi.watchbuddy.ui.components.dialogs.MediaEditDialog
-import com.gumbachi.watchbuddy.ui.components.dialogs.MediaFilterDialog
-import com.gumbachi.watchbuddy.ui.components.dialogs.MediaSortDialog
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.gumbachi.watchbuddy.ui.dialog.FilterDialog
+import com.gumbachi.watchbuddy.ui.dialog.MediaEditDialog
+import com.gumbachi.watchbuddy.ui.dialog.MediaSortDialog
+import com.gumbachi.watchbuddy.ui.snackbars.showUndoSnackbar
+import com.gumbachi.watchbuddy.ui.toolbars.MediaAppBar
 import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "MoviesScreen"
@@ -39,41 +34,45 @@ private const val TAG = "MoviesScreen"
 fun MoviesScreen(
     modifier: Modifier = Modifier,
     viewModel: MoviesViewModel = koinViewModel(),
-    focusedItemId: WatchbuddyID? = null,
+    focusedItemId: WatchBuddyID? = null,
     navigateToDetails: (Movie) -> Unit = {}
 ) {
 
     val state by viewModel.uiState.collectAsState()
+    val cardSettings = state.settings.card
+    val movieSettings = state.settings.movies
 
     // Composables
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val gridState = rememberLazyGridState()
 
-//    LaunchedEffect(Unit) {
-//        Log.d(TAG,"Launched Effect")
-//        focusedItemId?.let {
-//            viewModel.findItemOnScreen(id = it) { index, tab ->
-//                viewModel.changeWatchStatusTab(tab)
-//                delay(500)
-//                gridState.animateScrollToItem(index)
-//            }
-//        }
-//    }
-
+    LaunchedEffect(Unit) {
+        focusedItemId?.let {
+            runCatching {
+                val movie = viewModel.findMovie(it)
+                viewModel.changeWatchStatusTab(state.shownTabs.indexOf(movie?.watchStatus))
+                val index = state.currentList.indexOf(movie)
+                gridState.animateScrollToItem(index)
+            }.onFailure {
+                Log.d(TAG, "Couldn't navigate to specific Movie: $it")
+            }
+        }
+    }
 
     WatchbuddyScaffold(
         isLoading = state.loading,
         error = state.error,
+        modifier = modifier,
         topBar = {
             MediaAppBar(
                 title = "Movies",
-                onSortClicked = { viewModel.showSortDialog() },
-                onFilterClicked = { viewModel.showFilterDialog() }
+                onSortClicked = viewModel::showSortDialog,
+                onFilterClicked = viewModel::showFilterDialog
             )
         },
         snackbarHost = {
-            SnackbarHost(snackbarHostState)
+            SnackbarHost(snackbar)
         },
         tabRow = {
             MediaTabRow(
@@ -83,71 +82,85 @@ fun MoviesScreen(
                     viewModel.changeWatchStatusTab(index)
                 }
             )
-        },
-        dialogs = {
-            // Sort Dialog
-            if (state.showSortDialog) {
-                MediaSortDialog(
-                    title = "Sort Movies By",
-                    defaultSort = state.settings.movieSort,
-                    onSortChange = {
-                        scope.launch {
-                            viewModel.updateMovieSortTo(it)
-                            delay(400L)
-                            gridState.animateScrollToItem(0)
-                        }
-                    },
-                )
-            }
-
-            // Filter Dialog
-            if (state.showFilterDialog) {
-                // temporary state
-                var filter by remember { mutableStateOf(state.filter) }
-                MediaFilterDialog(
-                    title = "Filter Movies",
-                    filter = filter,
-                    onFilterChange = { filter = it },
-                    onFinish = { viewModel.changeFilterTo(filter) },
-                    onCancel = { viewModel.hideFilterDialog() }
-                )
-            }
-
-            // Edit Dialog
-            state.movieUnderEdit?.let { movie ->
-                MediaEditDialog(
-                    title = movie.title,
-                    editable = movie.clone(),
-                    scoreFormat = state.settings.scoreFormat,
-                    onCancel = { viewModel.hideEditDialog() },
-                    onDelete = { viewModel.deleteMovie(snackbarHostState) },
-                    onSubmit = {
-                        viewModel.updateMovie(
-                            original = movie,
-                            updated = it as Movie,
-                            snackbarState = snackbarHostState
-                        )
-                    }
-                )
-            }
         }
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(state.settings.cardStyle.requiredWidth),
+            columns = GridCells.Adaptive(cardSettings.style.requiredWidth),
             horizontalArrangement = Arrangement.Center,
             state = gridState,
-            contentPadding = PaddingValues(4.dp)
+            contentPadding = PaddingValues(4.dp),
         ) {
-            items(state.currentList, key = { it.watchbuddyID.toString() }) { movie ->
+            items(
+                items = state.currentList,
+                key = { it.watchbuddyID.toString() }
+            ) { movie ->
+
+                val showScore = when (cardSettings.showScoreOnPlanned) {
+                    true -> true
+                    false -> movie.watchStatus != WatchStatus.Planning
+                }
+
                 MediaCard(
                     cardData = movie,
-                    cardStyle = state.settings.cardStyle,
-                    scoreFormat = state.settings.scoreFormat,
+                    cardStyle = cardSettings.style,
+                    scoreFormat = cardSettings.scoreFormat,
+                    showApi = cardSettings.showApi,
                     onClick = { navigateToDetails(movie) },
                     onLongClick = { viewModel.showEditDialogFor(movie) },
-                    modifier = Modifier.animateItemPlacement()
+                    modifier = Modifier.animateItemPlacement(),
+                    showScore = showScore
                 )
             }
         }
     }
+
+    MediaSortDialog(
+        showDialog = state.showSortDialog,
+        title = "Sort Movies",
+        defaultSort = movieSettings.sort,
+        defaultOrder = movieSettings.sortOrder,
+        onDismissRequest = viewModel::hideSortDialog,
+        onConfirm = viewModel::updateMovieSort,
+    )
+
+    MediaEditDialog(
+        title = "Edit Movie",
+        isMediaSaved = true,
+        media = state.movieUnderEdit,
+        scoreFormat = cardSettings.scoreFormat,
+        hiddenStatuses = movieSettings.hiddenStatuses,
+        showProgressSection = false,
+        onCancel = viewModel::hideEditDialog,
+        onDismissRequest = {},
+        onMediaDelete = {
+            state.movieUnderEdit?.let { original ->
+                viewModel.deleteMovie(original)
+                snackbar.showUndoSnackbar(
+                    scope = scope,
+                    message = "Movie Deleted",
+                    undo = { viewModel.undoDelete(original) }
+                )
+            }
+        },
+        onConfirm = { updated ->
+            state.movieUnderEdit?.let { original ->
+                viewModel.updateMovie(updated as Movie)
+                snackbar.showUndoSnackbar(
+                    scope = scope,
+                    message = "Movie Updated",
+                    undo = { viewModel.updateMovie(original) }
+                )
+            }
+        }
+    )
+
+    FilterDialog(
+        showDialog = state.showFilterDialog,
+        title = "Filter Movies",
+        initialFilter = state.filter,
+        onConfirm = viewModel::updateFilter,
+        onDismissRequest = viewModel::hideFilterDialog,
+        showMediaTypeFilters = false
+    )
+
 }

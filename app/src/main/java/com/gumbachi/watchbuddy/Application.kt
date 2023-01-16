@@ -2,8 +2,8 @@ package com.gumbachi.watchbuddy
 
 import android.app.Application
 import android.util.Log
-import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDB
-import com.gumbachi.watchbuddy.data.local.realm.WatchbuddyDatabase
+import com.gumbachi.watchbuddy.database.WatchbuddyDB
+import com.gumbachi.watchbuddy.database.WatchbuddyDatabase
 import com.gumbachi.watchbuddy.datasource.anilist.api.AnilistAPI
 import com.gumbachi.watchbuddy.datasource.tmdb.api.TMDBApi
 import com.gumbachi.watchbuddy.module.details.DetailsRepository
@@ -14,7 +14,8 @@ import com.gumbachi.watchbuddy.module.movies.MoviesRepositoryImpl
 import com.gumbachi.watchbuddy.module.movies.MoviesViewModel
 import com.gumbachi.watchbuddy.module.search.SearchRepository
 import com.gumbachi.watchbuddy.module.search.SearchRepositoryImpl
-import com.gumbachi.watchbuddy.module.search.SearchViewModel
+import com.gumbachi.watchbuddy.module.search.home.SearchHomeViewModel
+import com.gumbachi.watchbuddy.module.search.mediasearch.MediaSearchViewModel
 import com.gumbachi.watchbuddy.module.settings.SettingsRepository
 import com.gumbachi.watchbuddy.module.settings.SettingsRepositoryImpl
 import com.gumbachi.watchbuddy.module.settings.SettingsViewModel
@@ -45,7 +46,8 @@ val appModule = module {
     // ViewModels
     viewModelOf(::MoviesViewModel)
     viewModelOf(::ShowsViewModel)
-    viewModelOf(::SearchViewModel)
+    viewModelOf(::SearchHomeViewModel)
+    viewModelOf(::MediaSearchViewModel)
     viewModelOf(::SettingsViewModel)
     viewModelOf(::DetailsViewModel)
 }
@@ -56,7 +58,7 @@ class WatchbuddyApplication : Application(){
 
         Log.d("Application", "Starting KOIN")
 
-        startKoin{
+        startKoin {
             androidLogger()
             androidContext(this@WatchbuddyApplication)
             modules(appModule)

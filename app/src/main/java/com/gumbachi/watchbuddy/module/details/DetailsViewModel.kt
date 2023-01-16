@@ -3,7 +3,7 @@ package com.gumbachi.watchbuddy.module.details
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.Source
 import com.gumbachi.watchbuddy.model.interfaces.Detailable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +29,7 @@ class DetailsViewModel(private val repository: DetailsRepository) : ViewModel() 
     private val _uiState = MutableStateFlow(DetailsScreenUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun loadDetailsFor(id: WatchbuddyID) {
+    fun loadDetailsFor(id: WatchBuddyID) {
         _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
             runCatching {

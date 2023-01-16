@@ -21,16 +21,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.ui.components.WatchbuddyScaffold
-import com.gumbachi.watchbuddy.ui.components.appbars.WatchbuddyBackAppBar
-import com.gumbachi.watchbuddy.ui.components.cards.PosterImage
+import com.gumbachi.watchbuddy.ui.toolbars.WatchbuddyBackAppBar
+import com.gumbachi.watchbuddy.ui.cards.PosterImage
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewDetailsScreen(
-    watchbuddyID: WatchbuddyID,
+    watchbuddyID: WatchBuddyID,
     modifier: Modifier = Modifier,
     viewModel: DetailsViewModel = koinViewModel(),
     onBackClicked: () -> Unit = {},

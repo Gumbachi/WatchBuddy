@@ -1,11 +1,15 @@
 package com.gumbachi.watchbuddy.module.settings
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FormatSize
-import androidx.compose.material.icons.filled.MovieFilter
-import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material.icons.filled.PhotoSizeSelectActual
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Tv
+import androidx.compose.material.icons.filled.Tab
+import androidx.compose.material.icons.rounded.QuestionMark
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -13,11 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.gumbachi.watchbuddy.R
+import com.gumbachi.watchbuddy.module.settings.menus.*
 import com.gumbachi.watchbuddy.ui.components.WatchbuddyScaffold
-import com.gumbachi.watchbuddy.ui.screens.settings.SettingsScreenOption
-import com.gumbachi.watchbuddy.ui.screens.settings.SettingsScreenSections
-import com.gumbachi.watchbuddy.ui.screens.settings.CardCustomizer
-import com.gumbachi.watchbuddy.ui.screens.settings.components.WatchStatusTabCustomizer
+import com.gumbachi.watchbuddy.ui.settings.components.SettingsScreenItem
+import com.gumbachi.watchbuddy.ui.settings.components.SettingsScreenSection
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,67 +36,92 @@ fun SettingsScreen(
 
     val state by viewModel.uiState.collectAsState()
 
+    val generalSettings = state.settings.general
+    val cardSettings = state.settings.card
+    val tmdbSettings = state.settings.tmdb
+    val anilistSettings = state.settings.anilist
+
     WatchbuddyScaffold(
         isLoading = state.loading,
         error = state.error,
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 8.dp),
         topBar = {
             CenterAlignedTopAppBar(title = { Text(text = "Settings") })
         }
     ) {
-        SettingsScreenSections {
-            SettingsScreenOption(
-                title = "Card Customization",
-                description = "Customize card style, score format, and more",
-                icon = Icons.Filled.FormatSize
-            ) {
-                CardCustomizer(
-                    cardStyle = state.settings.cardStyle,
-                    onCardStyleChange = { viewModel.updateCardStyleTo(it) },
-                    scoreFormat = state.settings.scoreFormat,
-                    onScoreFormatChange = { viewModel.updateScoreFormatTo(it) }
-                )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            SettingsScreenSection(title = "App Style") {
+                SettingsScreenItem(
+                    title = "General Settings",
+                    icon = rememberVectorPainter(image = Icons.Filled.Settings)
+                ) {
+                    GeneralSettingMenu(
+                        settings = generalSettings,
+                        updateStartingDestination = viewModel::updateStartingDestination
+                    )
+                }
+
+                SettingsScreenItem(
+                    title = "Card Customization",
+                    icon = rememberVectorPainter(image = Icons.Filled.PhotoSizeSelectActual)
+                ) {
+                    CardSettingsMenu(
+                        settings = cardSettings,
+                        updateCardStyle = viewModel::updateCardStyle,
+                        updateScoreFormat = viewModel::updateScoreFormat,
+                        updateShowProgressOnPlanned = viewModel::updateShowProgressOnPlanned,
+                        updateShowScoreOnPlanned = viewModel::updateShowScoreOnPlanned,
+                        updateShowApiIndicator = viewModel::updateShowApiIndicator
+                    )
+                }
+
+                SettingsScreenItem(
+                    title = "Tab Customization",
+                    icon = rememberVectorPainter(image = Icons.Filled.Tab)
+                ) {
+                    TabCustomizationMenu(
+                        state = state,
+                        updateHiddenMovieStatuses = viewModel::updateHiddenMovieStatuses,
+                        updateHiddenShowStatuses = viewModel::updateHiddenShowStatuses
+                    )
+                }
             }
-            SettingsScreenOption(
-                title = "Movies Tabs Customization",
-                description = "Customize which tabs show for movies",
-                icon = Icons.Filled.MovieFilter
-            ) {
-                WatchStatusTabCustomizer(
-                    hiddenCategories = state.settings.hiddenMovieStatuses,
-                    onHiddenCategoriesChange = { viewModel.updateHiddenMovieStatuses(it.toSet()) }
-                )
+
+            SettingsScreenSection(title = "Source Settings") {
+                SettingsScreenItem(
+                    title = "TMDB Settings",
+                    icon = painterResource(id = R.drawable.tmdb),
+                ) {
+                    TMDBSettingsMenu(
+                        settings = tmdbSettings,
+                        updateEnabled = viewModel::updateTMDBEnabled,
+                        updateAdult = viewModel::updateTMDBIncludeAdult
+                    )
+                }
+                SettingsScreenItem(
+                    title = "AniList Settings",
+                    icon = painterResource(id = R.drawable.anilist),
+                ) {
+                    AnilistSettingsMenu(
+                        settings = anilistSettings,
+                        updateEnabled = viewModel::updateAnilistEnabled,
+                        updatePreferredLanguage = viewModel::updateAnilistPreferredLanguage,
+                        updateAdult = viewModel::updateAnilistIncludeAdult
+                    )
+                }
             }
-            SettingsScreenOption(
-                title = "Shows Tabs Customization",
-                description = "Customize which tabs show for shows",
-                icon = Icons.Filled.Tv
-            ) {
-                WatchStatusTabCustomizer(
-                    hiddenCategories = state.settings.hiddenMovieStatuses,
-                    onHiddenCategoriesChange = { viewModel.updateHiddenMovieStatuses(it.toSet()) }
-                )
-            }
-            SettingsScreenOption(
-                title = "TMDB Settings",
-                description = "Modify settings for TMDB Specific Media",
-                icon = Icons.Filled.Settings
-            ) {
-                Text("In Progress") // TODO Fill in about section
-            }
-            SettingsScreenOption(
-                title = "Anilist Settings",
-                description = "Modify settings for Anilist Specific Media",
-                icon = Icons.Filled.Settings
-            ) {
-                Text("In Progress") // TODO Fill in section
-            }
-            SettingsScreenOption(
-                title = "About",
-                description = "Extra information about WatchBuddy",
-                icon = Icons.Filled.QuestionMark
-            ) {
-                Text("In Progress") // TODO Fill in about section
+
+            SettingsScreenSection(title = "Other Settings") {
+                SettingsScreenItem(
+                    title = "About WatchBuddy",
+                    icon = rememberVectorPainter(image = Icons.Rounded.QuestionMark)
+                ) {
+                    Text(text = "About")
+                }
             }
         }
     }

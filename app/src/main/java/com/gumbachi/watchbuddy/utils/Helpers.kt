@@ -1,9 +1,8 @@
 package com.gumbachi.watchbuddy.utils
 
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import com.gumbachi.watchbuddy.model.enums.data.Source
+import androidx.compose.material3.*
+import androidx.compose.ui.graphics.Color
+import com.gumbachi.watchbuddy.ui.theme.getElevation
 
 suspend fun displaySnackbar(
     message: String,
@@ -21,4 +20,8 @@ suspend fun displaySnackbar(
         SnackbarResult.Dismissed -> onDismiss()
         SnackbarResult.ActionPerformed -> onAction()
     }
+}
+
+fun ColorScheme.surfaceColorAtElevation(level: Int): Color {
+    return this.surfaceColorAtElevation(getElevation(level))
 }

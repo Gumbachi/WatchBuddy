@@ -1,4 +1,4 @@
-package com.gumbachi.watchbuddy.data.remote.anilist.mappers
+package com.gumbachi.watchbuddy.datasource.anilist.api.mappers
 
 import android.util.Log
 import com.gumbachi.watchbuddy.model.enums.data.MediaType

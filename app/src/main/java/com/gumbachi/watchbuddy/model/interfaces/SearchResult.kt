@@ -1,12 +1,12 @@
 package com.gumbachi.watchbuddy.model.interfaces
 
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 
 interface SearchResult : Cardable {
 
     val id: Int
-    override val watchbuddyID: WatchbuddyID
+    override val watchbuddyID: WatchBuddyID
 
     override val title: String
     override val posterURL: String

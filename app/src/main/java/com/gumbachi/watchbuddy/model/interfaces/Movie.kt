@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.model.interfaces
 
-import com.gumbachi.watchbuddy.data.local.realm.objects.RealmMovie
+import com.gumbachi.watchbuddy.database.objects.RealmMovie
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.utils.toMovieReleaseStatus
@@ -20,7 +20,7 @@ interface Movie: Media {
     override val totalEpisodes: Int?
         get() = 1
 
-    override fun toRealmObject(): RealmMovie {
+    fun toRealmMovie(): RealmMovie {
         val movie = this
         return RealmMovie().apply {
             id = movie.watchbuddyID.toString()

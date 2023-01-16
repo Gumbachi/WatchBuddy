@@ -13,18 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Show
+import com.gumbachi.watchbuddy.ui.cards.MediaCard
 import com.gumbachi.watchbuddy.ui.components.MediaTabRow
 import com.gumbachi.watchbuddy.ui.components.WatchbuddyScaffold
-import com.gumbachi.watchbuddy.ui.components.appbars.MediaAppBar
-import com.gumbachi.watchbuddy.ui.components.cards.MediaCard
-import com.gumbachi.watchbuddy.ui.components.dialogs.MediaEditDialog
-import com.gumbachi.watchbuddy.ui.components.dialogs.MediaSortDialog
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.gumbachi.watchbuddy.ui.dialog.MediaEditDialog
+import com.gumbachi.watchbuddy.ui.dialog.MediaSortDialog
+import com.gumbachi.watchbuddy.ui.toolbars.MediaAppBar
 import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "ShowsScreen"
@@ -39,10 +37,10 @@ fun ShowsScreen(
 ) {
 
     val state by viewModel.uiState.collectAsState()
+    val cardSettings = state.settings.card
 
     // Composables
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     val gridState = rememberLazyGridState()
 
 
@@ -53,8 +51,8 @@ fun ShowsScreen(
         topBar = {
             MediaAppBar(
                 title = "Shows",
-                onSortClicked = navigateToSearch,
-                onFilterClicked = viewModel::showSortDialog
+                onSortClicked = viewModel::showSortDialog,
+                onFilterClicked = { /* TODO */ }
             )
         },
         snackbarHost = {
@@ -69,54 +67,72 @@ fun ShowsScreen(
                 }
             )
         },
-        dialogs = {
-            if (state.showSortDialog) {
-                MediaSortDialog(
-                    title = "Sort Shows By",
-                    defaultSort = state.settings.showSort,
-                    onSortChange = { newSort ->
-                        scope.launch {
-                            viewModel.updateShowSortTo(newSort)
-                            delay(400L)
-                            gridState.animateScrollToItem(0)
-                        }
-                    },
-                )
-            }
-
-            state.showUnderEdit?.let { show ->
-                MediaEditDialog(
-                    title = show.title,
-                    editable = show,
-                    scoreFormat = state.settings.scoreFormat,
-                    onCancel = { viewModel.hideEditDialog() },
-                    onDelete = { viewModel.deleteShow(snackbarState = snackbarHostState) },
-                    onSubmit = {
-                        viewModel.updateShow(
-                            original = show,
-                            updated = it as Show,
-                            snackbarState = snackbarHostState
-                        )
-                    }
-                )
-            }
-        },
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(state.settings.cardStyle.requiredWidth),
+            columns = GridCells.Adaptive(cardSettings.style.requiredWidth),
             horizontalArrangement = Arrangement.Center,
             state = gridState,
             contentPadding = PaddingValues(4.dp)
         ) {
-            items(state.currentList, key = { it.watchbuddyID.toString() }) { show ->
+            items(
+                items = state.currentList,
+                key = { it.watchbuddyID.toString() }
+            ) { show ->
+
+                val showScore = when (cardSettings.showScoreOnPlanned) {
+                    true -> true
+                    false -> show.watchStatus != WatchStatus.Planning
+                }
+
+                val showProgress = when (cardSettings.showProgressOnPlanned) {
+                    true -> true
+                    false -> show.watchStatus != WatchStatus.Planning
+                }
+
                 MediaCard(
                     cardData = show,
-                    cardStyle = state.settings.cardStyle,
-                    scoreFormat = state.settings.scoreFormat,
+                    cardStyle = cardSettings.style,
+                    scoreFormat = cardSettings.scoreFormat,
+                    showApi = cardSettings.showApi,
+                    showScore = showScore,
+                    showProgress = showProgress,
                     onClick = { navigateToDetails(show) },
-                    onLongClick = { viewModel.showEditDialogFor(show) }
+                    onLongClick = { viewModel.showEditDialogFor(show) },
+                    onProgressClick = { viewModel.incrementShowProgress(show) }
                 )
             }
         }
     }
+
+    //region Dialogs
+    MediaEditDialog(
+        title = "Edit Show",
+        isMediaSaved = true,
+        media = state.showUnderEdit,
+        scoreFormat = state.settings.card.scoreFormat,
+        hiddenStatuses = state.settings.shows.hiddenStatuses,
+        onCancel = { viewModel.hideEditDialog() },
+        onDismissRequest = {},
+        onMediaDelete = { viewModel.deleteShow(snackbarHostState) },
+        onConfirm = { updatedMedia ->
+            state.showUnderEdit?.let {
+                viewModel.updateShow(
+                    original = it,
+                    updated = updatedMedia as Show,
+                    snackbarState = snackbarHostState
+                )
+            }
+        }
+    )
+
+    MediaSortDialog(
+        showDialog = state.showSortDialog,
+        title = "Sort Shows",
+        defaultSort = state.settings.shows.sort,
+        defaultOrder = state.settings.shows.sortOrder,
+        onDismissRequest = viewModel::hideSortDialog,
+        onConfirm = viewModel::updateShowSort
+    )
+
+    //endregion
 }

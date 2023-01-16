@@ -1,4 +1,4 @@
-package com.gumbachi.watchbuddy.data.remote.anilist.mappers
+package com.gumbachi.watchbuddy.datasource.anilist.api.mappers
 
 import com.gumbachi.watchbuddy.BlankAnimeQuery
 import com.gumbachi.watchbuddy.datasource.anilist.model.AnilistMovie

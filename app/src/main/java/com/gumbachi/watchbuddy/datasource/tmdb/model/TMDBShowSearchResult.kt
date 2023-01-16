@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.datasource.tmdb.model
 
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
@@ -20,7 +20,7 @@ data class TMDBShowSearchResult(
 
     ): SearchResult {
 
-    override val watchbuddyID = WatchbuddyID(API.TMDB, MediaType.Show, id)
+    override val watchbuddyID = WatchBuddyID(API.TMDB, MediaType.Show, id)
 
     override val releaseStatus: ReleaseStatus
         get() = airDate.toShowReleaseStatus(endDate = null) // TODO: See if i can get an end date

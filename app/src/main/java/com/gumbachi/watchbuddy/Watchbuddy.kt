@@ -8,28 +8,25 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.gumbachi.watchbuddy.ui.components.appbars.WatchbuddyNavigationBar
-import com.gumbachi.watchbuddy.ui.navigation.WatchbuddyDestination
-import com.gumbachi.watchbuddy.ui.navigation.WatchbuddyNavGraph
-import com.gumbachi.watchbuddy.ui.navigation.navigateTo
+import com.gumbachi.watchbuddy.ui.navigation.WatchBuddyNavGraph
+import com.gumbachi.watchbuddy.ui.navigation.WatchbuddyMainDestination
+import com.gumbachi.watchbuddy.ui.navigation.navigate
+import com.gumbachi.watchbuddy.ui.toolbars.ComposeWatchBuddyNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Watchbuddy() {
-
-    val mainRoutes = listOf(
-        WatchbuddyDestination.MOVIES.route,
-        WatchbuddyDestination.SHOWS.route,
-        WatchbuddyDestination.SEARCH.route,
-        WatchbuddyDestination.DISCOVER.route,
-        WatchbuddyDestination.SETTINGS.route,
-    )
+fun Watchbuddy(
+    startDestination: WatchbuddyMainDestination
+) {
 
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
     val showBottomBar by remember {
-        derivedStateOf { currentBackStackEntry?.destination?.route in mainRoutes }
+        derivedStateOf {
+            val currentRoute = currentBackStackEntry?.destination?.route
+            currentRoute in WatchbuddyMainDestination.routes()
+        }
     }
 
     val systemUiController = rememberSystemUiController()
@@ -40,9 +37,9 @@ fun Watchbuddy() {
                 systemUiController.setNavigationBarColor(
                     MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
                 )
-                WatchbuddyNavigationBar(
+                ComposeWatchBuddyNavigationBar(
                     currentNavBackStackEntry = currentBackStackEntry,
-                    onClick = { navController.navigateTo(it) }
+                    onClick = { navController.navigate(it) }
                 )
             })
 
@@ -54,7 +51,10 @@ fun Watchbuddy() {
 
         }
     ) { paddingValues ->
-        WatchbuddyNavGraph(
+        println(paddingValues)
+
+        WatchBuddyNavGraph(
+            startDestination = startDestination,
             navController = navController,
             modifier = Modifier.padding(paddingValues)
         )

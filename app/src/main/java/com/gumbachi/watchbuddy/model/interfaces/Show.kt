@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.model.interfaces
 
-import com.gumbachi.watchbuddy.data.local.realm.objects.RealmShow
+import com.gumbachi.watchbuddy.database.objects.RealmShow
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.utils.toShowReleaseStatus
 import kotlinx.datetime.LocalDate
@@ -16,7 +16,7 @@ interface Show: Media {
 
     override fun clone(): Show
 
-    override fun toRealmObject(): RealmShow {
+    fun toRealmShow(): RealmShow {
         val show = this
         return RealmShow().apply {
             id = show.watchbuddyID.toString()

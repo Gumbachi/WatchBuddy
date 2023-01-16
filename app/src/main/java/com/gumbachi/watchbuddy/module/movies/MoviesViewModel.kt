@@ -5,21 +5,15 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gumbachi.watchbuddy.model.MediaFilter
-import com.gumbachi.watchbuddy.model.UserSettings
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.settings.UserSettings
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.Watchlist
 import com.gumbachi.watchbuddy.model.enums.configuration.Sort
+import com.gumbachi.watchbuddy.model.enums.configuration.SortOrder
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Movie
-import com.gumbachi.watchbuddy.utils.displaySnackbar
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.withIndex
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 private const val TAG = "MoviesViewModel"
@@ -42,7 +36,7 @@ data class MoviesScreenUiState(
 ) {
 
     val shownTabs: List<WatchStatus>
-        get() = WatchStatus.values().toList() - settings.hiddenMovieStatuses
+        get() = WatchStatus.values().toList() - settings.movies.hiddenStatuses
 
     val currentList: List<Movie>
         get() = watchlist.getListFor(shownTabs[selectedTab])
@@ -66,17 +60,20 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
     //region State Collectors
     private suspend fun beginCollectingWatchlist() {
         val moviesFlow = repository.getMoviesFlow()
-        val sortFlow = uiState.map { it.settings.movieSort }
+        val sortFlow = uiState.map { it.settings.movies.sort }
+        val orderFlow = uiState.map { it.settings.movies.sortOrder }
         val filterFlow = uiState.map { it.filter.predicate }
-        val watchlistFlow = combine(moviesFlow, sortFlow, filterFlow) { movies, sort, filter ->
-            Watchlist(
-                entries = movies,
-                sort = sort,
-                filter = filter
-            )
-        }
+        val watchlistFlow =
+            combine(moviesFlow, sortFlow, orderFlow, filterFlow) { movies, sort, order, filter ->
+                Watchlist(
+                    entries = movies,
+                    sort = sort,
+                    order = order,
+                    filter = filter
+                )
+            }
 
-        watchlistFlow.collectLatest { watchlist ->
+        watchlistFlow.distinctUntilChanged().collectLatest { watchlist ->
             Log.d(TAG, "Collected Watchlist State Change")
             _uiState.update { it.copy(watchlist = watchlist) }
         }
@@ -87,7 +84,7 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
             Log.d(TAG, "Collected Settings State Change")
 
             // Reset selected tab if tab layout changes to avoid index problems
-            if (uiState.value.settings.hiddenMovieStatuses != settings.hiddenMovieStatuses) {
+            if (uiState.value.settings.movies.hiddenStatuses != settings.movies.hiddenStatuses) {
                 _uiState.update { it.copy(selectedTab = 0) }
             }
 
@@ -122,50 +119,23 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
         _uiState.update { it.copy(movieUnderEdit = null) }
     }
 
-    fun deleteMovie(snackbarState: SnackbarHostState) {
-        val movieToDelete = uiState.value.movieUnderEdit ?: return
+    fun deleteMovie(movie: Movie) {
         hideEditDialog()
         viewModelScope.launch {
             runCatching {
-                repository.removeMovie(movieToDelete)
-            }.onSuccess {
-                displaySnackbar(
-                    message = "Deleted Movie",
-                    actionLabel = "UNDO",
-                    snackbarState = snackbarState,
-                ) {
-                    runCatching {
-                        repository.addMovie(movieToDelete)
-                    }.onFailure { error ->
-                        Log.e(TAG, "Couldn't Undo Movie Delete: $error")
-                        displayError(error)
-                    }
-                }
+                repository.removeMovie(movie)
             }.onFailure { error ->
-                Log.e(TAG, "Couldn't Delete Movie: $error")
+                Log.e(TAG, "Couldn't Delete ${movie.title}: $error")
                 displayError(error)
             }
         }
     }
 
-    fun updateMovie(original: Movie, updated: Movie, snackbarState: SnackbarHostState) {
+    fun updateMovie(updated: Movie) {
         hideEditDialog()
         viewModelScope.launch {
             runCatching {
                 repository.updateMovieTo(updated)
-            }.onSuccess {
-                displaySnackbar(
-                    message = "Movie Updated",
-                    actionLabel = "UNDO",
-                    snackbarState = snackbarState,
-                ) {
-                    runCatching {
-                        repository.updateMovieTo(original)
-                    }.onFailure { error ->
-                        Log.e(TAG, "Couldn't Undo Movie Update: $error")
-                        displayError(error)
-                    }
-                }
             }.onFailure { error ->
                 Log.e(TAG, "Couldn't Update Movie: $error")
                 displayError(error)
@@ -173,6 +143,16 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
         }
     }
 
+    fun undoDelete(movie: Movie) {
+        viewModelScope.launch {
+            runCatching {
+                repository.addMovie(movie)
+            }.onFailure { error ->
+                Log.e(TAG, "Couldn't Save Movie: $error")
+                displayError(error)
+            }
+        }
+    }
 
     //region Sort Dialog Functions
     fun showSortDialog() {
@@ -183,13 +163,13 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
         _uiState.update { it.copy(showSortDialog = false) }
     }
 
-    fun updateMovieSortTo(new: Sort) {
+    fun updateMovieSort(sort: Sort, order: SortOrder) {
         hideSortDialog()
         viewModelScope.launch {
             runCatching {
-                repository.updateMovieSortTo(new)
+                repository.updateMovieSortTo(sort, order)
             }.onSuccess {
-                _uiState.update { it.copy(watchlist = it.watchlist.copy(sort = new)) }
+                _uiState.update { it.copy(watchlist = it.watchlist.copy(sort = sort)) }
             }.onFailure { error ->
                 Log.d(TAG, "Failed to update sort method $error")
                 displayError(error)
@@ -207,7 +187,7 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
         _uiState.update { it.copy(showFilterDialog = false) }
     }
 
-    fun changeFilterTo(filter: MediaFilter) {
+    fun updateFilter(filter: MediaFilter) {
         viewModelScope.launch {
             hideFilterDialog()
             _uiState.update { it.copy(filter = filter) }
@@ -215,29 +195,7 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
     }
     //endregion
 
-    fun findItemOnScreen(
-        id: WatchbuddyID,
-        attempts: Int = 5,
-        delay: Long = 500L,
-        onFind: suspend (itemIndex: Int, tab: WatchStatus) -> Unit = { _, _ -> }
-    ) {
-        viewModelScope.launch {
-            for (attempt in 1..attempts) {
-                Log.d(TAG, "Attempt #$attempt")
-                if (uiState.value.watchlist.contains(id)) {
-                    Log.d(TAG, "Item found running onfind")
-                    uiState.value.watchlist.findByID(id)?.let { movie ->
-                        onFind(
-                            uiState.value.watchlist.getListFor(movie.watchStatus)
-                                .indexOf(movie),
-                            movie.watchStatus
-                        )
-                    }
-                    break
-                }
-                delay(delay)
-            }
-        }
-    }
+    suspend fun findMovie(id: WatchBuddyID) =
+        repository.getMoviesFlow().first().find { it.watchbuddyID == id }
 
 }

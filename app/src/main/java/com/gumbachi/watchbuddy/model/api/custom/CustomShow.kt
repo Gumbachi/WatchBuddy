@@ -1,6 +1,6 @@
 package com.gumbachi.watchbuddy.model.api.custom
 
-import com.gumbachi.watchbuddy.model.WatchbuddyID
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
@@ -24,7 +24,7 @@ data class CustomShow(
     override val endDate: LocalDate?,
 ) : Show {
     override fun clone(): Show = copy()
-    override val watchbuddyID = WatchbuddyID(API.Custom, MediaType.Show, id)
+    override val watchbuddyID = WatchBuddyID(API.Custom, MediaType.Show, id)
 
     // Card Details
     override val primaryDetail = "IDK Yet" // TODO: Find something to put here

@@ -27,12 +27,13 @@ fun WatchbuddyScaffold(
     Scaffold(
         modifier = modifier,
         topBar = topBar,
+        bottomBar = {},
         snackbarHost = snackbarHost
     ) { paddingValues ->
 
-
         AnimatedVisibility(
             visible = isLoading,
+            enter = fadeIn(),
             exit = fadeOut()
         ) {
             LoadingDisplay()
@@ -40,13 +41,12 @@ fun WatchbuddyScaffold(
 
         AnimatedVisibility(
             visible = !isLoading,
-            enter = fadeIn()
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
             // Main Content
             Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+                modifier = Modifier.fillMaxSize().padding(paddingValues)
             ) {
                 tabRow()
                 content()
