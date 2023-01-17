@@ -27,7 +27,6 @@ import com.gumbachi.watchbuddy.ui.screens.search.SearchResultLabel
 import com.gumbachi.watchbuddy.ui.snackbars.showUndoSnackbar
 import com.gumbachi.watchbuddy.ui.snackbars.showViewMediaSnackbar
 import com.gumbachi.watchbuddy.ui.toolbars.WatchBuddySearchAppBar
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -164,22 +163,20 @@ fun MediaSearchScreen(
             onDismissRequest = viewModel::hideEditDialog,
             onMediaDelete = {
                 viewModel.deleteMedia(media)
-                scope.launch {
-                    snackbar.showUndoSnackbar(
-                        message = "Deleted ${media.type}",
-                        undo = { viewModel.saveMedia(media) }
-                    )
-                }
+                snackbar.showUndoSnackbar(
+                    scope = scope,
+                    message = "Deleted ${media.type}",
+                    undo = { viewModel.saveMedia(media) }
+                )
             },
             onConfirm = {
                 if (isSaved) viewModel.updateMedia(it) else viewModel.saveMedia(it)
-                scope.launch {
-                    val message = if (isSaved) "Updated ${media.type}" else "Saved ${media.type}"
-                    snackbar.showViewMediaSnackbar(
-                        message = message,
-                        navigateToMedia = { navigateToMedia(it) }
-                    )
-                }
+                val message = if (isSaved) "Updated ${media.type}" else "Saved ${media.type}"
+                snackbar.showViewMediaSnackbar(
+                    scope = scope,
+                    message = message,
+                    navigateToMedia = { navigateToMedia(it) }
+                )
             }
         )
     }
