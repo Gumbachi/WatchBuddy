@@ -6,10 +6,10 @@ import androidx.compose.material3.SnackbarResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-fun SnackbarHostState.showUndoSnackbar(
+inline fun SnackbarHostState.showUndoSnackbar(
     scope: CoroutineScope,
     message: String,
-    undo: () -> Unit
+    crossinline undo: () -> Unit
 ) {
     scope.launch {
         val result = showSnackbar(

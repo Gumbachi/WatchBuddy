@@ -115,11 +115,7 @@ fun MediaSearchScreen(
         }
 
         if (state.searchState == null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.8F)
-            ) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 SearchPrompt(
                     modifier = Modifier
                         .align(Alignment.Center)

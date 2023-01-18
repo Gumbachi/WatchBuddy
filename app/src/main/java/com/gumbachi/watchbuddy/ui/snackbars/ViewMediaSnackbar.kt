@@ -6,10 +6,10 @@ import androidx.compose.material3.SnackbarResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-fun SnackbarHostState.showViewMediaSnackbar(
+inline fun SnackbarHostState.showViewMediaSnackbar(
     scope: CoroutineScope,
     message: String,
-    navigateToMedia: () -> Unit
+    crossinline navigateToMedia: () -> Unit
 ) {
     scope.launch {
         val result = showSnackbar(
