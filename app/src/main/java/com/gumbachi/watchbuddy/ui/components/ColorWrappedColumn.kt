@@ -20,7 +20,7 @@ import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 import com.gumbachi.watchbuddy.utils.surfaceColorAtElevation
 
 @Composable
-fun ColoredCardWrapper(
+fun ColorWrappedColumn(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(12.dp),
     padding: PaddingValues = PaddingValues(4.dp),
@@ -42,7 +42,7 @@ fun ColoredCardWrapper(
 private fun PreviewDark() {
     WatchBuddyTheme(darkTheme = true) {
         Surface {
-            ColoredCardWrapper {
+            ColorWrappedColumn {
                 Text(text = "howdy", style = MaterialTheme.typography.displayMedium)
             }
         }

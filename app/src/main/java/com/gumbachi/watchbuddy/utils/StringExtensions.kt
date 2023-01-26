@@ -3,15 +3,22 @@ package com.gumbachi.watchbuddy.utils
 import android.util.Log
 import com.gumbachi.watchbuddy.model.enums.configuration.ScoreFormat
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlin.math.roundToInt
 
-fun String.parseDateOrNull(): LocalDate? {
-    return try {
-        LocalDate.parse(this)
-    } catch (e: Exception) {
-        Log.w("DateParsing", "Couldn't parse ($this) into a valid date. Returning Null")
-        null
-    }
+fun String.parseDateOrNull(): LocalDate? = try {
+    LocalDate.parse(this)
+} catch (e: Exception) {
+    Log.w("DateParsing", "Couldn't parse ($this) into a valid date. Returning Null")
+    null
+}
+
+
+fun String.parseDateTimeOrNull(): LocalDateTime? = try {
+    LocalDateTime.parse(this)
+} catch (e: Exception) {
+    Log.w("DateParsing", "Couldn't parse ($this) into a valid datetime. Returning Null")
+    null
 }
 
 fun String.toInt(format: ScoreFormat): Int {

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.Source
-import com.gumbachi.watchbuddy.model.interfaces.Detailable
+import com.gumbachi.watchbuddy.model.interfaces.MediaDetails
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,7 +19,7 @@ class DetailsViewModel(private val repository: DetailsRepository) : ViewModel() 
         val loading: Boolean = false,
         val error: Throwable? = null,
 
-        val details: Detailable? = null
+        val details: MediaDetails? = null
     )
 
     init {
@@ -49,6 +49,7 @@ class DetailsViewModel(private val repository: DetailsRepository) : ViewModel() 
                     )
                 }
             }.onFailure { error ->
+                error.printStackTrace()
                 Log.e(TAG, "Failed to load details: $error")
                 _uiState.update { it.copy(loading = false, error = error) }
             }

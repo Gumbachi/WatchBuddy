@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.module.settings.SettingsViewModel
-import com.gumbachi.watchbuddy.ui.components.ColoredCardWrapper
+import com.gumbachi.watchbuddy.ui.components.ColorWrappedColumn
 import com.gumbachi.watchbuddy.ui.components.SeparatorSelector
 import com.gumbachi.watchbuddy.ui.settings.components.SettingsSwitch
 
@@ -34,7 +34,7 @@ fun TabCustomizationMenu(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(text = "Movie Tabs", style = MaterialTheme.typography.titleMedium)
-        ColoredCardWrapper {
+        ColorWrappedColumn {
             SeparatorSelector(
                 topLabel = "Shown",
                 topItems = WatchStatus.values().toList() - hiddenMovieTabs,
@@ -49,7 +49,7 @@ fun TabCustomizationMenu(
         }
 
         Text(text = "Shows Tabs", style = MaterialTheme.typography.titleMedium)
-        ColoredCardWrapper {
+        ColorWrappedColumn {
             SeparatorSelector(
                 topLabel = "Shown",
                 topItems = WatchStatus.values().toList() - hiddenShowTabs,

@@ -25,3 +25,8 @@ suspend fun displaySnackbar(
 fun ColorScheme.surfaceColorAtElevation(level: Int): Color {
     return this.surfaceColorAtElevation(getElevation(level))
 }
+
+fun String.toTMDBImageURL() = "https://www.themoviedb.org/t/p/w500$this"
+fun String?.toTMDBImageURLOrBlank() = this?.let { "https://www.themoviedb.org/t/p/w500$it" } ?: ""
+
+fun Int?.formatRuntime() = this?.let { "${it / 60}h ${it % 60}m" } ?: "??h ??m"

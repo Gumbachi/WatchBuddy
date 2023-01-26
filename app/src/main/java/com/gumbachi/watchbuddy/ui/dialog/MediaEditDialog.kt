@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.dp
 import com.gumbachi.watchbuddy.model.enums.configuration.ScoreFormat
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Media
+import com.gumbachi.watchbuddy.ui.components.NumberSelector
 import com.gumbachi.watchbuddy.ui.components.SingleSelectDropdown
 import com.gumbachi.watchbuddy.ui.components.SpacedSection
-import com.gumbachi.watchbuddy.ui.dialogs.components.NumberSelector
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 import com.gumbachi.watchbuddy.utils.MediaDummy
 import com.gumbachi.watchbuddy.utils.toInt

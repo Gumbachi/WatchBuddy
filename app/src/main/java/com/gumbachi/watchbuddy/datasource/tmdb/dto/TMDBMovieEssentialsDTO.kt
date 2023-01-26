@@ -1,23 +1,17 @@
-package com.gumbachi.watchbuddy.datasource.tmdb.api.dto.movie
+package com.gumbachi.watchbuddy.datasource.tmdb.dto
 
 import kotlinx.serialization.Serializable
 
+/**Class with data required to construct an watchbuddy object*/
 @Serializable
-data class TMDBMovieDetailsDTO(
+data class TMDBMovieEssentialsDTO(
 
     val id: Int,
     val title: String,
 
-    val backdrop_path: String? = null,
     val poster_path: String? = null,
     val release_date: String = "",
     val adult: Boolean = false,
-    val budget: Long = 0,
-    val revenue: Long = 0,
-    val video: Boolean = false,
-    val vote_count: Long = 0,
-    val overview: String? = null,
-    val tagline: String? = null,
     val runtime: Int? = null,
     val status: String = "",
     val popularity: Double = 0.0,

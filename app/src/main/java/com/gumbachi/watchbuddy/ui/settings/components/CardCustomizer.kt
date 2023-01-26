@@ -16,7 +16,7 @@ import com.gumbachi.watchbuddy.model.enums.configuration.ScoreFormat
 import com.gumbachi.watchbuddy.model.enums.data.API
 import com.gumbachi.watchbuddy.ui.cards.CompactMediaCard
 import com.gumbachi.watchbuddy.ui.cards.NormalMediaCard
-import com.gumbachi.watchbuddy.ui.components.ColoredCardWrapper
+import com.gumbachi.watchbuddy.ui.components.ColorWrappedColumn
 
 @Composable
 fun CardCustomizer(
@@ -63,7 +63,7 @@ fun CardCustomizer(
         }
     }
 
-    ColoredCardWrapper {
+    ColorWrappedColumn {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Row(
                 modifier = Modifier

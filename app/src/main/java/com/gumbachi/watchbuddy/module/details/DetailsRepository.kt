@@ -4,7 +4,7 @@ import android.util.Log
 import com.gumbachi.watchbuddy.datasource.anilist.api.AnilistAPI
 import com.gumbachi.watchbuddy.datasource.anilist.model.AnilistMovieDetails
 import com.gumbachi.watchbuddy.datasource.anilist.model.AnilistShowDetails
-import com.gumbachi.watchbuddy.datasource.tmdb.api.TMDBApi
+import com.gumbachi.watchbuddy.datasource.tmdb.TMDBApi
 import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBMovieDetails
 import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBShowDetails
 

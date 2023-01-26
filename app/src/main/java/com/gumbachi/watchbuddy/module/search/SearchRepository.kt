@@ -2,29 +2,16 @@ package com.gumbachi.watchbuddy.module.search
 
 import android.util.Log
 import com.gumbachi.watchbuddy.database.WatchbuddyDatabase
+import com.gumbachi.watchbuddy.datasource.anilist.api.AnilistAPI
 import com.gumbachi.watchbuddy.datasource.anilist.api.mappers.toAnilistMovie
 import com.gumbachi.watchbuddy.datasource.anilist.api.mappers.toAnilistShow
-import com.gumbachi.watchbuddy.datasource.anilist.api.AnilistAPI
-import com.gumbachi.watchbuddy.datasource.tmdb.api.TMDBApi
-import com.gumbachi.watchbuddy.datasource.tmdb.api.mappers.toTMDBMovie
-import com.gumbachi.watchbuddy.datasource.tmdb.api.mappers.toTMDBShow
+import com.gumbachi.watchbuddy.datasource.tmdb.TMDBApi
 import com.gumbachi.watchbuddy.model.RecentSearch
-import com.gumbachi.watchbuddy.model.settings.UserSettings
 import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.model.enums.data.Source
-import com.gumbachi.watchbuddy.model.interfaces.Cardable
-import com.gumbachi.watchbuddy.model.interfaces.Media
-import com.gumbachi.watchbuddy.model.interfaces.Movie
-import com.gumbachi.watchbuddy.model.interfaces.SearchResult
-import com.gumbachi.watchbuddy.model.interfaces.Show
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.update
+import com.gumbachi.watchbuddy.model.interfaces.*
+import com.gumbachi.watchbuddy.model.settings.UserSettings
+import kotlinx.coroutines.flow.*
 
 private const val TAG = "SearchRepository"
 
@@ -114,8 +101,8 @@ class SearchRepositoryImpl(
 
     override suspend fun generateBlankMedia(searchResult: SearchResult): Media {
         return when (searchResult.watchbuddyID.source) {
-            Source.TMDBMovie -> tmdb.getMovieDetails(searchResult.id).toTMDBMovie()
-            Source.TMDBShow -> tmdb.getShowDetails(searchResult.id).toTMDBShow()
+            Source.TMDBMovie -> tmdb.getBlankMovie(searchResult.id)
+            Source.TMDBShow -> tmdb.getBlankShow(searchResult.id)
             Source.AnilistMovie -> anilist.getRequiredAnimeDetails(searchResult.id).toAnilistMovie()
             Source.AnilistShow -> anilist.getRequiredAnimeDetails(searchResult.id).toAnilistShow()
             else -> TODO("Add Support for custom items")

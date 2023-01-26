@@ -10,5 +10,3 @@ enum class ScoreFormat(
     Decimal(example = "8.3"),
     Percentage(example = "83%", suffix = "%");
 }
-
-

@@ -10,17 +10,12 @@ import kotlinx.datetime.LocalDate
 
 data class TMDBMovieSearchResult(
     override val id: Int,
-
     override val title: String,
     override val averageScore: Int,
-
     override val posterURL: String,
     val releaseDate: LocalDate?,
-
-    private val popularity: Double,
-
-
-    ): SearchResult {
+    private val popularity: Double
+) : SearchResult {
 
     override val watchbuddyID = WatchBuddyID(API.TMDB, MediaType.Movie, id)
 

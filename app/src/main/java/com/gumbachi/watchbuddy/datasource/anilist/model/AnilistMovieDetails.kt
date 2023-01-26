@@ -1,16 +1,16 @@
 package com.gumbachi.watchbuddy.datasource.anilist.model
 
-import com.gumbachi.watchbuddy.model.interfaces.Detailable
+import com.gumbachi.watchbuddy.model.interfaces.MediaDetails
 
 data class AnilistMovieDetails(
     override val id: Int,
     override val title: String,
     override val posterURL: String,
-    override val backdropURL: String,
-    override val overview: String?
-) : Detailable {
+    val backdropURL: String,
+    val overview: String?
+) : MediaDetails {
 
-    override fun shortDetails() = listOf(
+    fun shortDetails() = listOf(
         "Anilist ID: $id"
     )
 }

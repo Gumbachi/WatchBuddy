@@ -1,4 +1,4 @@
-package com.gumbachi.watchbuddy.ui.dialogs.components
+package com.gumbachi.watchbuddy.ui.components
 
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
