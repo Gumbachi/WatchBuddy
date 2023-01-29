@@ -1,7 +1,10 @@
 package com.gumbachi.watchbuddy.ui.details.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material3.*
@@ -13,9 +16,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
+import com.gumbachi.watchbuddy.utils.surfaceColorAtElevation
 
 @Composable
-fun DetailsCreditCard(
+fun DetailsPersonCard(
     imageURL: String,
     contentDescription: String,
     primaryDetail: String,
@@ -23,8 +27,10 @@ fun DetailsCreditCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.width(150.dp).height(260.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        modifier = modifier.size(150.dp, 260.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3)
+        )
     ) {
         SubcomposeAsyncImage(
             model = imageURL,
@@ -41,9 +47,7 @@ fun DetailsCreditCard(
             },
             contentDescription = contentDescription,
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(150.dp, 200.dp)
-//                .clip(RoundedCornerShape(12.dp)),
+            modifier = Modifier.size(150.dp, 200.dp)
         )
         Column(modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 4.dp)) {
             Text(text = primaryDetail, style = MaterialTheme.typography.titleSmall)

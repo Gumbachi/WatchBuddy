@@ -104,7 +104,7 @@ data class TMDBMovieDetails(
 
     data class Image(
         val url: String,
-        val score: Long,
+        val score: Double,
         val votes: Long
     )
 

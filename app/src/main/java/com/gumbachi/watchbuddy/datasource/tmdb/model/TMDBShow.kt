@@ -25,6 +25,11 @@ data class TMDBShow(
     override var startDate: LocalDate? = null,
     override var finishDate: LocalDate? = null,
     override var lastUpdate: Instant? = null,
+
+    // potential details
+    val episodeRuntime: String = "TODO",
+    val lastAirDate: LocalDate? = null
+
 ): Show {
     override val watchbuddyID = WatchBuddyID(API.TMDB, MediaType.Show, id)
 
@@ -32,7 +37,7 @@ data class TMDBShow(
     override val primaryDetail = "TBD"
     override val secondaryDetail = "Aired $releaseDate"
     override val progress
-        get() = "$episodesWatched / $totalEpisodes"
+        get() = "$episodesWatched / ${totalEpisodes ?: "??"}"
     override val score: Int
         get() = userScore
 

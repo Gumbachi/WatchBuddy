@@ -8,7 +8,6 @@ import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBShow
 import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBShowDetails
 import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBShowSearchResult
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
-import com.gumbachi.watchbuddy.utils.MediaDummy.NormalShow.totalEpisodes
 import com.gumbachi.watchbuddy.utils.parseDateOrNull
 import com.gumbachi.watchbuddy.utils.parseDateTimeOrNull
 import com.gumbachi.watchbuddy.utils.toTMDBImageURL
@@ -26,6 +25,16 @@ fun TMDBShowSearchResponseDTO.Result.toTMDBShowSearchResult() = TMDBShowSearchRe
 
 fun TMDBShowSearchResponseDTO.toTMDBSearchResults() = results.map { it.toTMDBShowSearchResult() }
 
+fun TMDBShowEssentialsDTO.toTMDBShow() = TMDBShow(
+    id = id,
+    posterURL = poster_path.toTMDBImageURLOrBlank(),
+    title = this.name,
+    releaseDate = first_air_date.parseDateOrNull(),
+    endDate = last_air_date.parseDateOrNull(),
+    totalEpisodes = number_of_episodes,
+    episodeRuntime = "${episode_run_time.average().toInt()}m",
+)
+
 fun TMDBShowDetailsDTO.toTMDBShowDetails() = TMDBShowDetails(
     id = id,
     title = name,
@@ -37,7 +46,6 @@ fun TMDBShowDetailsDTO.toTMDBShowDetails() = TMDBShowDetails(
             name = it.name,
             credit_id = it.credit_id,
             profile_path = it.profile_path.toTMDBImageURLOrBlank()
-
         )
     },
     episodeRunTime = episode_run_time,
@@ -192,11 +200,4 @@ fun TMDBShowDetailsDTO.toTMDBShowDetails() = TMDBShowDetails(
     }
 )
 
-fun TMDBShowEssentialsDTO.toTMDBShow() = TMDBShow(
-    id = id,
-    posterURL = poster_path.toTMDBImageURLOrBlank(),
-    title = this.name,
-    releaseDate = first_air_date.parseDateOrNull(),
-    endDate = last_air_date.parseDateOrNull(),
-    totalEpisodes = totalEpisodes,
-)
+

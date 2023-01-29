@@ -1,5 +1,6 @@
 package com.gumbachi.watchbuddy.ui.details.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -12,7 +13,8 @@ import coil.compose.SubcomposeAsyncImage
 @Composable
 fun DetailsBackdropBanner(
     imageURL: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     SubcomposeAsyncImage(
         model = imageURL,
@@ -21,6 +23,7 @@ fun DetailsBackdropBanner(
         alignment = Alignment.TopCenter,
         modifier = modifier
             .fillMaxWidth()
-            .height(200.dp),
+            .height(200.dp)
+            .clickable { onClick() },
     )
 }

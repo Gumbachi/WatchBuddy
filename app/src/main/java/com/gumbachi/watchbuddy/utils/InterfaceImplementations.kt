@@ -11,7 +11,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 
 sealed class MediaDummy: Media {
-    object NormalShow: MediaDummy() {
+    class NormalShow: MediaDummy() {
         override val watchbuddyID = WatchBuddyID(API.TMDB, MediaType.Show, -1)
         override fun clone(): Media = throw Exception("No")
         override val title = "Movie / Show Title"
@@ -35,7 +35,7 @@ sealed class MediaDummy: Media {
 
 
 sealed class CardableImpl: Cardable {
-    object SettingsExample: CardableImpl() {
+    class SettingsExample: CardableImpl() {
         override val title = "Title"
         override val watchbuddyID = WatchBuddyID(API.Custom, MediaType.Show, -1)
         override val primaryDetail = "Primary Detail"

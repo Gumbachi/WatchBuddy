@@ -45,17 +45,11 @@ class TMDBApi : WatchBuddyDataSource {
     }.body<TMDBMovieEssentialsDTO>().toTMDBMovie()
 
 
-    suspend fun getBlankShow(id: Int): TMDBShow = client.get {
-        url("$baseURL/movie/$id?language=en-US")
-        parameter("api_key", tmdbKey)
-    }
-        .body<TMDBShowEssentialsDTO>()
-        .toTMDBShow()
-
     override suspend fun getMovieDetails(id: Int): TMDBMovieDetails = client.get {
         url("$baseURL/movie/$id?language=en-US")
         parameter("api_key", tmdbKey)
         parameter("append_to_response", "credits,images,recommendations,reviews")
+        parameter("include_image_language", "en")
     }
         .body<TMDBMovieDetailsDTO>()
         .toTMDBMovieDetails()
@@ -76,7 +70,15 @@ class TMDBApi : WatchBuddyDataSource {
         url("$baseURL/tv/$id?language=en-US")
         parameter("api_key", tmdbKey)
         parameter("append_to_response", "credits,images,recommendations,reviews")
+        parameter("include_image_language", "en")
     }
         .body<TMDBShowDetailsDTO>()
         .toTMDBShowDetails()
+
+    suspend fun getBlankShow(id: Int): TMDBShow = client.get {
+        url("$baseURL/tv/$id?language=en-US")
+        parameter("api_key", tmdbKey)
+    }
+        .body<TMDBShowEssentialsDTO>()
+        .toTMDBShow()
 }

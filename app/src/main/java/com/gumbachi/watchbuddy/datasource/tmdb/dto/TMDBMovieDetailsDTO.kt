@@ -111,14 +111,14 @@ data class TMDBMovieDetailsDTO(
         @Serializable
         data class Backdrop(
             val file_path: String,
-            val vote_average: Long = 0,
+            val vote_average: Double = 0.0,
             val vote_count: Long = 0
         )
 
         @Serializable
         data class Poster(
             val file_path: String,
-            val vote_average: Long = 0,
+            val vote_average: Double = 0.0,
             val vote_count: Long = 0
         )
     }

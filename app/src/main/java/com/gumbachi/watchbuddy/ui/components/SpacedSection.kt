@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
-import com.gumbachi.watchbuddy.utils.CardableImpl.SettingsExample.title
 
 @Composable
 fun SpacedSection(
@@ -33,7 +32,7 @@ fun SpacedSection(
             modifier = Modifier.weight(1F).padding(end = 8.dp)
         ) {
             icon?.let {
-                Icon(imageVector = it, contentDescription = title)
+                Icon(imageVector = it, contentDescription = label)
             }
             Column {
                 Text(text = label, style = MaterialTheme.typography.titleMedium)

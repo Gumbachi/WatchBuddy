@@ -45,7 +45,7 @@ fun MediaAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-private fun ActionBarPreview(darkMode: Boolean = true) {
+private fun PreviewDark(darkMode: Boolean = true) {
     WatchBuddyTheme(darkTheme = darkMode) {
         Surface {
             MediaAppBar(title = "Movies", onSortClicked = { /*TODO*/ }, onFilterClicked = { /*TODO*/ })
@@ -56,5 +56,5 @@ private fun ActionBarPreview(darkMode: Boolean = true) {
 @Preview
 @Composable
 private fun ActionBarPreviewDark() {
-    ActionBarPreview(darkMode = false)
+    PreviewDark(darkMode = false)
 }

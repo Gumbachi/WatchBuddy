@@ -150,7 +150,7 @@ private fun Preview(dark: Boolean = true) {
     WatchBuddyTheme(darkTheme = dark) {
         Surface {
             MediaEditDialog(
-                media = MediaDummy.NormalShow,
+                media = MediaDummy.NormalShow(),
                 title = "Edit Media",
                 isMediaSaved = true,
                 scoreFormat = ScoreFormat.Percentage,
