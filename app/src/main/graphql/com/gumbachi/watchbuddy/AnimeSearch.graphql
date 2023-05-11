@@ -14,17 +14,18 @@ query AnimeSearch($search: String) {
                 month
                 day
             }
-            endDate {
-                year
-                month
-                day
-            }
             episodes
             popularity
             averageScore
             coverImage {
-              extraLarge
+                extraLarge
             }
+            nextAiringEpisode {
+                airingAt
+                episode
+                timeUntilAiring
+            }
+            duration
         }
     }
 }

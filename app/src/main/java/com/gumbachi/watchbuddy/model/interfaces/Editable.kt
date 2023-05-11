@@ -15,7 +15,7 @@ interface Editable {
     var userNotes: String
     var watchStatus: WatchStatus
 
-    var startDate: LocalDate?
-    var finishDate: LocalDate?
+    var userStartDate: LocalDate?
+    var userFinishDate: LocalDate?
     var lastUpdate: Instant?
 }

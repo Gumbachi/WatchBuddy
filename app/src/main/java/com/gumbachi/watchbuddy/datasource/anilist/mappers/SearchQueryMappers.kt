@@ -1,4 +1,4 @@
-package com.gumbachi.watchbuddy.datasource.anilist.api.mappers
+package com.gumbachi.watchbuddy.datasource.anilist.mappers
 
 import android.util.Log
 import com.gumbachi.watchbuddy.AnimeSearchQuery
@@ -26,7 +26,11 @@ fun AnimeSearchQuery.Medium.toAnilistAnimeSearchResult(): AnilistSearchResult? {
         averageScore = averageScore ?: 0,
         popularity = popularity ?: 0,
         type = mediaType,
-        releaseStatus = releaseStatus
+        releaseStatus = releaseStatus,
+        timeUntilNextEpisode = nextAiringEpisode?.timeUntilAiring,
+        nextEpisode = nextAiringEpisode?.episode,
+        releaseDate = createLocalDateOrNull(startDate?.year, startDate?.month, startDate?.day),
+        totalEpisodes = episodes
     )
 }
 

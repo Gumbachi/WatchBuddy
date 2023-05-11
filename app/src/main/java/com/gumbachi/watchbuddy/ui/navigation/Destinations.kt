@@ -1,8 +1,16 @@
 package com.gumbachi.watchbuddy.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.filled.CellTower
+import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Tv
+import androidx.compose.material.icons.outlined.CellTower
+import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import com.gumbachi.watchbuddy.model.WatchBuddyID

@@ -11,7 +11,7 @@ fun <T : Sortable> Iterable<T>.sortedBy(mode: Sort, order: SortOrder): List<T> {
             SortOrder.Descending -> sortedByDescending { it.userScore }
         }
         Sort.ReleaseDate -> when (order) {
-            SortOrder.Ascending -> sortedBy { it.releaseDate }
+            SortOrder.Ascending -> sortedBy { it.startDate }
             SortOrder.Descending -> sortedByDescending { it.userScore }
         }
         Sort.Name -> when (order) {

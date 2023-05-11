@@ -1,4 +1,4 @@
-package com.gumbachi.watchbuddy.ui.screens.search
+package com.gumbachi.watchbuddy.ui.search.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

@@ -36,8 +36,7 @@ class DetailsViewModel(private val repository: DetailsRepository) : ViewModel() 
                 when (id.source) {
                     Source.TMDBMovie -> repository.getTMDBMovieDetails(id.sourceID)
                     Source.TMDBShow -> repository.getTMDBShowDetails(id.sourceID)
-                    Source.AnilistMovie -> repository.getAnilistMovieDetails(id.sourceID)
-                    Source.AnilistShow -> repository.getAnilistShowDetails(id.sourceID)
+                    Source.AnilistMovie, Source.AnilistShow -> repository.getAnilistAnimeDetails(id.sourceID)
                     else -> TODO("Need to fill this in for other APIs")
                 }
             }.onSuccess { details ->

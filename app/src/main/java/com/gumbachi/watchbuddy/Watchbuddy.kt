@@ -51,8 +51,6 @@ fun Watchbuddy(
 
         }
     ) { paddingValues ->
-        println(paddingValues)
-
         WatchBuddyNavGraph(
             startDestination = startDestination,
             navController = navController,

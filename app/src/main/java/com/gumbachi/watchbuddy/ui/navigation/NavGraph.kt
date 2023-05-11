@@ -41,7 +41,8 @@ fun WatchBuddyNavGraph(
         )
 
         searchHomeScreen(
-            navigateToMediaSearch = navController::navigateToMediaSearch
+            navigateToMediaSearch = navController::navigateToMediaSearch,
+            navigateToDetails = navController::navigateToDetails
         )
 
         settingsScreen()
@@ -49,7 +50,8 @@ fun WatchBuddyNavGraph(
 
         // Secondary Destinations
         detailsScreen(
-            navigateBack = navController::popBackStack
+            navigateBack = navController::popBackStack,
+            navigateToDetails = navController::navigateToDetails
         )
 
         mediaSearchScreen(

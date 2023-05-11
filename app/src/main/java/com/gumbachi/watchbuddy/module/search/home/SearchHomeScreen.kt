@@ -20,16 +20,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.ui.components.WatchbuddyScaffold
-import com.gumbachi.watchbuddy.ui.search.RecentSearchesSection
+import com.gumbachi.watchbuddy.ui.search.components.RecentSearchesSection
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchHomeScreen(
+    navigateToMediaSearch: () -> Unit,
+    navigateToDetails: (WatchBuddyID) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SearchHomeViewModel = koinViewModel(),
-    navigateToMediaSearch: () -> Unit = {}
 ) {
 
     val state by viewModel.uiState.collectAsState()
@@ -63,7 +65,8 @@ fun SearchHomeScreen(
     ) {
         RecentSearchesSection(
             recents = state.recentItems,
-            modifier.padding(horizontal = 8.dp)
+            onItemClick = { navigateToDetails(it.watchbuddyID) },
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
     }
 }

@@ -1,7 +1,11 @@
 package com.gumbachi.watchbuddy.datasource.tmdb.model
 
+import com.gumbachi.watchbuddy.model.WatchBuddyID
+import com.gumbachi.watchbuddy.model.enums.data.API
+import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.interfaces.MediaDetails
+import com.gumbachi.watchbuddy.model.interfaces.Review
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
@@ -45,10 +49,12 @@ data class TMDBMovieDetails(
 
     // Recommendations and Reviews
     val recommendations: List<Recommendation>,
-    val reviews: List<Review>
+    val reviews: List<UserReview>
 ): MediaDetails {
 
     val formattedRuntime = runtime?.let { "${it / 60}h ${it % 60}m" } ?: "??h ??m"
+
+    override val watchBuddyID = WatchBuddyID(API.TMDB, MediaType.Movie, id)
 
     data class Genre(
         val id: Int,
@@ -125,20 +131,20 @@ data class TMDBMovieDetails(
         val userScore: Double
     )
 
-    data class Review(
+    data class UserReview(
         val id: String,
-        val author: String,
-        val content: String,
+        override val author: String,
+        override val content: String,
 
         val authorName: String,
         val authorUsername: String,
-        val authorAvatarURL: String,
-        val rating: Double?,
+        override val avatarURL: String,
+        override val rating: Int?,
 
         val createdAt: LocalDateTime?,
         val updatedAt: LocalDateTime?,
         val url: String
-    )
+    ) : Review
 }
 
 

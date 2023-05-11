@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -40,7 +41,7 @@ fun CompactMediaCard(
     progress: String? = null,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
-    onProgressClick: () -> Unit = {},
+    onProgressClick: (() -> Unit)? = null,
 ) {
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -143,13 +144,27 @@ fun CompactMediaCard(
                         }
 
                         progress?.let {
-                            Text(
-                                text = if (onProgressClick == {}) progress else "$progress+",
-                                style = MaterialTheme.typography.labelSmall,
-                                modifier = Modifier.clickable(interactionSource, indication = null) {
-                                    onProgressClick()
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null
+                                ) {
+                                    if (onProgressClick != null) onProgressClick()
                                 }
-                            )
+                            ) {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.labelSmall,
+                                )
+                                if (onProgressClick != null) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = "Increment Progress",
+                                        modifier = Modifier.size(13.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -210,7 +225,8 @@ private fun DefaultCompactMediaCardPreview(darkMode: Boolean = false) {
                 progress = "50 / 128",
                 modifier = Modifier,
                 api = API.TMDB,
-                isSaved = true
+                isSaved = true,
+                onProgressClick = {}
             )
         }
     }

@@ -12,7 +12,7 @@ interface Show: Media {
     val endDate: LocalDate?
 
     override val releaseStatus: ReleaseStatus
-        get() = releaseDate.toShowReleaseStatus(endDate = endDate)
+        get() = startDate.toShowReleaseStatus(endDate = endDate)
 
     override fun clone(): Show
 
@@ -22,7 +22,7 @@ interface Show: Media {
             id = show.watchbuddyID.toString()
             title = show.title
             posterURL = show.posterURL
-            releaseDate = show.releaseDate?.toEpochDays()
+            releaseDate = show.startDate?.toEpochDays()
             watchStatus = show.watchStatus.toString()
             userScore = show.userScore
             userNotes = show.userNotes
@@ -30,8 +30,8 @@ interface Show: Media {
             episodesWatched = show.episodesWatched
             totalEpisodes = show.totalEpisodes
 
-            startDate = show.startDate?.toEpochDays()
-            finishDate = show.finishDate?.toEpochDays()
+            startDate = show.userStartDate?.toEpochDays()
+            finishDate = show.userFinishDate?.toEpochDays()
             lastUpdate = show.lastUpdate?.epochSeconds
 
             releaseStatus = show.releaseStatus.toString()

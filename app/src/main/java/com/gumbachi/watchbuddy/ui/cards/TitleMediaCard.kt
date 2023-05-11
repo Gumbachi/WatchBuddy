@@ -6,9 +6,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gumbachi.watchbuddy.ui.components.FixedText
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 import com.gumbachi.watchbuddy.utils.LONG_MEDIA_TITLE
 
@@ -19,11 +19,9 @@ fun TitleMediaCard(
     title: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Transparent,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    lines: Int = 2
 ) {
-
-    var titleText by remember { mutableStateOf(title) }
-
     Card(
         onClick = onClick,
         modifier = modifier,
@@ -32,17 +30,12 @@ fun TitleMediaCard(
         )
     ) {
         PosterImage(posterURL = posterURL)
-        Box(modifier = Modifier.padding(8.dp)) {
-            Text(
-                text = titleText,
-                style = MaterialTheme.typography.labelLarge,
-                overflow = TextOverflow.Ellipsis,
-                onTextLayout = {
-                    val diff = 2 - it.lineCount
-                    if (diff > 0) {
-                        titleText += "\n".repeat(diff)
-                    }
-                }
+        Box(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+            FixedText(
+                text = title,
+                maxLines = lines,
+                minLines = lines,
+                style = MaterialTheme.typography.labelMedium
             )
         }
     }

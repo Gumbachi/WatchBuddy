@@ -1,7 +1,11 @@
 package com.gumbachi.watchbuddy.datasource.tmdb.model
 
+import com.gumbachi.watchbuddy.model.WatchBuddyID
+import com.gumbachi.watchbuddy.model.enums.data.API
+import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
 import com.gumbachi.watchbuddy.model.interfaces.MediaDetails
+import com.gumbachi.watchbuddy.model.interfaces.Review
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
@@ -45,10 +49,12 @@ data class TMDBShowDetails(
     val backdrops: List<Image>,
     val cast: List<Cast>,
     val crew: List<Crew>,
-    val reviews: List<Review>,
+    val reviews: List<UserReview>,
     val recommendations: List<Recommendation>
 
 ) : MediaDetails {
+
+    override val watchBuddyID = WatchBuddyID(API.TMDB, MediaType.Show, id)
 
     data class CreatedBy(
         val id: Int,
@@ -70,7 +76,7 @@ data class TMDBShowDetails(
         val order: Int = 0,
         val originalName: String = "",
         val popularity: Double = 0.0,
-        val imageURL: String = ""
+        val profileURL: String = ""
     )
 
     data class Crew(
@@ -82,7 +88,7 @@ data class TMDBShowDetails(
         val name: String = "",
         val original_name: String = "",
         val popularity: Double = 0.0,
-        val imageURL: String? = null,
+        val profileURL: String = "",
         val department: String = "",
         val job: String = ""
     )
@@ -94,7 +100,7 @@ data class TMDBShowDetails(
 
     data class Image(
         val aspectRatio: Double = 0.0,
-        val url: String? = null,
+        val url: String,
         val height: Int = 0,
         val iso_639_1: String? = null,
         val averageScore: Double = 0.0,
@@ -112,7 +118,7 @@ data class TMDBShowDetails(
         val runtime: Int = 0,
         val seasonNumber: Int = 0,
         val showId: Int = 0,
-        val stillURL: String? = null,
+        val stillURL: String = "",
         val averageScore: Double = 0.0,
         val votes: Long = 0
     )
@@ -149,27 +155,21 @@ data class TMDBShowDetails(
         val originalName: String = "",
         val overview: String = "",
         val popularity: Double = 0.0,
-        val posterURL: String? = null,
+        val posterURL: String = "",
         val averageScore: Double = 0.0,
         val votes: Long = 0
     )
 
-    data class Review(
+    data class UserReview(
         val id: String,
-        val author: String,
-        val content: String,
-        val authorDetails: AuthorDetails = AuthorDetails(),
+        override val author: String,
+        override val content: String,
+        override val avatarURL: String,
+        override val rating: Int?,
         val createdAt: LocalDateTime? = null,
         val updatedAt: LocalDateTime? = null,
         val url: String = ""
-    ) {
-        data class AuthorDetails(
-            val name: String = "Firstname, Lastname",
-            val username: String = "Username",
-            val avatarURL: String? = null,
-            val rating: Double? = null
-        )
-    }
+    ): Review
 
     data class Season(
         val airDate: String = "",
@@ -177,7 +177,7 @@ data class TMDBShowDetails(
         val id: Int = 0,
         val name: String = "",
         val overview: String = "",
-        val posterURL: String? = null,
+        val posterURL: String = "",
         val seasonNumber: Int = 0
     )
 

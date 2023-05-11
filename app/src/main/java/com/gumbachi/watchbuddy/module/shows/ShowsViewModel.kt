@@ -11,7 +11,12 @@ import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Show
 import com.gumbachi.watchbuddy.model.settings.UserSettings
 import com.gumbachi.watchbuddy.utils.displaySnackbar
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 
 private const val TAG = "ShowsViewModel"
@@ -19,6 +24,7 @@ private const val TAG = "ShowsViewModel"
 data class ShowsScreenUiState(
     val loading: Boolean = false,
     val error: Throwable? = null,
+    val isRefreshing: Boolean = false,
 
     val watchlist: Watchlist<Show> = Watchlist(),
 
@@ -181,6 +187,14 @@ class ShowsViewModel(private val repository: ShowsRepository) : ViewModel() {
                 Log.d(TAG, "Failed to update Show Sort method $error")
                 displayError(error)
             }
+        }
+    }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            delay(3000)
+            _uiState.update { it.copy(isRefreshing = false) }
         }
     }
 }

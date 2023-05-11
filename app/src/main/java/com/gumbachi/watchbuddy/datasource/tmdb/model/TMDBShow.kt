@@ -13,7 +13,7 @@ data class TMDBShow(
     override val title: String,
     override val posterURL: String,
 
-    override val releaseDate: LocalDate?,
+    override val startDate: LocalDate?,
     override val endDate: LocalDate?,
 
     override var episodesWatched: Int = 0,
@@ -22,8 +22,8 @@ data class TMDBShow(
     override var userScore: Int = 0,
     override var userNotes: String = "",
     override var watchStatus: WatchStatus = WatchStatus.Watching,
-    override var startDate: LocalDate? = null,
-    override var finishDate: LocalDate? = null,
+    override var userStartDate: LocalDate? = null,
+    override var userFinishDate: LocalDate? = null,
     override var lastUpdate: Instant? = null,
 
     // potential details
@@ -35,7 +35,7 @@ data class TMDBShow(
 
     // Card Details
     override val primaryDetail = "TBD"
-    override val secondaryDetail = "Aired $releaseDate"
+    override val secondaryDetail = "Aired $startDate"
     override val progress
         get() = "$episodesWatched / ${totalEpisodes ?: "??"}"
     override val score: Int

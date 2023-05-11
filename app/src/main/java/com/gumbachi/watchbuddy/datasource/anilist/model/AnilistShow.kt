@@ -14,7 +14,7 @@ data class AnilistShow(
     override val title: String,
     override val posterURL: String,
 
-    override val releaseDate: LocalDate?,
+    override val startDate: LocalDate?,
     override val endDate: LocalDate?,
 
     override val releaseStatus: ReleaseStatus,
@@ -22,18 +22,24 @@ data class AnilistShow(
     override var episodesWatched: Int = 0,
     override val totalEpisodes: Int?,
 
+    val nextEpisode: Int? = null,
+    val timeUntilNextEpisode: Int? = null,
+
     override var userScore: Int = 0,
     override var userNotes: String = "",
     override var watchStatus: WatchStatus = WatchStatus.Watching,
-    override var startDate: LocalDate? = null,
-    override var finishDate: LocalDate? = null,
+    override var userStartDate: LocalDate? = null,
+    override var userFinishDate: LocalDate? = null,
     override var lastUpdate: Instant? = null,
 ): Show {
     override val watchbuddyID = WatchBuddyID(API.Anilist, MediaType.Show, id)
 
     // Card Details
-    override val primaryDetail = "TBD" // TODO
-    override val secondaryDetail = "Aired $releaseDate"
+    override val primaryDetail = when (releaseStatus) {
+        ReleaseStatus.Releasing -> "EP $nextEpisode in $timeUntilNextEpisode"
+        else -> releaseStatus.toString()
+    }
+    override val secondaryDetail = "$startDate - $endDate"
     override val progress
         get() = "$episodesWatched / $totalEpisodes"
     override val score: Int

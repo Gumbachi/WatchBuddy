@@ -1,33 +1,36 @@
 package com.gumbachi.watchbuddy.module.details
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import com.gumbachi.watchbuddy.datasource.anilist.model.AnilistAnimeDetails
 import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBMovieDetails
+import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBShowDetails
 import com.gumbachi.watchbuddy.model.WatchBuddyID
+import com.gumbachi.watchbuddy.model.enums.configuration.AnilistTitleLanguage
+import com.gumbachi.watchbuddy.model.enums.configuration.ScoreFormat
+import com.gumbachi.watchbuddy.module.details.screens.AnilistAnimeDetailsContent
 import com.gumbachi.watchbuddy.module.details.screens.TMDBMovieDetailsContent
+import com.gumbachi.watchbuddy.module.details.screens.TMDBShowDetailsContent
 import com.gumbachi.watchbuddy.ui.components.WatchbuddyScaffold
 import com.gumbachi.watchbuddy.ui.details.components.DetailsPosterAndDetails
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewDetailsScreen(
     watchbuddyID: WatchBuddyID,
     modifier: Modifier = Modifier,
-    viewModel: DetailsViewModel = koinViewModel(),
-    onBackClicked: () -> Unit = {},
+    onBackClicked: () -> Unit,
+    navigateToDetails: (WatchBuddyID) -> Unit,
+    viewModel: DetailsViewModel = koinViewModel()
 ) {
 
     val state by viewModel.uiState.collectAsState()
 
-    val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
-        state = rememberTopAppBarState()
-    )
-
-
-    // Load details
     LaunchedEffect(Unit) {
         viewModel.loadDetailsFor(watchbuddyID)
     }
@@ -36,19 +39,28 @@ fun NewDetailsScreen(
         isLoading = state.loading,
         error = state.error,
         modifier = modifier,
-//        topBar = {
-//            WatchBuddyBackAppBar(
-//                title = "",
-//                onBackClicked = onBackClicked,
-//                scrollBehavior = null
-//            )
-//        }
     ) {
         when (val details = state.details) {
             is TMDBMovieDetails -> TMDBMovieDetailsContent(
                 movie = details,
-                onBackClicked = onBackClicked
+                onBackClicked = onBackClicked,
+                navigateToDetails = navigateToDetails
             )
+
+            is TMDBShowDetails -> TMDBShowDetailsContent(
+                show = details,
+                onBackClicked = onBackClicked,
+                navigateToDetails = navigateToDetails
+            )
+
+            is AnilistAnimeDetails -> AnilistAnimeDetailsContent(
+                anime = details,
+                onBackClicked = onBackClicked,
+                preferredTitleLanguage = AnilistTitleLanguage.English, // TODO Fix this
+                scoreFormat = ScoreFormat.Percentage, // TODO Fix this,
+                navigateToDetails = navigateToDetails
+            )
+
             null -> {}
             else -> {
                 DetailsPosterAndDetails(

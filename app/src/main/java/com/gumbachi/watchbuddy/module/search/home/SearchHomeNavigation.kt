@@ -4,18 +4,21 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.gumbachi.watchbuddy.model.WatchBuddyID
 import com.gumbachi.watchbuddy.ui.navigation.WatchbuddyMainDestination
 import org.koin.androidx.compose.koinViewModel
 
 private val destination = WatchbuddyMainDestination.SearchHome
 
 fun NavGraphBuilder.searchHomeScreen(
-    navigateToMediaSearch: () -> Unit
+    navigateToMediaSearch: () -> Unit,
+    navigateToDetails: (WatchBuddyID) -> Unit,
 ) {
     composable(destination.route) {
         SearchHomeScreen(
             viewModel = koinViewModel(),
-            navigateToMediaSearch = navigateToMediaSearch
+            navigateToMediaSearch = navigateToMediaSearch,
+            navigateToDetails = navigateToDetails
         )
     }
 }

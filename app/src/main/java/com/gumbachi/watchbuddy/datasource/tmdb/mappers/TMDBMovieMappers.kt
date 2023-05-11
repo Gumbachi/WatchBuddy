@@ -7,7 +7,11 @@ import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBMovie
 import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBMovieDetails
 import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBMovieSearchResult
 import com.gumbachi.watchbuddy.model.enums.data.ReleaseStatus
-import com.gumbachi.watchbuddy.utils.*
+import com.gumbachi.watchbuddy.utils.formatRuntime
+import com.gumbachi.watchbuddy.utils.parseDateOrNull
+import com.gumbachi.watchbuddy.utils.parseDateTimeOrNull
+import com.gumbachi.watchbuddy.utils.toTMDBImageURL
+import com.gumbachi.watchbuddy.utils.toTMDBImageURLOrBlank
 import kotlin.math.roundToInt
 
 fun TMDBMovieSearchResponseDTO.Result.toTMDBMovieSearchResult() = TMDBMovieSearchResult(
@@ -25,7 +29,7 @@ fun TMDBMovieEssentialsDTO.toTMDBMovie() = TMDBMovie(
     id = id,
     posterURL = poster_path.toTMDBImageURLOrBlank(),
     title = title,
-    releaseDate = release_date.parseDateOrNull(),
+    startDate = release_date.parseDateOrNull(),
     runtime = runtime.formatRuntime(),
 )
 
@@ -109,14 +113,14 @@ fun TMDBMovieDetailsDTO.toTMDBMovieDetails() = TMDBMovieDetails(
         )
     },
     reviews = reviews.results.map {
-        TMDBMovieDetails.Review(
+        TMDBMovieDetails.UserReview(
             id = it.id,
             author = it.author,
             content = it.content,
             authorName = it.author_details.name,
             authorUsername = it.author_details.username,
-            authorAvatarURL = it.author_details.avatar_path.toTMDBImageURLOrBlank(),
-            rating = it.author_details.rating,
+            avatarURL = it.author_details.avatar_path.toTMDBImageURLOrBlank(),
+            rating = it.author_details.rating?.let { (it * 10).roundToInt() },
             createdAt = it.created_at.parseDateTimeOrNull(),
             updatedAt = it.updated_at.parseDateTimeOrNull(),
             url = it.url

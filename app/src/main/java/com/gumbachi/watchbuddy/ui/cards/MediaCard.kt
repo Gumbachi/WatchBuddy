@@ -19,7 +19,7 @@ fun MediaCard(
     showScore: Boolean = true,
     showProgress: Boolean = true,
     isSaved: Boolean? = null,
-    onProgressClick: () -> Unit = {}
+    onProgressClick: (() -> Unit)? = null
 ) {
 
     val score = when (showScore) {

@@ -29,7 +29,7 @@ fun TMDBShowEssentialsDTO.toTMDBShow() = TMDBShow(
     id = id,
     posterURL = poster_path.toTMDBImageURLOrBlank(),
     title = this.name,
-    releaseDate = first_air_date.parseDateOrNull(),
+    startDate = first_air_date.parseDateOrNull(),
     endDate = last_air_date.parseDateOrNull(),
     totalEpisodes = number_of_episodes,
     episodeRuntime = "${episode_run_time.average().toInt()}m",
@@ -143,7 +143,7 @@ fun TMDBShowDetailsDTO.toTMDBShowDetails() = TMDBShowDetails(
             order = it.order,
             originalName = it.original_name,
             popularity = it.popularity,
-            imageURL = it.profile_path.toTMDBImageURLOrBlank()
+            profileURL = it.profile_path.toTMDBImageURLOrBlank()
         )
     },
     crew = credits.crew.map {
@@ -155,25 +155,21 @@ fun TMDBShowDetailsDTO.toTMDBShowDetails() = TMDBShowDetails(
             name = it.name,
             original_name = it.original_name,
             popularity = it.popularity,
-            imageURL = it.profile_path.toTMDBImageURLOrBlank(),
+            profileURL = it.profile_path.toTMDBImageURLOrBlank(),
             department = it.department,
             job = it.job
         )
     },
     reviews = reviews.results.map {
-        TMDBShowDetails.Review(
+        TMDBShowDetails.UserReview(
             id = it.id,
             author = it.author,
             content = it.content,
-            authorDetails = TMDBShowDetails.Review.AuthorDetails(
-                name = it.author_details.name,
-                username = it.author_details.username,
-                avatarURL = it.author_details.avatar_path.toTMDBImageURLOrBlank(),
-                rating = it.author_details.rating
-            ),
             createdAt = it.created_at.parseDateTimeOrNull(),
             updatedAt = it.updated_at.parseDateTimeOrNull(),
-            url = it.url
+            url = it.url,
+            avatarURL = it.author_details.avatar_path.toTMDBImageURLOrBlank(),
+            rating = it.author_details.rating?.let { (it * 10).roundToInt() }
         )
     },
     recommendations = recommendations.results.map {

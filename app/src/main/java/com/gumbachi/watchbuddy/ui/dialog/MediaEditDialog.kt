@@ -108,10 +108,10 @@ fun MediaEditDialog(
                 SpacedSection(label = "Start Date") {
                     OutlinedButton(onClick = { /*TODO DATE*/ }) {
                         Text(
-                            text = if (state.startDate == null) {
+                            text = if (state.userStartDate == null) {
                                 "--/--/----"
                             } else {
-                                state.startDate.toString()
+                                state.userStartDate.toString()
                             }
                         )
                     }
@@ -119,10 +119,10 @@ fun MediaEditDialog(
                 SpacedSection(label = "Finish Date") {
                     OutlinedButton(onClick = { /*TODO DATE*/ }) {
                         Text(
-                            text = if (state.finishDate == null) {
+                            text = if (state.userFinishDate == null) {
                                 "--/--/----"
                             } else {
-                                state.finishDate.toString()
+                                state.userFinishDate.toString()
                             }
                         )
                     }

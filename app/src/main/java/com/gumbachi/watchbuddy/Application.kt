@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.gumbachi.watchbuddy.database.WatchbuddyDB
 import com.gumbachi.watchbuddy.database.WatchbuddyDatabase
-import com.gumbachi.watchbuddy.datasource.anilist.api.AnilistAPI
+import com.gumbachi.watchbuddy.datasource.anilist.AnilistAPI
 import com.gumbachi.watchbuddy.datasource.tmdb.TMDBApi
 import com.gumbachi.watchbuddy.module.details.DetailsRepository
 import com.gumbachi.watchbuddy.module.details.DetailsRepositoryImpl

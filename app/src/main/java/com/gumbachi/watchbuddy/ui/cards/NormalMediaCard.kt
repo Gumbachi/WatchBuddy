@@ -45,7 +45,7 @@ fun NormalMediaCard(
     progress: String? = null,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
-    onProgressClick: () -> Unit = {}
+    onProgressClick: (() -> Unit)? = null
 ) {
     Card(
         modifier = modifier
@@ -104,7 +104,7 @@ fun NormalMediaCard(
                     progress?.let {
                         CardBubble(
                             text = it,
-                            trailingIcon = when (onProgressClick != {}) {
+                            trailingIcon = when (onProgressClick != null) {
                                 true -> rememberVectorPainter(image = Icons.Filled.Add)
                                 false -> null
                             },
@@ -114,7 +114,9 @@ fun NormalMediaCard(
                                 .clickable(
                                     interactionSource = MutableInteractionSource(),
                                     indication = null
-                                ) { onProgressClick() }
+                                ) {
+                                    if (onProgressClick != null) onProgressClick()
+                                }
                         )
                     }
                 }
@@ -282,7 +284,8 @@ private fun MediaCardPreview(darkMode: Boolean = true) {
             progress = "50 / 128",
             modifier = Modifier.size(230.dp, 400.dp),
             api = API.TMDB,
-            isSaved = true
+            isSaved = true,
+            onProgressClick = {}
         )
     }
 }

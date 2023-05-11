@@ -9,6 +9,6 @@ interface Sortable {
     val title: String
     val releaseStatus: ReleaseStatus
 
-    val releaseDate: LocalDate?
+    val startDate: LocalDate?
     var lastUpdate: Instant?
 }

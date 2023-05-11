@@ -14,23 +14,23 @@ data class AnilistMovie(
     override val title: String,
     override val id: Int,
     override val runtime: String,
-    override val releaseDate: LocalDate?,
+    override val startDate: LocalDate?,
     override val releaseStatus: ReleaseStatus,
 
     override var userScore: Int = 0,
     override var userNotes: String = "",
     override var watchStatus: WatchStatus = WatchStatus.Watching,
-    override var startDate: LocalDate? = null,
-    override var finishDate: LocalDate? = null,
+    override var userStartDate: LocalDate? = null,
+    override var userFinishDate: LocalDate? = null,
     override var lastUpdate: Instant? = null,
 
-) : Movie {
+    ) : Movie {
 
     override val watchbuddyID = WatchBuddyID(API.Anilist, MediaType.Movie, id)
 
     // Card Details
     override val primaryDetail = runtime
-    override val secondaryDetail = releaseDate.toString()
+    override val secondaryDetail = startDate.toString()
     override val score: Int
         get() = userScore
 

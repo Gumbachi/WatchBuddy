@@ -31,7 +31,7 @@ fun NavGraphBuilder.moviesScreen(
 }
 
 fun NavController.navigateToMovies(mediaID: WatchBuddyID? = null) {
-    if (currentDestination?.route == destination.route) return
+//    if (currentDestination?.route == destination.route) return
 
     val route = destination.buildRoute(mediaID)
 

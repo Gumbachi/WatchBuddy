@@ -21,6 +21,7 @@ private const val TAG = "MoviesViewModel"
 data class MoviesScreenUiState(
     val loading: Boolean = false,
     val error: Throwable? = null,
+    val isRefreshing: Boolean = false,
 
     val watchlist: Watchlist<Movie> = Watchlist(),
 
@@ -197,5 +198,13 @@ class MoviesViewModel(private val repository: MoviesRepository) : ViewModel() {
 
     suspend fun findMovie(id: WatchBuddyID) =
         repository.getMoviesFlow().first().find { it.watchbuddyID == id }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            delay(3000)
+            _uiState.update { it.copy(isRefreshing = false) }
+        }
+    }
 
 }

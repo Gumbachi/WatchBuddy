@@ -21,11 +21,11 @@ sealed class MediaDummy: Media {
         override var userScore = 83
         override var userNotes = "It's Alright"
         override var watchStatus = WatchStatus.Watching
-        override var startDate: LocalDate? = LocalDate(2022, 11, 24)
-        override var finishDate: LocalDate? = null
+        override var userStartDate: LocalDate? = LocalDate(2022, 11, 24)
+        override var userFinishDate: LocalDate? = null
         override var lastUpdate: Instant? = null
         override val releaseStatus = ReleaseStatus.Releasing
-        override val releaseDate: LocalDate? = LocalDate(2018, 7, 22)
+        override val startDate: LocalDate? = LocalDate(2018, 7, 22)
         override val primaryDetail = "Detail 1"
         override val secondaryDetail = "Detail 2"
         override val posterURL = ""

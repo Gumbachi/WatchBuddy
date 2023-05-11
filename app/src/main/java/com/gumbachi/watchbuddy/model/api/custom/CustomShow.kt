@@ -15,12 +15,12 @@ data class CustomShow(
     override var userScore: Int,
     override var userNotes: String,
     override var watchStatus: WatchStatus,
-    override var startDate: LocalDate?,
-    override var finishDate: LocalDate?,
+    override var userStartDate: LocalDate?,
+    override var userFinishDate: LocalDate?,
     override var lastUpdate: Instant?,
     override val totalEpisodes: Int?,
     override var episodesWatched: Int,
-    override val releaseDate: LocalDate?,
+    override val startDate: LocalDate?,
     override val endDate: LocalDate?,
 ) : Show {
     override fun clone(): Show = copy()
@@ -28,7 +28,7 @@ data class CustomShow(
 
     // Card Details
     override val primaryDetail = "IDK Yet" // TODO: Find something to put here
-    override val secondaryDetail = releaseDate.toString()
+    override val secondaryDetail = startDate.toString()
     override val score: Int
         get() = userScore
 

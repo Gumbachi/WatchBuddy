@@ -2,34 +2,48 @@ package com.gumbachi.watchbuddy.module.movies
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import com.gumbachi.watchbuddy.model.WatchBuddyID
-import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.model.interfaces.Movie
-import com.gumbachi.watchbuddy.ui.cards.MediaCard
-import com.gumbachi.watchbuddy.ui.components.MediaTabRow
+import com.gumbachi.watchbuddy.ui.cards.LazyMediaGrid
+import com.gumbachi.watchbuddy.ui.components.PagerMediaTabRow
 import com.gumbachi.watchbuddy.ui.components.WatchbuddyScaffold
 import com.gumbachi.watchbuddy.ui.dialog.FilterDialog
 import com.gumbachi.watchbuddy.ui.dialog.MediaEditDialog
 import com.gumbachi.watchbuddy.ui.dialog.MediaSortDialog
 import com.gumbachi.watchbuddy.ui.snackbars.showUndoSnackbar
 import com.gumbachi.watchbuddy.ui.toolbars.MediaAppBar
+import com.gumbachi.watchbuddy.utils.surfaceColorAtElevation
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "MoviesScreen"
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    ExperimentalMaterialApi::class, ExperimentalPagerApi::class
+)
 @Composable
 fun MoviesScreen(
     modifier: Modifier = Modifier,
@@ -46,6 +60,20 @@ fun MoviesScreen(
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val gridState = rememberLazyGridState()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isRefreshing,
+        onRefresh = {
+            println("Refresh")
+            viewModel.refresh()
+        }
+    )
+    val pagerState = rememberPagerState()
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            viewModel.changeWatchStatusTab(page)
+        }
+    }
 
     LaunchedEffect(Unit) {
         focusedItemId?.let {
@@ -75,42 +103,36 @@ fun MoviesScreen(
             SnackbarHost(snackbar)
         },
         tabRow = {
-            MediaTabRow(
-                selected = state.selectedTab,
-                tabs = state.shownTabs,
+            PagerMediaTabRow(
+                pagerState = pagerState,
+                shownTabs = state.shownTabs,
                 onSelectedChange = { index, _ ->
-                    viewModel.changeWatchStatusTab(index)
+                    scope.launch { pagerState.scrollToPage(index) }
                 }
             )
         }
     ) {
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(cardSettings.style.requiredWidth),
-            horizontalArrangement = Arrangement.Center,
-            state = gridState,
-            contentPadding = PaddingValues(4.dp),
-        ) {
-            items(
-                items = state.currentList,
-                key = { it.watchbuddyID.toString() }
-            ) { movie ->
-
-                val showScore = when (cardSettings.showScoreOnPlanned) {
-                    true -> true
-                    false -> movie.watchStatus != WatchStatus.Planning
-                }
-
-                MediaCard(
-                    cardData = movie,
-                    cardStyle = cardSettings.style,
-                    scoreFormat = cardSettings.scoreFormat,
-                    showApi = cardSettings.showApi,
-                    onClick = { navigateToDetails(movie) },
-                    onLongClick = { viewModel.showEditDialogFor(movie) },
-                    modifier = Modifier.animateItemPlacement(),
-                    showScore = showScore
+        Box(modifier = Modifier.pullRefresh(pullRefreshState, true)) {
+            HorizontalPager(
+                count = state.shownTabs.size,
+                state = pagerState
+            ) { page ->
+                LazyMediaGrid(
+                    items = state.watchlist.getListFor(state.shownTabs[page]),
+                    settings = cardSettings,
+                    onItemClick = { navigateToDetails(it) },
+                    onItemLongClick = { viewModel.showEditDialogFor(it) }
                 )
             }
+
+            PullRefreshIndicator(
+                refreshing = state.isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+                backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3),
+                contentColor = MaterialTheme.colorScheme.primary,
+                scale = true
+            )
         }
     }
 

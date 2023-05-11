@@ -20,7 +20,12 @@ fun SettingsSwitch(
     modifier: Modifier = Modifier,
     description: String? = null,
 ) {
-    SpacedSection(label = title, icon = icon, description = description) {
+    SpacedSection(
+        label = title,
+        icon = icon,
+        description = description,
+        modifier = modifier
+    ) {
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange
@@ -33,7 +38,12 @@ fun SettingsSwitch(
 private fun PreviewDark() {
     WatchBuddyTheme(darkTheme = true) {
         Surface() {
-            SettingsSwitch(title = "Settings", description = "Settings Description That is reather long please dont pus the switch off the screen", icon = Icons.Filled.Settings, checked = true, onCheckedChange = {})
+            SettingsSwitch(
+                title = "Settings",
+                description = "Settings Description That is rather long please don't put the switch off the screen",
+                icon = Icons.Filled.Settings,
+                checked = true,
+                onCheckedChange = {})
         }
     }
 }
@@ -43,7 +53,12 @@ private fun PreviewDark() {
 private fun PreviewLight() {
     WatchBuddyTheme(darkTheme = false) {
         Surface() {
-            SettingsSwitch(title = "Settings", description = "Settings Description", icon = Icons.Filled.Settings, checked = true, onCheckedChange = {})
+            SettingsSwitch(
+                title = "Settings",
+                description = "Settings Description",
+                icon = Icons.Filled.Settings,
+                checked = true,
+                onCheckedChange = {})
         }
     }
 }

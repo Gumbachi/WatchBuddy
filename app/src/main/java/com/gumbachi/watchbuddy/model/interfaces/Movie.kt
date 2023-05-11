@@ -9,7 +9,7 @@ interface Movie: Media {
     val runtime: String
 
     override val releaseStatus: ReleaseStatus
-        get() = releaseDate.toMovieReleaseStatus()
+        get() = startDate.toMovieReleaseStatus()
 
     override fun clone(): Movie
 
@@ -26,13 +26,13 @@ interface Movie: Media {
             id = movie.watchbuddyID.toString()
             title = movie.title
             posterURL = movie.posterURL
-            releaseDate = movie.releaseDate?.toEpochDays()
+            releaseDate = movie.startDate?.toEpochDays()
             runtime = movie.runtime
             watchStatus = movie.watchStatus.toString()
             userScore = movie.userScore
             userNotes = movie.userNotes
-            startDate = movie.startDate?.toEpochDays()
-            finishDate = movie.finishDate?.toEpochDays()
+            startDate = movie.userStartDate?.toEpochDays()
+            finishDate = movie.userFinishDate?.toEpochDays()
             lastUpdate = movie.lastUpdate?.epochSeconds
             releaseStatus = movie.releaseStatus.toString()
         }

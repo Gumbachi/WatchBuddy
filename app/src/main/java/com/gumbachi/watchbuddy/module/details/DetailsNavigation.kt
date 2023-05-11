@@ -19,7 +19,8 @@ import org.koin.androidx.compose.koinViewModel
 private val destination = WatchBuddySecondaryDestination.Details
 
 fun NavGraphBuilder.detailsScreen(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    navigateToDetails: (WatchBuddyID) -> Unit
 ) {
     composable(
         route = destination.route,
@@ -30,6 +31,7 @@ fun NavGraphBuilder.detailsScreen(
                 watchbuddyID = id.toWatchbuddyID(),
                 viewModel = koinViewModel(),
                 onBackClicked = navigateBack,
+                navigateToDetails = navigateToDetails
             )
         } ?: run {
             Box(
@@ -47,7 +49,6 @@ fun NavGraphBuilder.detailsScreen(
 
 fun NavController.navigateToDetails(id: WatchBuddyID) {
     val route = destination.buildRoute(id = id)
-    navigate(route) {
-        launchSingleTop = true
-    }
+    println("Navigating to $route")
+    navigate(route)
 }

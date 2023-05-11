@@ -24,6 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import com.gumbachi.watchbuddy.model.enums.data.WatchStatus
 import com.gumbachi.watchbuddy.ui.theme.WatchBuddyTheme
 
@@ -44,8 +46,6 @@ private fun MeasureUnconstrainedViewWidth(
         }
     }
 }
-
-
 
 @Composable
 fun MediaTabRow(
@@ -126,6 +126,22 @@ fun MediaTabRow(
             }
         }
     }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun PagerMediaTabRow(
+    pagerState: PagerState,
+    shownTabs: Collection<WatchStatus>,
+    onSelectedChange: (Int, WatchStatus) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    MediaTabRow(
+        modifier = modifier,
+        selected = pagerState.currentPage,
+        tabs = shownTabs,
+        onSelectedChange = onSelectedChange
+    )
 }
 
 

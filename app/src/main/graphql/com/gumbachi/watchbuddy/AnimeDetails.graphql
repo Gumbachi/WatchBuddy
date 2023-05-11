@@ -1,69 +1,134 @@
 query AnimeDetails($mediaId: Int) {
-  Media(id: $mediaId) {
-    coverImage {
-      extraLarge
-    }
-    id
-    format
-    episodes
-    endDate {
-      day
-      month
-      year
-    }
-    nextAiringEpisode {
-      timeUntilAiring
-      episode
-      airingAt
-    }
-    startDate {
-      day
-      month
-      year
-    }
-    status
-    title {
-      english
-      native
-      romaji
-    }
-    bannerImage
-    averageScore
-    characters {
-      nodes {
-        description
-        id
-        image {
-          medium
-        }
-        name {
-          full
-        }
-      }
-    }
-    countryOfOrigin
-    description
-    duration
-    genres
-    hashtag
-    idMal
-    isAdult
-    meanScore
-    popularity
-    season
-    seasonYear
-    relations {
-      nodes {
+    Media(id: $mediaId) {
         id
         title {
-          romaji
-          native
-          english
+            english
+            native
+            romaji
         }
+
+        # Details
+        description
+        format
+        status
+        episodes
+        duration
+        averageScore
+        genres
+        popularity
+        isAdult
+        source
+        studios {
+            nodes {
+                name
+            }
+        }
+
+
+        # Dates/Timeframes
+        startDate {
+            day
+            month
+            year
+        }
+        nextAiringEpisode {
+            timeUntilAiring
+            episode
+            airingAt
+        }
+        endDate {
+            day
+            month
+            year
+        }
+        season
+        seasonYear
+
+        # Images
         coverImage {
-          medium
+            extraLarge
         }
-      }
+        bannerImage
+
+        # Recommendations / Relations
+        recommendations {
+            nodes {
+                mediaRecommendation {
+                    id
+                    title {
+                        english
+                        romaji
+                        native
+                    }
+                    coverImage {
+                        large
+                    }
+                    averageScore
+                    format
+                }
+            }
+        }
+        relations {
+            nodes {
+                id
+                title {
+                    english
+                    romaji
+                    native
+                }
+                coverImage {
+                    large
+                }
+                format
+                averageScore
+            }
+        }
+
+        # Reviews
+        reviews {
+            nodes {
+                body
+                score
+                user {
+                    name
+                    avatar {
+                        medium
+                    }
+                }
+                createdAt
+                updatedAt
+            }
+        }
+
+        # Credits
+        characters(sort: RELEVANCE) {
+            edges {
+                node {
+                    name {
+                        full
+                    }
+                    image {
+                        large
+                    }
+                }
+                voiceActors {
+                    name {
+                        full
+                    }
+                }
+            }
+        }
+
+        staff(sort: RELEVANCE) {
+            nodes {
+                name {
+                    full
+                }
+                image {
+                    large
+                }
+                primaryOccupations
+            }
+        }
     }
-  }
 }

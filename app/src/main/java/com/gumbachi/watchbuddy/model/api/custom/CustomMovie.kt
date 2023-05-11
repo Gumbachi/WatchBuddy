@@ -16,10 +16,10 @@ data class CustomMovie(
     override var userScore: Int,
     override var userNotes: String,
     override var watchStatus: WatchStatus,
-    override var startDate: LocalDate?,
-    override var finishDate: LocalDate?,
+    override var userStartDate: LocalDate?,
+    override var userFinishDate: LocalDate?,
     override var lastUpdate: Instant?,
-    override val releaseDate: LocalDate?,
+    override val startDate: LocalDate?,
     override val runtime: String
 ): Movie {
 
@@ -27,7 +27,7 @@ data class CustomMovie(
 
     // Card Details
     override val primaryDetail = runtime
-    override val secondaryDetail = releaseDate.toString()
+    override val secondaryDetail = startDate.toString()
     override val score: Int
         get() = userScore
 

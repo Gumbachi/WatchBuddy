@@ -1,0 +1,32 @@
+query AnimeEssentials($mediaId: Int) {
+    Media(id: $mediaId) {
+        id
+        title {
+            english
+            native
+            romaji
+        }
+        coverImage {
+            large
+        }
+        startDate {
+            day
+            month
+            year
+        }
+        endDate {
+            day
+            month
+            year
+        }
+        status
+        duration
+        format
+        nextAiringEpisode {
+            timeUntilAiring
+            episode
+            airingAt
+        }
+        episodes
+    }
+}

@@ -1,6 +1,14 @@
 package com.gumbachi.watchbuddy.module.details.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,21 +18,36 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.gumbachi.watchbuddy.datasource.tmdb.model.TMDBMovieDetails
+import com.gumbachi.watchbuddy.model.WatchBuddyID
+import com.gumbachi.watchbuddy.model.enums.data.API
+import com.gumbachi.watchbuddy.model.enums.data.MediaType
 import com.gumbachi.watchbuddy.ui.cards.TitleMediaCard
 import com.gumbachi.watchbuddy.ui.components.ColorWrappedColumn
-import com.gumbachi.watchbuddy.ui.details.components.*
+import com.gumbachi.watchbuddy.ui.details.components.DetailsBackdropBanner
+import com.gumbachi.watchbuddy.ui.details.components.DetailsClickCarousel
+import com.gumbachi.watchbuddy.ui.details.components.DetailsImageCarouselDialog
+import com.gumbachi.watchbuddy.ui.details.components.DetailsLazyCardRow
+import com.gumbachi.watchbuddy.ui.details.components.DetailsOverviewSection
+import com.gumbachi.watchbuddy.ui.details.components.DetailsPersonCard
+import com.gumbachi.watchbuddy.ui.details.components.DetailsPosterAndDetails
+import com.gumbachi.watchbuddy.ui.details.components.DetailsReviewItem
 import com.gumbachi.watchbuddy.utils.surfaceColorAtElevation
 
 @Composable
 fun TMDBMovieDetailsContent(
     movie: TMDBMovieDetails,
     onBackClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateToDetails: (WatchBuddyID) -> Unit = {}
 ) {
 
     val lazyListState = rememberLazyListState()
@@ -92,11 +115,21 @@ fun TMDBMovieDetailsContent(
                             secondaryDetail = it.character
                         )
                     }
+
+                    val consolidatedCrew = remember {
+                        movie.crew.groupBy { it.id }.values.map {
+                            object {
+                                val name = it.first().name
+                                val profileURL = it.first().profileURL
+                                val job = it.joinToString(", ") { it.job }
+                                val popularity = it.first().popularity
+                            }
+                        }.sortedByDescending { it.popularity }
+                    }
+
                     DetailsLazyCardRow(
                         title = "Crew",
-                        items = movie.crew
-                            .sortedByDescending { it.popularity }
-                            .distinctBy { it.name }
+                        items = consolidatedCrew
                     ) {
                         DetailsPersonCard(
                             imageURL = it.profileURL,
@@ -115,7 +148,8 @@ fun TMDBMovieDetailsContent(
                             posterURL = it.posterURL,
                             title = it.title,
                             color = MaterialTheme.colorScheme.surfaceColorAtElevation(3),
-                            modifier = Modifier.width(150.dp)
+                            modifier = Modifier.width(150.dp),
+                            onClick = { navigateToDetails(WatchBuddyID(API.TMDB, MediaType.Movie, it.id)) }
                         )
                     }
                 }
@@ -127,7 +161,7 @@ fun TMDBMovieDetailsContent(
                         DetailsReviewItem(
                             name = it.author,
                             content = it.content,
-                            avatarURL = it.authorAvatarURL,
+                            avatarURL = it.avatarURL,
                             rating = it.rating?.toString(),
                             modifier = Modifier.fillMaxWidth()
                         )

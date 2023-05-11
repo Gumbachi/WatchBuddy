@@ -2,9 +2,7 @@ package com.gumbachi.watchbuddy.module.search
 
 import android.util.Log
 import com.gumbachi.watchbuddy.database.WatchbuddyDatabase
-import com.gumbachi.watchbuddy.datasource.anilist.api.AnilistAPI
-import com.gumbachi.watchbuddy.datasource.anilist.api.mappers.toAnilistMovie
-import com.gumbachi.watchbuddy.datasource.anilist.api.mappers.toAnilistShow
+import com.gumbachi.watchbuddy.datasource.anilist.AnilistAPI
 import com.gumbachi.watchbuddy.datasource.tmdb.TMDBApi
 import com.gumbachi.watchbuddy.model.RecentSearch
 import com.gumbachi.watchbuddy.model.WatchBuddyID
@@ -103,9 +101,9 @@ class SearchRepositoryImpl(
         return when (searchResult.watchbuddyID.source) {
             Source.TMDBMovie -> tmdb.getBlankMovie(searchResult.id)
             Source.TMDBShow -> tmdb.getBlankShow(searchResult.id)
-            Source.AnilistMovie -> anilist.getRequiredAnimeDetails(searchResult.id).toAnilistMovie()
-            Source.AnilistShow -> anilist.getRequiredAnimeDetails(searchResult.id).toAnilistShow()
-            else -> TODO("Add Support for custom items")
+            Source.AnilistMovie -> anilist.getBlankMovie(searchResult.id)
+            Source.AnilistShow -> anilist.getBlankShow(searchResult.id)
+            Source.CustomMovie, Source.CustomShow -> TODO("Add Support for custom items")
         }
     }
 
